@@ -152,6 +152,11 @@ app.get('/api/health', async (req, res) => {
     database: db.config.database,
     basicAuth: basicAuthAllowed(),
     uptime: Math.round(process.uptime()),
+    // Which build is actually running. Railway injects the commit it deployed, and
+    // without it there is no way to tell "the fix is not working" from "the fix is
+    // not deployed yet" - two problems with completely different answers.
+    commit: (process.env.RAILWAY_GIT_COMMIT_SHA || 'unknown').slice(0, 7),
+    schemaSync: process.env.AUTO_SCHEMA_SYNC === 'false' ? 'disabled' : 'enabled',
     schema: 'ready',
   };
   try {
