@@ -57,6 +57,36 @@ async function main() {
     host, port, user, password, database, multipleStatements: true,
   });
 
+  /**
+   * Refuse to destroy a database that has data in it.
+   *
+   * schema.sql drops all 23 tables before recreating them. That is correct for a
+   * first run and catastrophic against anything real, and the mistake is easy to
+   * make: this script calls dotenv.config(), so a DB_NAME in .env silently wins over
+   * whatever the caller thought they were targeting on the command line.
+   *
+   * Pass --force (or CONFIRM_DESTRUCTIVE=yes) to mean it.
+   */
+  const forced = process.argv.includes('--force') || process.env.CONFIRM_DESTRUCTIVE === 'yes';
+  if (!forced) {
+    // `rows` is reserved in MariaDB, hence the alias
+    const [[{ total }]] = await conn.query(
+      `SELECT COALESCE(SUM(TABLE_ROWS), 0) AS total
+         FROM information_schema.TABLES WHERE TABLE_SCHEMA = ?`,
+      [database]
+    );
+    if (Number(total) > 0) {
+      console.error(`refusing to run: ${database}@${host}:${port} already holds data (~${total} rows).`);
+      console.error('db/schema.sql DROPS every table before recreating it, so this would erase it.');
+      console.error('');
+      console.error('  to add missing tables and columns without losing data, just start the API -');
+      console.error('  it reconciles the schema on boot (src/schema-sync.js).');
+      console.error('  to wipe and rebuild anyway: node db/migrate.js --force');
+      await conn.end();
+      process.exit(1);
+    }
+  }
+
   console.log(`> applying db/schema.sql to ${database}@${host}:${port} ...`);
   await conn.query(withoutDatabaseHeader(raw));
 
