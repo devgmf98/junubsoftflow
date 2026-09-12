@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate, useOutletContext } from 'react-router-dom';
-import api from '../api/client';
+import api, { assetUrl } from '../api/client';
 import Icon from '../components/Icon';
 import { useToast } from '../context/ToastContext';
 import ProductCard from '../components/ProductCard';
@@ -122,14 +122,14 @@ export default function ProductDetail() {
                   onClick={() => setPreviewAt(0)}
                   aria-label="Open the preview slider"
                 >
-                  <img src={previewImages[0].url} alt={previewImages[0].caption || `${product.name} preview`} />
+                  <img src={assetUrl(previewImages[0].url)} alt={previewImages[0].caption || `${product.name} preview`} />
                   <span className="pdp-preview-hint">
                     <Icon name="eye" /> Preview
                   </span>
                 </button>
               ) : product.imageUrl ? (
                 <img
-                  src={product.imageUrl}
+                  src={assetUrl(product.imageUrl)}
                   alt={product.name}
                   style={{ maxHeight: 300, borderRadius: 10, objectFit: 'contain' }}
                 />
@@ -150,7 +150,7 @@ export default function ProductDetail() {
                       onClick={() => setPreviewAt(i)}
                       aria-label={`Preview image ${i + 1}`}
                     >
-                      <img src={img.url} alt="" loading="lazy" />
+                      <img src={assetUrl(img.url)} alt="" loading="lazy" />
                     </button>
                   ))}
                 </div>

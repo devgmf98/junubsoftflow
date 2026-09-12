@@ -1,0 +1,16 @@
+# Build context is the repo root. The API image needs backend/ only.
+frontend
+dist
+**/node_modules
+**/.env
+**/.env.*
+!**/.env.example
+backend/storage/apk/*
+backend/storage/files/*
+backend/storage/tmp/*
+!backend/storage/**/.gitkeep
+**/*.log
+.git
+.github
+*.md
+api-samples.json

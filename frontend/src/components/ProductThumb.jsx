@@ -1,4 +1,5 @@
 import Icon from './Icon';
+import { assetUrl } from '../api/client';
 import { accentStyle } from '../utils/format';
 
 /**
@@ -17,7 +18,7 @@ export default function ProductThumb({ product = {}, size = 36, radius = 9, fill
   if (imageUrl) {
     return (
       <span className={`product-thumb-img ${className}`} style={{ ...box, borderRadius: radius }}>
-        <img src={imageUrl} alt={name ? `${name}` : ''} loading="lazy" />
+        <img src={assetUrl(imageUrl)} alt={name ? `${name}` : ''} loading="lazy" />
       </span>
     );
   }

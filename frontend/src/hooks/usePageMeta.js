@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSettings } from '../context/SettingsContext';
 
-const ORIGIN = 'https://junubsoftflow.com';
+const ORIGIN = 'https://junubsoftflow.netlify.app';
 
 /** Sets or creates a meta/link tag, and reports whether it made a new one. */
 function setTag(selector, create, attr, value) {

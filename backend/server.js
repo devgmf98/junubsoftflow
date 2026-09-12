@@ -16,6 +16,19 @@ const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
 
 app.set('trust proxy', 1);
 
+/**
+ * The front end and the API are separate sites in production - Netlify and Railway -
+ * so the session cookie is a third-party cookie as far as the browser is concerned.
+ * A SameSite=Lax cookie is simply not sent on a cross-site XHR: sign-in would appear
+ * to succeed, set a cookie, and then never see it again. SameSite=None is the only
+ * value browsers send cross-site, and they only accept it alongside Secure.
+ *
+ * Locally the Vite proxy keeps everything on one origin, where Lax is the safer choice
+ * because it is not exposed to cross-site requests at all.
+ */
+const IS_PROD = process.env.NODE_ENV === 'production';
+const CROSS_SITE = IS_PROD || process.env.CROSS_SITE_COOKIE === 'true';
+
 /* ---------- CORS (credentials on, so the session cookie travels) ---------- */
 app.use(
   cors({
@@ -68,8 +81,9 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      sameSite: CROSS_SITE ? 'none' : 'lax',
+      // SameSite=None is rejected by browsers unless Secure is set, so these move together
+      secure: CROSS_SITE,
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
@@ -135,7 +149,8 @@ async function start() {
     process.exit(1);
   }
 
-  app.listen(PORT, () => {
+  // 0.0.0.0, not localhost: inside a container the health check arrives from outside
+  app.listen(PORT, '0.0.0.0', () => {
     console.log('');
     console.log('  SoftFlow API');
     console.log(`  api    http://localhost:${PORT}/api`);

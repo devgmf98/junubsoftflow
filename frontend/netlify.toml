@@ -1,0 +1,14 @@
+# Netlify builds from this directory; the SPA fallback also lives in public/_redirects
+# so it survives if this file is ever superseded by UI settings.
+[build]
+  base    = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200

@@ -5,9 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!--
-      Facebook and Twitter scrapers do NOT run JavaScript, so every tag a share card
-      needs has to be in this static file - setting them from React would be too late.
-      Replace https://junubsoftflow.com throughout when the real domain is live.
+      Facebook, LinkedIn, X and Google's crawler do NOT run JavaScript, so every tag a
+      share card needs has to be in this static file - setting them from React would be
+      too late. That also means every route shares this one card: a link to /products
+      previews the same way the home page does, until the site is pre-rendered.
+
+      The canonical host is https://junubsoftflow.netlify.app. If a custom domain is
+      added later, change it here, in public/sitemap.xml, public/robots.txt and
+      src/hooks/usePageMeta.js together - a card pointing at the wrong host stays
+      cached by the scrapers for days.
     -->
     <title>JunubSoftFlow - Buy Genuine Software Licences Online</title>
     <meta
@@ -18,31 +24,36 @@
     <meta name="author" content="JunubSoftFlow" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <meta name="theme-color" content="#2563eb" />
-    <link rel="canonical" href="https://junubsoftflow.com/" />
+    <link rel="canonical" href="https://junubsoftflow.netlify.app/" />
 
     <!-- Open Graph: Facebook, LinkedIn, WhatsApp -->
     <meta property="og:site_name" content="JunubSoftFlow" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://junubsoftflow.com/" />
+    <meta property="og:url" content="https://junubsoftflow.netlify.app/" />
     <meta property="og:title" content="JunubSoftFlow - Buy Genuine Software Licences Online" />
     <meta
       property="og:description"
       content="Genuine software licences delivered the moment you pay. Instant keys, real support, fair returns."
     />
-    <meta property="og:image" content="https://junubsoftflow.com/og-image.png" />
+    <meta property="og:image" content="https://junubsoftflow.netlify.app/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:secure_url" content="https://junubsoftflow.netlify.app/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
     <meta property="og:image:alt" content="JunubSoftFlow - buy genuine software licences online" />
     <meta property="og:locale" content="en_US" />
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
+    <!-- these must match the profiles in sameAs below; remove both if the account does not exist -->
+    <meta name="twitter:site" content="@junubsoftflow" />
+    <meta name="twitter:creator" content="@junubsoftflow" />
     <meta name="twitter:title" content="JunubSoftFlow - Buy Genuine Software Licences Online" />
     <meta
       name="twitter:description"
       content="Genuine software licences delivered the moment you pay. Instant keys, real support, fair returns."
     />
-    <meta name="twitter:image" content="https://junubsoftflow.com/og-image.png" />
+    <meta name="twitter:image" content="https://junubsoftflow.netlify.app/og-image.png" />
     <meta name="twitter:image:alt" content="JunubSoftFlow - buy genuine software licences online" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -65,11 +76,11 @@
         "@graph": [
           {
             "@type": "Organization",
-            "@id": "https://junubsoftflow.com/#organization",
+            "@id": "https://junubsoftflow.netlify.app/#organization",
             "name": "JunubSoftFlow",
             "alternateName": ["Junub SoftFlow", "SoftFlow"],
-            "url": "https://junubsoftflow.com/",
-            "logo": "https://junubsoftflow.com/og-image.png",
+            "url": "https://junubsoftflow.netlify.app/",
+            "logo": "https://junubsoftflow.netlify.app/og-image.png",
             "description": "Genuine software licences delivered the moment you pay.",
             "address": {
               "@type": "PostalAddress",
@@ -79,7 +90,7 @@
             "contactPoint": {
               "@type": "ContactPoint",
               "contactType": "customer support",
-              "email": "support@softflow.com",
+              "email": "junubsoftflow@gmail.com",
               "availableLanguage": ["English"]
             },
             "sameAs": [
@@ -90,31 +101,31 @@
           },
           {
             "@type": "WebSite",
-            "@id": "https://junubsoftflow.com/#website",
-            "url": "https://junubsoftflow.com/",
+            "@id": "https://junubsoftflow.netlify.app/#website",
+            "url": "https://junubsoftflow.netlify.app/",
             "name": "JunubSoftFlow",
-            "publisher": { "@id": "https://junubsoftflow.com/#organization" },
+            "publisher": { "@id": "https://junubsoftflow.netlify.app/#organization" },
             "potentialAction": {
               "@type": "SearchAction",
               "target": {
                 "@type": "EntryPoint",
-                "urlTemplate": "https://junubsoftflow.com/products?q={search_term_string}"
+                "urlTemplate": "https://junubsoftflow.netlify.app/products?q={search_term_string}"
               },
               "query-input": "required name=search_term_string"
             }
           },
           {
             "@type": "SiteNavigationElement",
-            "@id": "https://junubsoftflow.com/#nav",
+            "@id": "https://junubsoftflow.netlify.app/#nav",
             "name": ["Home", "Products", "Demos", "About", "Contact", "Sign in", "Create account"],
             "url": [
-              "https://junubsoftflow.com/",
-              "https://junubsoftflow.com/products",
-              "https://junubsoftflow.com/demos",
-              "https://junubsoftflow.com/about",
-              "https://junubsoftflow.com/contact",
-              "https://junubsoftflow.com/login",
-              "https://junubsoftflow.com/register"
+              "https://junubsoftflow.netlify.app/",
+              "https://junubsoftflow.netlify.app/products",
+              "https://junubsoftflow.netlify.app/demos",
+              "https://junubsoftflow.netlify.app/about",
+              "https://junubsoftflow.netlify.app/contact",
+              "https://junubsoftflow.netlify.app/login",
+              "https://junubsoftflow.netlify.app/register"
             ]
           }
         ]
