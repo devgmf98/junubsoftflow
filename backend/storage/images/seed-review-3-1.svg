@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400">
+  <rect width="640" height="400" fill="#e0ecff"/>
+  <rect x="0" y="0" width="640" height="46" fill="#2563eb" opacity="0.9"/>
+  <circle cx="24" cy="23" r="6" fill="#ffffff" opacity="0.85"/>
+  <circle cx="44" cy="23" r="6" fill="#ffffff" opacity="0.55"/>
+  <circle cx="64" cy="23" r="6" fill="#ffffff" opacity="0.35"/>
+  <text x="88" y="29" font-family="Inter, Arial, sans-serif" font-size="15" fill="#ffffff">Adobe Photoshop</text>
+  <rect x="32" y="82" width="240" height="18" rx="5" fill="#2563eb" opacity="0.28"/>
+  <rect x="32" y="112" width="384" height="12" rx="4" fill="#2563eb" opacity="0.16"/>
+  <rect x="32" y="134" width="330" height="12" rx="4" fill="#2563eb" opacity="0.16"/>
+  <rect x="32" y="176" width="264" height="150" rx="10" fill="#ffffff" opacity="0.75"/>
+  <rect x="320" y="176" width="288" height="70" rx="10" fill="#ffffff" opacity="0.6"/>
+  <rect x="320" y="256" width="288" height="70" rx="10" fill="#ffffff" opacity="0.6"/>
+  <text x="32" y="366" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700" fill="#2563eb">Activation screen</text>
+  <text x="32" y="388" font-family="Inter, Arial, sans-serif" font-size="13" fill="#2563eb" opacity="0.75">Licence accepted first try</text>
+</svg>

@@ -1,0 +1,18 @@
+# JunubSoftFlow
+User-agent: *
+Allow: /
+
+# Signed-in areas hold personal data and have nothing to index
+Disallow: /account
+Disallow: /admin
+Disallow: /checkout
+Disallow: /cart
+Disallow: /order/
+
+# Social scrapers need the share image and the pages it points at
+User-agent: facebookexternalhit
+Allow: /
+User-agent: Twitterbot
+Allow: /
+
+Sitemap: https://junubsoftflow.com/sitemap.xml

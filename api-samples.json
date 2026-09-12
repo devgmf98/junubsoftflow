@@ -1,0 +1,6038 @@
+{
+  "capturedAt": "2026-09-10T14:45:39.485Z",
+  "baseUrl": "http://localhost:4000/api",
+  "accounts": {
+    "admin": "admin@softflow.com / admin123",
+    "customer": "john@example.com / user123"
+  },
+  "note": "Real responses captured from a running API. Regenerate with: node backend/tools/capture-api.js",
+  "endpoints": {
+    "GET /auth/me": {
+      "as": "guest",
+      "status": 200,
+      "note": "signed out",
+      "response": {
+        "user": null
+      }
+    },
+    "POST /auth/login": {
+      "as": "user",
+      "status": 200,
+      "request": {
+        "email": "john@example.com",
+        "password": "user123"
+      },
+      "response": {
+        "user": {
+          "id": 2,
+          "name": "John Doe",
+          "email": "john@example.com",
+          "role": "customer",
+          "phone": "+211 912345678",
+          "company": "Doe Enterprises",
+          "country": "South Sudan",
+          "city": "Juba",
+          "status": "active",
+          "createdAt": "2026-05-28 00:02:11"
+        }
+      }
+    },
+    "POST /auth/login [200]": {
+      "as": "admin",
+      "status": 200,
+      "request": {
+        "email": "admin@softflow.com",
+        "password": "admin123"
+      },
+      "response": {
+        "user": {
+          "id": 1,
+          "name": "Admin",
+          "email": "admin@softflow.com",
+          "role": "admin",
+          "phone": "+211 920 000 111",
+          "company": "SoftFlow",
+          "country": "South Sudan",
+          "city": "Juba",
+          "status": "active",
+          "createdAt": "2025-08-06 00:02:11"
+        }
+      }
+    },
+    "GET /auth/me [200 signed in]": {
+      "as": "user",
+      "status": 200,
+      "note": "signed in",
+      "response": {
+        "user": {
+          "id": 2,
+          "name": "John Doe",
+          "email": "john@example.com",
+          "role": "customer",
+          "phone": "+211 912345678",
+          "company": "Doe Enterprises",
+          "country": "South Sudan",
+          "city": "Juba",
+          "status": "active",
+          "createdAt": "2026-05-28 00:02:11"
+        }
+      }
+    },
+    "GET /shop/settings": {
+      "as": "guest",
+      "status": 200,
+      "response": {
+        "settings": {
+          "site_name": "Junub SoftFlow",
+          "site_url": "http://localhost:5173",
+          "site_tagline": "Software for a smarter tomorrow",
+          "hero_title": "The Right Software for Your Business Growth",
+          "hero_highlight": "Growth",
+          "hero_subtitle": "Powerful. Secure. Scalable",
+          "hero_banner": "Buy Software Online - Fast, Secure, and Easy",
+          "hero_banner_sub": "Everything you need to power your business. From productivity tools to enterprise solutions - all in one place.",
+          "support_email": "junubsoftflow@gmail.com",
+          "support_phone": "+211 911771111",
+          "office_address": "Juba, South Sudan",
+          "currency": "USD",
+          "checkout_discount": "10",
+          "payment_card": "1",
+          "payment_paypal": "1",
+          "payment_mobile_money": "1",
+          "payment_bank_transfer": "1",
+          "payment_cash": "1"
+        }
+      }
+    },
+    "GET /shop/categories": {
+      "as": "guest",
+      "status": 200,
+      "response": {
+        "categories": [
+          {
+            "id": 1,
+            "name": "Productivity",
+            "slug": "productivity",
+            "description": "Office tools and productivity apps",
+            "icon": "file",
+            "accent": "blue",
+            "productCount": 2
+          },
+          {
+            "id": 2,
+            "name": "Security",
+            "slug": "security",
+            "description": "Antivirus and security software",
+            "icon": "shield",
+            "accent": "green",
+            "productCount": 1
+          },
+          {
+            "id": 3,
+            "name": "Design & Creative",
+            "slug": "design-creative",
+            "description": "Design and creative software",
+            "icon": "edit",
+            "accent": "purple",
+            "productCount": 2
+          },
+          {
+            "id": 4,
+            "name": "Business",
+            "slug": "business",
+            "description": "Business management tools",
+            "icon": "chart",
+            "accent": "orange",
+            "productCount": 3
+          },
+          {
+            "id": 5,
+            "name": "Developer Tools",
+            "slug": "developer-tools",
+            "description": "Developer and coding tools",
+            "icon": "code",
+            "accent": "teal",
+            "productCount": 1
+          }
+        ]
+      }
+    },
+    "GET /shop/home": {
+      "as": "guest",
+      "status": 200,
+      "response": {
+        "featured": [
+          {
+            "id": 1,
+            "name": "Microsoft Office 365",
+            "slug": "microsoft-office-365",
+            "sku": "SF-MS365",
+            "vendor": "Microsoft",
+            "shortDesc": "Productivity Suite for Business",
+            "description": "The complete Office suite for business. Word, Excel, PowerPoint and Outlook, kept up to date automatically, with 1TB of cloud storage per user and email hosting on your own domain.",
+            "price": 99,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 149,
+            "stock": 53,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows & Mac",
+            "badge": "Best Seller",
+            "icon": "file",
+            "accent": "orange",
+            "imageUrl": null,
+            "rating": 4.5,
+            "reviewCount": 124,
+            "isFeatured": true,
+            "categoryId": 1,
+            "categoryName": "Productivity",
+            "categorySlug": "productivity"
+          },
+          {
+            "id": 2,
+            "name": "Adobe Photoshop",
+            "slug": "adobe-photoshop",
+            "sku": "SF-PSCC",
+            "vendor": "Adobe",
+            "shortDesc": "Industry-standard image editing",
+            "description": "Photo editing, compositing and digital painting used by designers everywhere. Includes generative fill, RAW editing and every brush engine Photoshop ships with.",
+            "price": 36.75,
+            "listPrice": 49,
+            "discountPercent": 25,
+            "discountLabel": "Black Friday",
+            "pricingMode": "simple",
+            "comparePrice": 79,
+            "stock": 85,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows & Mac",
+            "badge": null,
+            "icon": "edit",
+            "accent": "blue",
+            "imageUrl": null,
+            "rating": 4.7,
+            "reviewCount": 96,
+            "isFeatured": true,
+            "categoryId": 3,
+            "categoryName": "Design & Creative",
+            "categorySlug": "design-creative"
+          },
+          {
+            "id": 3,
+            "name": "Windows 11 Pro",
+            "slug": "windows-11-pro",
+            "sku": "SF-W11P",
+            "vendor": "Microsoft",
+            "shortDesc": "Operating system for professionals",
+            "description": "Windows 11 Pro with BitLocker encryption, Remote Desktop, Hyper-V and Windows Sandbox. Delivered as a retail licence key you can activate immediately.",
+            "price": 109.65,
+            "listPrice": 129,
+            "discountPercent": 15,
+            "discountLabel": "Independence Day Sale",
+            "pricingMode": "simple",
+            "comparePrice": 199,
+            "stock": 59,
+            "licenceTerm": "Lifetime Licence",
+            "platforms": "Windows",
+            "badge": null,
+            "icon": "monitor",
+            "accent": "blue",
+            "imageUrl": null,
+            "rating": 4.6,
+            "reviewCount": 78,
+            "isFeatured": true,
+            "categoryId": 1,
+            "categoryName": "Productivity",
+            "categorySlug": "productivity"
+          },
+          {
+            "id": 4,
+            "name": "Antivirus Pro",
+            "slug": "antivirus-pro",
+            "sku": "SF-AVPRO",
+            "vendor": "SoftFlow Labs",
+            "shortDesc": "Real-time protection for up to 5 devices",
+            "description": "Real-time malware protection, ransomware shielding, a VPN and a password manager, covering up to five devices on one licence.",
+            "price": 23.4,
+            "listPrice": 39,
+            "discountPercent": 40,
+            "discountLabel": "Ramadan Offer",
+            "pricingMode": "simple",
+            "comparePrice": 59,
+            "stock": 200,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows, Mac & Android",
+            "badge": null,
+            "icon": "shield",
+            "accent": "green",
+            "imageUrl": null,
+            "rating": 4.4,
+            "reviewCount": 152,
+            "isFeatured": true,
+            "categoryId": 2,
+            "categoryName": "Security",
+            "categorySlug": "security"
+          }
+        ],
+        "deals": [
+          {
+            "id": 4,
+            "name": "Antivirus Pro",
+            "slug": "antivirus-pro",
+            "sku": "SF-AVPRO",
+            "vendor": "SoftFlow Labs",
+            "shortDesc": "Real-time protection for up to 5 devices",
+            "description": "Real-time malware protection, ransomware shielding, a VPN and a password manager, covering up to five devices on one licence.",
+            "price": 23.4,
+            "listPrice": 39,
+            "discountPercent": 40,
+            "discountLabel": "Ramadan Offer",
+            "pricingMode": "simple",
+            "comparePrice": 59,
+            "stock": 200,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows, Mac & Android",
+            "badge": null,
+            "icon": "shield",
+            "accent": "green",
+            "imageUrl": null,
+            "rating": 4.4,
+            "reviewCount": 152,
+            "isFeatured": true,
+            "categoryId": 2,
+            "categoryName": "Security",
+            "categorySlug": "security"
+          },
+          {
+            "id": 2,
+            "name": "Adobe Photoshop",
+            "slug": "adobe-photoshop",
+            "sku": "SF-PSCC",
+            "vendor": "Adobe",
+            "shortDesc": "Industry-standard image editing",
+            "description": "Photo editing, compositing and digital painting used by designers everywhere. Includes generative fill, RAW editing and every brush engine Photoshop ships with.",
+            "price": 36.75,
+            "listPrice": 49,
+            "discountPercent": 25,
+            "discountLabel": "Black Friday",
+            "pricingMode": "simple",
+            "comparePrice": 79,
+            "stock": 85,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows & Mac",
+            "badge": null,
+            "icon": "edit",
+            "accent": "blue",
+            "imageUrl": null,
+            "rating": 4.7,
+            "reviewCount": 96,
+            "isFeatured": true,
+            "categoryId": 3,
+            "categoryName": "Design & Creative",
+            "categorySlug": "design-creative"
+          },
+          {
+            "id": 3,
+            "name": "Windows 11 Pro",
+            "slug": "windows-11-pro",
+            "sku": "SF-W11P",
+            "vendor": "Microsoft",
+            "shortDesc": "Operating system for professionals",
+            "description": "Windows 11 Pro with BitLocker encryption, Remote Desktop, Hyper-V and Windows Sandbox. Delivered as a retail licence key you can activate immediately.",
+            "price": 109.65,
+            "listPrice": 129,
+            "discountPercent": 15,
+            "discountLabel": "Independence Day Sale",
+            "pricingMode": "simple",
+            "comparePrice": 199,
+            "stock": 59,
+            "licenceTerm": "Lifetime Licence",
+            "platforms": "Windows",
+            "badge": null,
+            "icon": "monitor",
+            "accent": "blue",
+            "imageUrl": null,
+            "rating": 4.6,
+            "reviewCount": 78,
+            "isFeatured": true,
+            "categoryId": 1,
+            "categoryName": "Productivity",
+            "categorySlug": "productivity"
+          }
+        ],
+        "newest": [
+          {
+            "id": 12,
+            "name": "MoneyPay",
+            "slug": "moneypay",
+            "sku": "SF-MONPAY",
+            "vendor": "JunubSoft",
+            "shortDesc": "Multi-vendor wallet, payments and delivery platform",
+            "description": "MoneyPay is a complete wallet and payments platform: customer app, vendor app and admin dashboard, with source code delivered per package.",
+            "price": 99,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "packages",
+            "comparePrice": 149,
+            "stock": 100,
+            "licenceTerm": "Life time",
+            "platforms": "Web, Android and IOS",
+            "badge": "New",
+            "icon": "money",
+            "accent": "green",
+            "imageUrl": "/api/shop/review-images/moneypay-logo-1788983189239-aebc50c0.svg",
+            "rating": 5,
+            "reviewCount": 0,
+            "isFeatured": true,
+            "categoryId": 4,
+            "categoryName": "Business",
+            "categorySlug": "business"
+          },
+          {
+            "id": 8,
+            "name": "CorelDRAW Graphics Suite",
+            "slug": "coreldraw-graphics-suite",
+            "sku": "SF-CDGS",
+            "vendor": "Corel",
+            "shortDesc": "Vector illustration and layout",
+            "description": "Vector illustration, page layout, photo editing and typography in one long-standing design suite.",
+            "price": 119,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 179,
+            "stock": 25,
+            "licenceTerm": "Lifetime Licence",
+            "platforms": "Windows & Mac",
+            "badge": null,
+            "icon": "tag",
+            "accent": "teal",
+            "imageUrl": null,
+            "rating": 4.1,
+            "reviewCount": 22,
+            "isFeatured": false,
+            "categoryId": 3,
+            "categoryName": "Design & Creative",
+            "categorySlug": "design-creative"
+          },
+          {
+            "id": 7,
+            "name": "Zoom Business",
+            "slug": "zoom-business",
+            "sku": "SF-ZOOMB",
+            "vendor": "Zoom",
+            "shortDesc": "Meetings for growing teams",
+            "description": "Up to 300 participants, 30-hour meetings, cloud recording, transcripts and company branding.",
+            "price": 59,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 89,
+            "stock": 75,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows, Mac, Android & iOS",
+            "badge": null,
+            "icon": "users",
+            "accent": "blue",
+            "imageUrl": null,
+            "rating": 4.2,
+            "reviewCount": 37,
+            "isFeatured": false,
+            "categoryId": 4,
+            "categoryName": "Business",
+            "categorySlug": "business"
+          },
+          {
+            "id": 6,
+            "name": "JetBrains IntelliJ IDEA",
+            "slug": "intellij-idea-ultimate",
+            "sku": "SF-IJIDEA",
+            "vendor": "JetBrains",
+            "shortDesc": "The IDE professional developers reach for",
+            "description": "Ultimate edition with full framework support, database tools, profiling and remote development built in.",
+            "price": 149,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 199,
+            "stock": 30,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows, Mac & Linux",
+            "badge": null,
+            "icon": "code",
+            "accent": "purple",
+            "imageUrl": null,
+            "rating": 4.8,
+            "reviewCount": 41,
+            "isFeatured": false,
+            "categoryId": 5,
+            "categoryName": "Developer Tools",
+            "categorySlug": "developer-tools"
+          }
+        ],
+        "categories": [
+          {
+            "id": 1,
+            "name": "Productivity",
+            "slug": "productivity",
+            "description": "Office tools and productivity apps",
+            "icon": "file",
+            "accent": "blue",
+            "productCount": 2
+          },
+          {
+            "id": 2,
+            "name": "Security",
+            "slug": "security",
+            "description": "Antivirus and security software",
+            "icon": "shield",
+            "accent": "green",
+            "productCount": 1
+          },
+          {
+            "id": 3,
+            "name": "Design & Creative",
+            "slug": "design-creative",
+            "description": "Design and creative software",
+            "icon": "edit",
+            "accent": "purple",
+            "productCount": 2
+          },
+          {
+            "id": 4,
+            "name": "Business",
+            "slug": "business",
+            "description": "Business management tools",
+            "icon": "chart",
+            "accent": "orange",
+            "productCount": 3
+          },
+          {
+            "id": 5,
+            "name": "Developer Tools",
+            "slug": "developer-tools",
+            "description": "Developer and coding tools",
+            "icon": "code",
+            "accent": "teal",
+            "productCount": 1
+          }
+        ],
+        "settings": {
+          "checkout_discount": "10",
+          "currency": "USD",
+          "email_from_address": "junubsoftflow@gmail.com",
+          "email_from_name": "JunubSoftFlow",
+          "email_order_confirmation": "1",
+          "hero_banner": "Buy Software Online - Fast, Secure, and Easy",
+          "hero_banner_sub": "Everything you need to power your business. From productivity tools to enterprise solutions - all in one place.",
+          "hero_highlight": "Growth",
+          "hero_subtitle": "Powerful. Secure. Scalable",
+          "hero_title": "The Right Software for Your Business Growth",
+          "licence_terms": "Lifetime\n1 Year Subscription\n2 Year Subscription\n3 Year Subscription\nMonthly Subscription\nPerpetual with 1 Year Updates",
+          "office_address": "Juba, South Sudan",
+          "payment_bank_transfer": "1",
+          "payment_card": "1",
+          "payment_cash": "1",
+          "payment_mobile_money": "1",
+          "payment_paypal": "1",
+          "site_name": "Junub SoftFlow",
+          "site_tagline": "Software for a smarter tomorrow",
+          "site_url": "http://localhost:5173",
+          "support_email": "junubsoftflow@gmail.com",
+          "support_phone": "+211 911771111",
+          "timezone": "(UTC+3) Nairobi"
+        }
+      }
+    },
+    "GET /shop/products?page=1": {
+      "as": "guest",
+      "status": 200,
+      "response": {
+        "products": [
+          {
+            "id": 1,
+            "name": "Microsoft Office 365",
+            "slug": "microsoft-office-365",
+            "sku": "SF-MS365",
+            "vendor": "Microsoft",
+            "shortDesc": "Productivity Suite for Business",
+            "description": "The complete Office suite for business. Word, Excel, PowerPoint and Outlook, kept up to date automatically, with 1TB of cloud storage per user and email hosting on your own domain.",
+            "price": 99,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 149,
+            "stock": 53,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows & Mac",
+            "badge": "Best Seller",
+            "icon": "file",
+            "accent": "orange",
+            "imageUrl": null,
+            "rating": 4.5,
+            "reviewCount": 124,
+            "isFeatured": true,
+            "categoryId": 1,
+            "categoryName": "Productivity",
+            "categorySlug": "productivity"
+          },
+          {
+            "id": 2,
+            "name": "Adobe Photoshop",
+            "slug": "adobe-photoshop",
+            "sku": "SF-PSCC",
+            "vendor": "Adobe",
+            "shortDesc": "Industry-standard image editing",
+            "description": "Photo editing, compositing and digital painting used by designers everywhere. Includes generative fill, RAW editing and every brush engine Photoshop ships with.",
+            "price": 36.75,
+            "listPrice": 49,
+            "discountPercent": 25,
+            "discountLabel": "Black Friday",
+            "pricingMode": "simple",
+            "comparePrice": 79,
+            "stock": 85,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows & Mac",
+            "badge": null,
+            "icon": "edit",
+            "accent": "blue",
+            "imageUrl": null,
+            "rating": 4.7,
+            "reviewCount": 96,
+            "isFeatured": true,
+            "categoryId": 3,
+            "categoryName": "Design & Creative",
+            "categorySlug": "design-creative"
+          },
+          {
+            "id": 3,
+            "name": "Windows 11 Pro",
+            "slug": "windows-11-pro",
+            "sku": "SF-W11P",
+            "vendor": "Microsoft",
+            "shortDesc": "Operating system for professionals",
+            "description": "Windows 11 Pro with BitLocker encryption, Remote Desktop, Hyper-V and Windows Sandbox. Delivered as a retail licence key you can activate immediately.",
+            "price": 109.65,
+            "listPrice": 129,
+            "discountPercent": 15,
+            "discountLabel": "Independence Day Sale",
+            "pricingMode": "simple",
+            "comparePrice": 199,
+            "stock": 59,
+            "licenceTerm": "Lifetime Licence",
+            "platforms": "Windows",
+            "badge": null,
+            "icon": "monitor",
+            "accent": "blue",
+            "imageUrl": null,
+            "rating": 4.6,
+            "reviewCount": 78,
+            "isFeatured": true,
+            "categoryId": 1,
+            "categoryName": "Productivity",
+            "categorySlug": "productivity"
+          },
+          {
+            "id": 4,
+            "name": "Antivirus Pro",
+            "slug": "antivirus-pro",
+            "sku": "SF-AVPRO",
+            "vendor": "SoftFlow Labs",
+            "shortDesc": "Real-time protection for up to 5 devices",
+            "description": "Real-time malware protection, ransomware shielding, a VPN and a password manager, covering up to five devices on one licence.",
+            "price": 23.4,
+            "listPrice": 39,
+            "discountPercent": 40,
+            "discountLabel": "Ramadan Offer",
+            "pricingMode": "simple",
+            "comparePrice": 59,
+            "stock": 200,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows, Mac & Android",
+            "badge": null,
+            "icon": "shield",
+            "accent": "green",
+            "imageUrl": null,
+            "rating": 4.4,
+            "reviewCount": 152,
+            "isFeatured": true,
+            "categoryId": 2,
+            "categoryName": "Security",
+            "categorySlug": "security"
+          },
+          {
+            "id": 12,
+            "name": "MoneyPay",
+            "slug": "moneypay",
+            "sku": "SF-MONPAY",
+            "vendor": "JunubSoft",
+            "shortDesc": "Multi-vendor wallet, payments and delivery platform",
+            "description": "MoneyPay is a complete wallet and payments platform: customer app, vendor app and admin dashboard, with source code delivered per package.",
+            "price": 99,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "packages",
+            "comparePrice": 149,
+            "stock": 100,
+            "licenceTerm": "Life time",
+            "platforms": "Web, Android and IOS",
+            "badge": "New",
+            "icon": "money",
+            "accent": "green",
+            "imageUrl": "/api/shop/review-images/moneypay-logo-1788983189239-aebc50c0.svg",
+            "rating": 5,
+            "reviewCount": 0,
+            "isFeatured": true,
+            "categoryId": 4,
+            "categoryName": "Business",
+            "categorySlug": "business"
+          },
+          {
+            "id": 5,
+            "name": "QuickBooks Accounting",
+            "slug": "quickbooks-accounting",
+            "sku": "SF-QBACC",
+            "vendor": "Intuit",
+            "shortDesc": "Bookkeeping built for small business",
+            "description": "Invoicing, expense tracking, VAT returns and payroll in one ledger your accountant can work from directly.",
+            "price": 89,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 119,
+            "stock": 45,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows & Web",
+            "badge": null,
+            "icon": "money",
+            "accent": "green",
+            "imageUrl": null,
+            "rating": 4.3,
+            "reviewCount": 64,
+            "isFeatured": false,
+            "categoryId": 4,
+            "categoryName": "Business",
+            "categorySlug": "business"
+          },
+          {
+            "id": 6,
+            "name": "JetBrains IntelliJ IDEA",
+            "slug": "intellij-idea-ultimate",
+            "sku": "SF-IJIDEA",
+            "vendor": "JetBrains",
+            "shortDesc": "The IDE professional developers reach for",
+            "description": "Ultimate edition with full framework support, database tools, profiling and remote development built in.",
+            "price": 149,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 199,
+            "stock": 30,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows, Mac & Linux",
+            "badge": null,
+            "icon": "code",
+            "accent": "purple",
+            "imageUrl": null,
+            "rating": 4.8,
+            "reviewCount": 41,
+            "isFeatured": false,
+            "categoryId": 5,
+            "categoryName": "Developer Tools",
+            "categorySlug": "developer-tools"
+          },
+          {
+            "id": 7,
+            "name": "Zoom Business",
+            "slug": "zoom-business",
+            "sku": "SF-ZOOMB",
+            "vendor": "Zoom",
+            "shortDesc": "Meetings for growing teams",
+            "description": "Up to 300 participants, 30-hour meetings, cloud recording, transcripts and company branding.",
+            "price": 59,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 89,
+            "stock": 75,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows, Mac, Android & iOS",
+            "badge": null,
+            "icon": "users",
+            "accent": "blue",
+            "imageUrl": null,
+            "rating": 4.2,
+            "reviewCount": 37,
+            "isFeatured": false,
+            "categoryId": 4,
+            "categoryName": "Business",
+            "categorySlug": "business"
+          },
+          {
+            "id": 8,
+            "name": "CorelDRAW Graphics Suite",
+            "slug": "coreldraw-graphics-suite",
+            "sku": "SF-CDGS",
+            "vendor": "Corel",
+            "shortDesc": "Vector illustration and layout",
+            "description": "Vector illustration, page layout, photo editing and typography in one long-standing design suite.",
+            "price": 119,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 179,
+            "stock": 25,
+            "licenceTerm": "Lifetime Licence",
+            "platforms": "Windows & Mac",
+            "badge": null,
+            "icon": "tag",
+            "accent": "teal",
+            "imageUrl": null,
+            "rating": 4.1,
+            "reviewCount": 22,
+            "isFeatured": false,
+            "categoryId": 3,
+            "categoryName": "Design & Creative",
+            "categorySlug": "design-creative"
+          }
+        ],
+        "activeCategory": null,
+        "page": 1,
+        "pages": 1,
+        "total": 9,
+        "perPage": 9
+      }
+    },
+    "GET /shop/products?search=money&sort=price-asc": {
+      "as": "guest",
+      "status": 200,
+      "response": {
+        "products": [
+          {
+            "id": 1,
+            "name": "Microsoft Office 365",
+            "slug": "microsoft-office-365",
+            "sku": "SF-MS365",
+            "vendor": "Microsoft",
+            "shortDesc": "Productivity Suite for Business",
+            "description": "The complete Office suite for business. Word, Excel, PowerPoint and Outlook, kept up to date automatically, with 1TB of cloud storage per user and email hosting on your own domain.",
+            "price": 99,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 149,
+            "stock": 53,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows & Mac",
+            "badge": "Best Seller",
+            "icon": "file",
+            "accent": "orange",
+            "imageUrl": null,
+            "rating": 4.5,
+            "reviewCount": 124,
+            "isFeatured": true,
+            "categoryId": 1,
+            "categoryName": "Productivity",
+            "categorySlug": "productivity"
+          },
+          {
+            "id": 2,
+            "name": "Adobe Photoshop",
+            "slug": "adobe-photoshop",
+            "sku": "SF-PSCC",
+            "vendor": "Adobe",
+            "shortDesc": "Industry-standard image editing",
+            "description": "Photo editing, compositing and digital painting used by designers everywhere. Includes generative fill, RAW editing and every brush engine Photoshop ships with.",
+            "price": 36.75,
+            "listPrice": 49,
+            "discountPercent": 25,
+            "discountLabel": "Black Friday",
+            "pricingMode": "simple",
+            "comparePrice": 79,
+            "stock": 85,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows & Mac",
+            "badge": null,
+            "icon": "edit",
+            "accent": "blue",
+            "imageUrl": null,
+            "rating": 4.7,
+            "reviewCount": 96,
+            "isFeatured": true,
+            "categoryId": 3,
+            "categoryName": "Design & Creative",
+            "categorySlug": "design-creative"
+          },
+          {
+            "id": 3,
+            "name": "Windows 11 Pro",
+            "slug": "windows-11-pro",
+            "sku": "SF-W11P",
+            "vendor": "Microsoft",
+            "shortDesc": "Operating system for professionals",
+            "description": "Windows 11 Pro with BitLocker encryption, Remote Desktop, Hyper-V and Windows Sandbox. Delivered as a retail licence key you can activate immediately.",
+            "price": 109.65,
+            "listPrice": 129,
+            "discountPercent": 15,
+            "discountLabel": "Independence Day Sale",
+            "pricingMode": "simple",
+            "comparePrice": 199,
+            "stock": 59,
+            "licenceTerm": "Lifetime Licence",
+            "platforms": "Windows",
+            "badge": null,
+            "icon": "monitor",
+            "accent": "blue",
+            "imageUrl": null,
+            "rating": 4.6,
+            "reviewCount": 78,
+            "isFeatured": true,
+            "categoryId": 1,
+            "categoryName": "Productivity",
+            "categorySlug": "productivity"
+          },
+          {
+            "id": 4,
+            "name": "Antivirus Pro",
+            "slug": "antivirus-pro",
+            "sku": "SF-AVPRO",
+            "vendor": "SoftFlow Labs",
+            "shortDesc": "Real-time protection for up to 5 devices",
+            "description": "Real-time malware protection, ransomware shielding, a VPN and a password manager, covering up to five devices on one licence.",
+            "price": 23.4,
+            "listPrice": 39,
+            "discountPercent": 40,
+            "discountLabel": "Ramadan Offer",
+            "pricingMode": "simple",
+            "comparePrice": 59,
+            "stock": 200,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows, Mac & Android",
+            "badge": null,
+            "icon": "shield",
+            "accent": "green",
+            "imageUrl": null,
+            "rating": 4.4,
+            "reviewCount": 152,
+            "isFeatured": true,
+            "categoryId": 2,
+            "categoryName": "Security",
+            "categorySlug": "security"
+          },
+          {
+            "id": 12,
+            "name": "MoneyPay",
+            "slug": "moneypay",
+            "sku": "SF-MONPAY",
+            "vendor": "JunubSoft",
+            "shortDesc": "Multi-vendor wallet, payments and delivery platform",
+            "description": "MoneyPay is a complete wallet and payments platform: customer app, vendor app and admin dashboard, with source code delivered per package.",
+            "price": 99,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "packages",
+            "comparePrice": 149,
+            "stock": 100,
+            "licenceTerm": "Life time",
+            "platforms": "Web, Android and IOS",
+            "badge": "New",
+            "icon": "money",
+            "accent": "green",
+            "imageUrl": "/api/shop/review-images/moneypay-logo-1788983189239-aebc50c0.svg",
+            "rating": 5,
+            "reviewCount": 0,
+            "isFeatured": true,
+            "categoryId": 4,
+            "categoryName": "Business",
+            "categorySlug": "business"
+          },
+          {
+            "id": 5,
+            "name": "QuickBooks Accounting",
+            "slug": "quickbooks-accounting",
+            "sku": "SF-QBACC",
+            "vendor": "Intuit",
+            "shortDesc": "Bookkeeping built for small business",
+            "description": "Invoicing, expense tracking, VAT returns and payroll in one ledger your accountant can work from directly.",
+            "price": 89,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 119,
+            "stock": 45,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows & Web",
+            "badge": null,
+            "icon": "money",
+            "accent": "green",
+            "imageUrl": null,
+            "rating": 4.3,
+            "reviewCount": 64,
+            "isFeatured": false,
+            "categoryId": 4,
+            "categoryName": "Business",
+            "categorySlug": "business"
+          },
+          {
+            "id": 6,
+            "name": "JetBrains IntelliJ IDEA",
+            "slug": "intellij-idea-ultimate",
+            "sku": "SF-IJIDEA",
+            "vendor": "JetBrains",
+            "shortDesc": "The IDE professional developers reach for",
+            "description": "Ultimate edition with full framework support, database tools, profiling and remote development built in.",
+            "price": 149,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 199,
+            "stock": 30,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows, Mac & Linux",
+            "badge": null,
+            "icon": "code",
+            "accent": "purple",
+            "imageUrl": null,
+            "rating": 4.8,
+            "reviewCount": 41,
+            "isFeatured": false,
+            "categoryId": 5,
+            "categoryName": "Developer Tools",
+            "categorySlug": "developer-tools"
+          },
+          {
+            "id": 7,
+            "name": "Zoom Business",
+            "slug": "zoom-business",
+            "sku": "SF-ZOOMB",
+            "vendor": "Zoom",
+            "shortDesc": "Meetings for growing teams",
+            "description": "Up to 300 participants, 30-hour meetings, cloud recording, transcripts and company branding.",
+            "price": 59,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 89,
+            "stock": 75,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows, Mac, Android & iOS",
+            "badge": null,
+            "icon": "users",
+            "accent": "blue",
+            "imageUrl": null,
+            "rating": 4.2,
+            "reviewCount": 37,
+            "isFeatured": false,
+            "categoryId": 4,
+            "categoryName": "Business",
+            "categorySlug": "business"
+          },
+          {
+            "id": 8,
+            "name": "CorelDRAW Graphics Suite",
+            "slug": "coreldraw-graphics-suite",
+            "sku": "SF-CDGS",
+            "vendor": "Corel",
+            "shortDesc": "Vector illustration and layout",
+            "description": "Vector illustration, page layout, photo editing and typography in one long-standing design suite.",
+            "price": 119,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 179,
+            "stock": 25,
+            "licenceTerm": "Lifetime Licence",
+            "platforms": "Windows & Mac",
+            "badge": null,
+            "icon": "tag",
+            "accent": "teal",
+            "imageUrl": null,
+            "rating": 4.1,
+            "reviewCount": 22,
+            "isFeatured": false,
+            "categoryId": 3,
+            "categoryName": "Design & Creative",
+            "categorySlug": "design-creative"
+          }
+        ],
+        "activeCategory": null,
+        "page": 1,
+        "pages": 1,
+        "total": 9,
+        "perPage": 9
+      }
+    },
+    "GET /shop/products/moneypay": {
+      "as": "guest",
+      "status": 200,
+      "response": {
+        "product": {
+          "id": 12,
+          "name": "MoneyPay",
+          "slug": "moneypay",
+          "sku": "SF-MONPAY",
+          "vendor": "JunubSoft",
+          "shortDesc": "Multi-vendor wallet, payments and delivery platform",
+          "description": "MoneyPay is a complete wallet and payments platform: customer app, vendor app and admin dashboard, with source code delivered per package.",
+          "price": 99,
+          "listPrice": null,
+          "discountPercent": 0,
+          "discountLabel": null,
+          "pricingMode": "packages",
+          "comparePrice": 149,
+          "stock": 100,
+          "licenceTerm": "Life time",
+          "platforms": "Web, Android and IOS",
+          "badge": "New",
+          "icon": "money",
+          "accent": "green",
+          "imageUrl": "/api/shop/review-images/moneypay-logo-1788983189239-aebc50c0.svg",
+          "rating": 5,
+          "reviewCount": 0,
+          "isFeatured": true,
+          "categoryId": 4,
+          "categoryName": "Business",
+          "categorySlug": "business"
+        },
+        "pricing": {
+          "licenseTypes": [
+            "regular",
+            "extended",
+            "agency"
+          ],
+          "packages": [
+            {
+              "id": 1,
+              "licenseType": "regular",
+              "name": "Starter",
+              "tagline": null,
+              "price": 99,
+              "comparePrice": null,
+              "savePercent": 0,
+              "licenseCount": 1,
+              "perLicense": null,
+              "isPopular": false,
+              "ctaLabel": "Buy Now",
+              "included": [
+                {
+                  "label": "Admin Panel",
+                  "included": true
+                },
+                {
+                  "label": "Vendor Panel",
+                  "included": true
+                },
+                {
+                  "label": "Customer App",
+                  "included": true
+                },
+                {
+                  "label": "Landing page",
+                  "included": true
+                }
+              ],
+              "addons": [],
+              "benefits": []
+            },
+            {
+              "id": 2,
+              "licenseType": "regular",
+              "name": "Combo",
+              "tagline": null,
+              "price": 234,
+              "comparePrice": 276,
+              "savePercent": 15,
+              "licenseCount": 1,
+              "perLicense": null,
+              "isPopular": false,
+              "ctaLabel": "Buy Now",
+              "included": [
+                {
+                  "label": "Admin Panel",
+                  "included": true
+                },
+                {
+                  "label": "Vendor Panel",
+                  "included": true
+                },
+                {
+                  "label": "Customer App",
+                  "included": true
+                },
+                {
+                  "label": "Landing page",
+                  "included": true
+                }
+              ],
+              "addons": [
+                {
+                  "label": "Vendor App",
+                  "included": true
+                },
+                {
+                  "label": "Deliveryman App",
+                  "included": true
+                },
+                {
+                  "label": "React Website",
+                  "included": true
+                }
+              ],
+              "benefits": []
+            },
+            {
+              "id": 3,
+              "licenseType": "regular",
+              "name": "Super Combo",
+              "tagline": null,
+              "price": 289,
+              "comparePrice": 414,
+              "savePercent": 30,
+              "licenseCount": 1,
+              "perLicense": null,
+              "isPopular": true,
+              "ctaLabel": "Buy Now",
+              "included": [
+                {
+                  "label": "Admin Panel",
+                  "included": true
+                },
+                {
+                  "label": "Vendor Panel",
+                  "included": true
+                },
+                {
+                  "label": "Customer App",
+                  "included": true
+                },
+                {
+                  "label": "Landing page",
+                  "included": true
+                }
+              ],
+              "addons": [
+                {
+                  "label": "Vendor App",
+                  "included": true
+                },
+                {
+                  "label": "Deliveryman App",
+                  "included": true
+                },
+                {
+                  "label": "React Website",
+                  "included": true
+                },
+                {
+                  "label": "Car Rental Module",
+                  "included": true
+                },
+                {
+                  "label": "Vendor Website Builder",
+                  "included": true
+                }
+              ],
+              "benefits": []
+            },
+            {
+              "id": 4,
+              "licenseType": "extended",
+              "name": "Starter",
+              "tagline": null,
+              "price": 399,
+              "comparePrice": null,
+              "savePercent": 0,
+              "licenseCount": 1,
+              "perLicense": null,
+              "isPopular": false,
+              "ctaLabel": "Buy Now",
+              "included": [
+                {
+                  "label": "Admin Panel",
+                  "included": true
+                },
+                {
+                  "label": "Vendor Panel",
+                  "included": true
+                },
+                {
+                  "label": "Customer App",
+                  "included": true
+                },
+                {
+                  "label": "Landing page",
+                  "included": true
+                }
+              ],
+              "addons": [],
+              "benefits": []
+            },
+            {
+              "id": 5,
+              "licenseType": "extended",
+              "name": "Combo",
+              "tagline": null,
+              "price": 846,
+              "comparePrice": 996,
+              "savePercent": 15,
+              "licenseCount": 1,
+              "perLicense": null,
+              "isPopular": false,
+              "ctaLabel": "Buy Now",
+              "included": [
+                {
+                  "label": "Admin Panel",
+                  "included": true
+                },
+                {
+                  "label": "Vendor Panel",
+                  "included": true
+                },
+                {
+                  "label": "Customer App",
+                  "included": true
+                },
+                {
+                  "label": "Landing page",
+                  "included": true
+                }
+              ],
+              "addons": [
+                {
+                  "label": "Vendor App",
+                  "included": true
+                },
+                {
+                  "label": "Deliveryman App",
+                  "included": true
+                },
+                {
+                  "label": "React Website",
+                  "included": true
+                }
+              ],
+              "benefits": []
+            },
+            {
+              "id": 6,
+              "licenseType": "extended",
+              "name": "Super Combo",
+              "tagline": null,
+              "price": 1045,
+              "comparePrice": 1494,
+              "savePercent": 30,
+              "licenseCount": 1,
+              "perLicense": null,
+              "isPopular": true,
+              "ctaLabel": "Buy Now",
+              "included": [
+                {
+                  "label": "Admin Panel",
+                  "included": true
+                },
+                {
+                  "label": "Vendor Panel",
+                  "included": true
+                },
+                {
+                  "label": "Customer App",
+                  "included": true
+                },
+                {
+                  "label": "Landing page",
+                  "included": true
+                }
+              ],
+              "addons": [
+                {
+                  "label": "Vendor App",
+                  "included": true
+                },
+                {
+                  "label": "Deliveryman App",
+                  "included": true
+                },
+                {
+                  "label": "React Website",
+                  "included": true
+                },
+                {
+                  "label": "Car Rental Module",
+                  "included": true
+                },
+                {
+                  "label": "Vendor Website Builder",
+                  "included": true
+                }
+              ],
+              "benefits": []
+            },
+            {
+              "id": 7,
+              "licenseType": "agency",
+              "name": "Launch",
+              "tagline": "For agencies taking on their first client builds",
+              "price": 2599,
+              "comparePrice": 3135,
+              "savePercent": 17,
+              "licenseCount": 3,
+              "perLicense": 866.33,
+              "isPopular": false,
+              "ctaLabel": "Buy Now",
+              "included": [
+                {
+                  "label": "Admin Panel",
+                  "included": true
+                },
+                {
+                  "label": "Vendor Panel",
+                  "included": true
+                },
+                {
+                  "label": "Customer App",
+                  "included": true
+                },
+                {
+                  "label": "Landing page",
+                  "included": true
+                }
+              ],
+              "addons": [
+                {
+                  "label": "Vendor App",
+                  "included": true
+                },
+                {
+                  "label": "Deliveryman App",
+                  "included": true
+                },
+                {
+                  "label": "React Website",
+                  "included": true
+                },
+                {
+                  "label": "Car Rental Module",
+                  "included": true
+                },
+                {
+                  "label": "Vendor Website Builder",
+                  "included": true
+                }
+              ],
+              "benefits": [
+                {
+                  "label": "One production domain per license",
+                  "included": true
+                },
+                {
+                  "label": "Client build & commercial rights",
+                  "included": true
+                },
+                {
+                  "label": "White-label / rebranding rights",
+                  "included": true
+                },
+                {
+                  "label": "12 months support",
+                  "included": true
+                }
+              ]
+            },
+            {
+              "id": 8,
+              "licenseType": "agency",
+              "name": "Growth",
+              "tagline": "For agencies with a steady client pipeline",
+              "price": 3699,
+              "comparePrice": 5225,
+              "savePercent": 29,
+              "licenseCount": 5,
+              "perLicense": 739.8,
+              "isPopular": false,
+              "ctaLabel": "Buy Now",
+              "included": [
+                {
+                  "label": "Admin Panel",
+                  "included": true
+                },
+                {
+                  "label": "Vendor Panel",
+                  "included": true
+                },
+                {
+                  "label": "Customer App",
+                  "included": true
+                },
+                {
+                  "label": "Landing page",
+                  "included": true
+                }
+              ],
+              "addons": [
+                {
+                  "label": "Vendor App",
+                  "included": true
+                },
+                {
+                  "label": "Deliveryman App",
+                  "included": true
+                },
+                {
+                  "label": "React Website",
+                  "included": true
+                },
+                {
+                  "label": "Car Rental Module",
+                  "included": true
+                },
+                {
+                  "label": "Vendor Website Builder",
+                  "included": true
+                }
+              ],
+              "benefits": [
+                {
+                  "label": "Everything in Launch",
+                  "included": true
+                },
+                {
+                  "label": "5 licenses - one production domain each",
+                  "included": true
+                }
+              ]
+            },
+            {
+              "id": 9,
+              "licenseType": "agency",
+              "name": "Empire",
+              "tagline": "For high-volume agencies & multi-market operators",
+              "price": 5999,
+              "comparePrice": 10450,
+              "savePercent": 43,
+              "licenseCount": 10,
+              "perLicense": 599.9,
+              "isPopular": true,
+              "ctaLabel": "Buy Now",
+              "included": [
+                {
+                  "label": "Admin Panel",
+                  "included": true
+                },
+                {
+                  "label": "Vendor Panel",
+                  "included": true
+                },
+                {
+                  "label": "Customer App",
+                  "included": true
+                },
+                {
+                  "label": "Landing page",
+                  "included": true
+                }
+              ],
+              "addons": [
+                {
+                  "label": "Vendor App",
+                  "included": true
+                },
+                {
+                  "label": "Deliveryman App",
+                  "included": true
+                },
+                {
+                  "label": "React Website",
+                  "included": true
+                },
+                {
+                  "label": "Car Rental Module",
+                  "included": true
+                },
+                {
+                  "label": "Vendor Website Builder",
+                  "included": true
+                }
+              ],
+              "benefits": [
+                {
+                  "label": "Everything in Growth",
+                  "included": true
+                },
+                {
+                  "label": "10 licenses - one production domain each",
+                  "included": true
+                },
+                {
+                  "label": "Dedicated support manager",
+                  "included": true
+                }
+              ]
+            }
+          ],
+          "matrix": [
+            {
+              "licenseType": "regular",
+              "rows": [
+                {
+                  "label": "Lifetime License Validity (edited)",
+                  "included": true
+                },
+                {
+                  "label": "Permitted for 1 Domain",
+                  "included": true
+                },
+                {
+                  "label": "6 months of general & technical support",
+                  "included": true
+                },
+                {
+                  "label": "All Premium Features",
+                  "included": true
+                },
+                {
+                  "label": "Lifetime FREE Update",
+                  "included": true
+                },
+                {
+                  "label": "For Personal Project",
+                  "included": true
+                },
+                {
+                  "label": "For Commercial Projects (if end-product is paid)",
+                  "included": false
+                },
+                {
+                  "label": "Postman Collection for REST API Docs",
+                  "included": false
+                },
+                {
+                  "label": "Admin Panel FREE Installation in cPanel",
+                  "included": false
+                },
+                {
+                  "label": "Priority Support",
+                  "included": false
+                }
+              ]
+            },
+            {
+              "licenseType": "extended",
+              "rows": [
+                {
+                  "label": "Lifetime License Validity",
+                  "included": true
+                },
+                {
+                  "label": "Permitted for 1 Domain",
+                  "included": true
+                },
+                {
+                  "label": "6 months of general & technical support",
+                  "included": true
+                },
+                {
+                  "label": "All Premium Features",
+                  "included": true
+                },
+                {
+                  "label": "Lifetime FREE Update",
+                  "included": true
+                },
+                {
+                  "label": "For Personal Project",
+                  "included": true
+                },
+                {
+                  "label": "For Commercial Projects (if end-product is paid)",
+                  "included": true
+                },
+                {
+                  "label": "Postman Collection for REST API Docs",
+                  "included": true
+                },
+                {
+                  "label": "Admin Panel FREE Installation in cPanel (One Time)",
+                  "included": true
+                },
+                {
+                  "label": "Priority Support",
+                  "included": true
+                }
+              ]
+            }
+          ],
+          "addons": [
+            {
+              "id": 1,
+              "name": "MoneyPay - Vendor App",
+              "description": null,
+              "regularPrice": 39,
+              "extendedPrice": 99
+            },
+            {
+              "id": 3,
+              "name": "MoneyPay - React User Website",
+              "description": null,
+              "regularPrice": 99,
+              "extendedPrice": 399
+            },
+            {
+              "id": 5,
+              "name": "MoneyPay - Vendor Website Builder",
+              "description": null,
+              "regularPrice": 79,
+              "extendedPrice": 199
+            }
+          ]
+        },
+        "previewImages": [
+          {
+            "id": 4,
+            "caption": "Dashboard overview",
+            "url": "/api/shop/review-images/preview-1-dashboard-1788981882784-8a6395d7.svg"
+          },
+          {
+            "id": 5,
+            "caption": "Transactions list",
+            "url": "/api/shop/review-images/preview-2-transactions-1788981882787-901d3da0.svg"
+          },
+          {
+            "id": 6,
+            "caption": "Settings panel",
+            "url": "/api/shop/review-images/preview-3-settings-1788981882787-ddfd0f45.svg"
+          }
+        ],
+        "deliverables": [
+          {
+            "label": "MoneyPay source code",
+            "kind": "source",
+            "packageId": null,
+            "packageName": null,
+            "platform": "web",
+            "version": "1.0.0",
+            "size": 863,
+            "isExternal": false
+          },
+          {
+            "label": "Starter source folder",
+            "kind": "source",
+            "packageId": 1,
+            "packageName": "Starter",
+            "platform": "web",
+            "version": null,
+            "size": 355,
+            "isExternal": false
+          },
+          {
+            "label": "Super Combo source folder",
+            "kind": "source",
+            "packageId": 3,
+            "packageName": "Super Combo",
+            "platform": "web",
+            "version": null,
+            "size": 753,
+            "isExternal": false
+          }
+        ],
+        "features": [],
+        "reviews": [],
+        "related": [
+          {
+            "id": 5,
+            "name": "QuickBooks Accounting",
+            "slug": "quickbooks-accounting",
+            "sku": "SF-QBACC",
+            "vendor": "Intuit",
+            "shortDesc": "Bookkeeping built for small business",
+            "description": "Invoicing, expense tracking, VAT returns and payroll in one ledger your accountant can work from directly.",
+            "price": 89,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 119,
+            "stock": 45,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows & Web",
+            "badge": null,
+            "icon": "money",
+            "accent": "green",
+            "imageUrl": null,
+            "rating": 4.3,
+            "reviewCount": 64,
+            "isFeatured": false,
+            "categoryId": 4,
+            "categoryName": "Business",
+            "categorySlug": "business"
+          },
+          {
+            "id": 7,
+            "name": "Zoom Business",
+            "slug": "zoom-business",
+            "sku": "SF-ZOOMB",
+            "vendor": "Zoom",
+            "shortDesc": "Meetings for growing teams",
+            "description": "Up to 300 participants, 30-hour meetings, cloud recording, transcripts and company branding.",
+            "price": 59,
+            "listPrice": null,
+            "discountPercent": 0,
+            "discountLabel": null,
+            "pricingMode": "simple",
+            "comparePrice": 89,
+            "stock": 75,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows, Mac, Android & iOS",
+            "badge": null,
+            "icon": "users",
+            "accent": "blue",
+            "imageUrl": null,
+            "rating": 4.2,
+            "reviewCount": 37,
+            "isFeatured": false,
+            "categoryId": 4,
+            "categoryName": "Business",
+            "categorySlug": "business"
+          }
+        ],
+        "demos": [
+          {
+            "id": 4,
+            "title": "MoneyPay",
+            "platform": "both",
+            "webUrl": "https://gpay-ss.netlify.app/login",
+            "reviewUrl": "https://gpay-ss.netlify.app/login",
+            "hasApk": true,
+            "apkVersion": "1.0.0"
+          }
+        ]
+      }
+    },
+    "GET /shop/products/microsoft-office-365": {
+      "as": "guest",
+      "status": 200,
+      "response": {
+        "product": {
+          "id": 1,
+          "name": "Microsoft Office 365",
+          "slug": "microsoft-office-365",
+          "sku": "SF-MS365",
+          "vendor": "Microsoft",
+          "shortDesc": "Productivity Suite for Business",
+          "description": "The complete Office suite for business. Word, Excel, PowerPoint and Outlook, kept up to date automatically, with 1TB of cloud storage per user and email hosting on your own domain.",
+          "price": 99,
+          "listPrice": null,
+          "discountPercent": 0,
+          "discountLabel": null,
+          "pricingMode": "simple",
+          "comparePrice": 149,
+          "stock": 53,
+          "licenceTerm": "1 Year Subscription",
+          "platforms": "Windows & Mac",
+          "badge": "Best Seller",
+          "icon": "file",
+          "accent": "orange",
+          "imageUrl": null,
+          "rating": 4.5,
+          "reviewCount": 124,
+          "isFeatured": true,
+          "categoryId": 1,
+          "categoryName": "Productivity",
+          "categorySlug": "productivity"
+        },
+        "pricing": {
+          "licenseTypes": [],
+          "packages": [],
+          "matrix": [],
+          "addons": []
+        },
+        "previewImages": [],
+        "deliverables": [
+          {
+            "label": "Office 365 Installer",
+            "kind": "installer",
+            "packageId": null,
+            "packageName": null,
+            "platform": "windows",
+            "version": "16.0.17328",
+            "size": 569,
+            "isExternal": false
+          },
+          {
+            "label": "Office 365 for Mac",
+            "kind": "installer",
+            "packageId": null,
+            "packageName": null,
+            "platform": "mac",
+            "version": "16.83",
+            "size": 555,
+            "isExternal": false
+          }
+        ],
+        "features": [
+          "Word, Excel, PowerPoint, Outlook",
+          "1 Year Subscription",
+          "Instant Email Delivery",
+          "Works on Windows & Mac",
+          "1TB OneDrive cloud storage"
+        ],
+        "reviews": [
+          {
+            "id": 1,
+            "author": "James Wani",
+            "rating": 5,
+            "title": "Exactly what we needed",
+            "body": "Key arrived in about two minutes and activated first try. No complaints at all.",
+            "createdAt": "2026-07-31 00:02:11",
+            "images": [
+              "/api/shop/review-images/seed-review-1-1.svg",
+              "/api/shop/review-images/seed-review-1-2.svg",
+              "/api/shop/review-images/seed-review-1-3.svg"
+            ]
+          },
+          {
+            "id": 2,
+            "author": "Anna Poni",
+            "rating": 4,
+            "title": "Good value",
+            "body": "Much cheaper than buying direct. Took a few minutes to find the activation instructions but support helped.",
+            "createdAt": "2026-06-20 00:02:11",
+            "images": []
+          }
+        ],
+        "related": [
+          {
+            "id": 3,
+            "name": "Windows 11 Pro",
+            "slug": "windows-11-pro",
+            "sku": "SF-W11P",
+            "vendor": "Microsoft",
+            "shortDesc": "Operating system for professionals",
+            "description": "Windows 11 Pro with BitLocker encryption, Remote Desktop, Hyper-V and Windows Sandbox. Delivered as a retail licence key you can activate immediately.",
+            "price": 109.65,
+            "listPrice": 129,
+            "discountPercent": 15,
+            "discountLabel": "Independence Day Sale",
+            "pricingMode": "simple",
+            "comparePrice": 199,
+            "stock": 59,
+            "licenceTerm": "Lifetime Licence",
+            "platforms": "Windows",
+            "badge": null,
+            "icon": "monitor",
+            "accent": "blue",
+            "imageUrl": null,
+            "rating": 4.6,
+            "reviewCount": 78,
+            "isFeatured": true,
+            "categoryId": 1,
+            "categoryName": "Productivity",
+            "categorySlug": "productivity"
+          }
+        ],
+        "demos": [
+          {
+            "id": 3,
+            "title": "Office 365 - Guided Walkthrough",
+            "platform": "web",
+            "webUrl": "https://demo.softflow.com/office365",
+            "reviewUrl": "https://review.softflow.com/office365",
+            "hasApk": false,
+            "apkVersion": null
+          }
+        ]
+      }
+    },
+    "GET /shop/demos": {
+      "as": "guest",
+      "status": 200,
+      "response": {
+        "product": null,
+        "total": 4,
+        "demos": [
+          {
+            "id": 1,
+            "title": "Antivirus Pro - Android Beta",
+            "slug": "antivirus-pro-android-beta",
+            "description": "The Android build of Antivirus Pro. Enable \"Install unknown apps\" for your browser before installing the APK.",
+            "platform": "android",
+            "webUrl": null,
+            "reviewUrl": "https://review.softflow.com/antivirus-pro/beta-notes",
+            "hasApk": false,
+            "apkName": null,
+            "apkSize": null,
+            "apkVersion": "8.2.1-beta",
+            "apkUploadedAt": null,
+            "downloadCount": 0,
+            "productName": "Antivirus Pro",
+            "productSlug": "antivirus-pro",
+            "previewImages": []
+          },
+          {
+            "id": 2,
+            "title": "SoftFlow Store - Live Demo",
+            "slug": "softflow-store-demo",
+            "description": "A sandbox copy of the storefront with test checkout enabled. No real payments are taken.",
+            "platform": "both",
+            "webUrl": "https://demo.softflow.com/store",
+            "reviewUrl": "https://review.softflow.com/store/walkthrough",
+            "hasApk": false,
+            "apkName": null,
+            "apkSize": null,
+            "apkVersion": "1.4.0",
+            "apkUploadedAt": null,
+            "downloadCount": 0,
+            "productName": null,
+            "productSlug": null,
+            "previewImages": []
+          },
+          {
+            "id": 3,
+            "title": "Office 365 - Guided Walkthrough",
+            "slug": "office-365-walkthrough",
+            "description": "A recorded walkthrough of activation and first-run setup, for buyers who want to see it before purchasing.",
+            "platform": "web",
+            "webUrl": "https://demo.softflow.com/office365",
+            "reviewUrl": "https://review.softflow.com/office365",
+            "hasApk": false,
+            "apkName": null,
+            "apkSize": null,
+            "apkVersion": null,
+            "apkUploadedAt": null,
+            "downloadCount": 0,
+            "productName": "Microsoft Office 365",
+            "productSlug": "microsoft-office-365",
+            "previewImages": []
+          },
+          {
+            "id": 4,
+            "title": "MoneyPay",
+            "slug": "moneypay-demo",
+            "description": "Try the MoneyPay wallet, vendor and rider apps.",
+            "platform": "both",
+            "webUrl": "https://gpay-ss.netlify.app/login",
+            "reviewUrl": "https://gpay-ss.netlify.app/login",
+            "hasApk": true,
+            "apkName": "app-release.apk",
+            "apkSize": 70205272,
+            "apkVersion": "1.0.0",
+            "apkUploadedAt": "2026-09-10 02:02:53",
+            "downloadCount": 0,
+            "productName": "MoneyPay",
+            "productSlug": "moneypay",
+            "previewImages": [
+              {
+                "id": 4,
+                "caption": "Dashboard overview",
+                "url": "/api/shop/review-images/preview-1-dashboard-1788981882784-8a6395d7.svg"
+              },
+              {
+                "id": 5,
+                "caption": "Transactions list",
+                "url": "/api/shop/review-images/preview-2-transactions-1788981882787-901d3da0.svg"
+              },
+              {
+                "id": 6,
+                "caption": "Settings panel",
+                "url": "/api/shop/review-images/preview-3-settings-1788981882787-ddfd0f45.svg"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "GET /shop/demos?product=moneypay": {
+      "as": "guest",
+      "status": 200,
+      "response": {
+        "product": {
+          "id": 12,
+          "name": "MoneyPay",
+          "slug": "moneypay"
+        },
+        "total": 4,
+        "demos": [
+          {
+            "id": 4,
+            "title": "MoneyPay",
+            "slug": "moneypay-demo",
+            "description": "Try the MoneyPay wallet, vendor and rider apps.",
+            "platform": "both",
+            "webUrl": "https://gpay-ss.netlify.app/login",
+            "reviewUrl": "https://gpay-ss.netlify.app/login",
+            "hasApk": true,
+            "apkName": "app-release.apk",
+            "apkSize": 70205272,
+            "apkVersion": "1.0.0",
+            "apkUploadedAt": "2026-09-10 02:02:53",
+            "downloadCount": 0,
+            "productName": "MoneyPay",
+            "productSlug": "moneypay",
+            "previewImages": [
+              {
+                "id": 4,
+                "caption": "Dashboard overview",
+                "url": "/api/shop/review-images/preview-1-dashboard-1788981882784-8a6395d7.svg"
+              },
+              {
+                "id": 5,
+                "caption": "Transactions list",
+                "url": "/api/shop/review-images/preview-2-transactions-1788981882787-901d3da0.svg"
+              },
+              {
+                "id": 6,
+                "caption": "Settings panel",
+                "url": "/api/shop/review-images/preview-3-settings-1788981882787-ddfd0f45.svg"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "POST /shop/cart/price": {
+      "as": "guest",
+      "status": 200,
+      "note": "server re-prices every line; the client sends IDs only",
+      "request": {
+        "items": [
+          {
+            "productId": 1,
+            "quantity": 2
+          },
+          {
+            "productId": 12,
+            "packageId": 3,
+            "licenseType": "regular",
+            "quantity": 1
+          },
+          {
+            "addonId": 1,
+            "licenseType": "extended",
+            "quantity": 1
+          }
+        ]
+      },
+      "response": {
+        "cart": {
+          "items": [
+            {
+              "key": "product-1",
+              "productId": 1,
+              "name": "Microsoft Office 365",
+              "kind": "product",
+              "discountPercent": 0,
+              "discountLabel": null,
+              "listPrice": null,
+              "slug": "microsoft-office-365",
+              "icon": "file",
+              "accent": "orange",
+              "imageUrl": null,
+              "shortDesc": "Productivity Suite for Business",
+              "licenceTerm": "1 Year Subscription",
+              "price": 99,
+              "stock": 53,
+              "quantity": 2,
+              "lineTotal": 198
+            },
+            {
+              "key": "pkg-3",
+              "productId": 12,
+              "packageId": 3,
+              "name": "MoneyPay",
+              "packageName": "Super Combo",
+              "licenseType": "regular",
+              "licenseCount": 1,
+              "licenceTerm": "Life time",
+              "kind": "package",
+              "slug": "moneypay",
+              "icon": "money",
+              "accent": "green",
+              "imageUrl": "/api/shop/review-images/moneypay-logo-1788983189239-aebc50c0.svg",
+              "price": 289,
+              "stock": 100,
+              "quantity": 1,
+              "lineTotal": 289
+            },
+            {
+              "key": "addon-1-extended",
+              "addonId": 1,
+              "productId": 12,
+              "name": "MoneyPay - Vendor App",
+              "kind": "addon",
+              "licenceTerm": "Life time",
+              "licenseType": "extended",
+              "price": 99,
+              "stock": 20,
+              "quantity": 1,
+              "lineTotal": 99
+            }
+          ],
+          "subtotal": 586,
+          "discount": 58.6,
+          "discountPercent": 10,
+          "discountableSubtotal": 586,
+          "alreadyDiscounted": 0,
+          "discountRates": {
+            "default": 10,
+            "card": 10,
+            "paypal": 10,
+            "mobile_money": 10,
+            "bank_transfer": 10,
+            "cash": 10
+          },
+          "paymentMethod": null,
+          "total": 527.4,
+          "count": 4,
+          "removed": []
+        }
+      }
+    },
+    "GET /account/summary": {
+      "as": "user",
+      "status": 200,
+      "response": {
+        "kpis": {
+          "spent": 1201.2,
+          "orders": 11,
+          "licenses": 16,
+          "pending": 2
+        },
+        "recentOrders": [
+          {
+            "orderNumber": "SOF123460",
+            "items": "Microsoft Office 365",
+            "total": 89.1,
+            "status": "completed",
+            "paymentStatus": "paid",
+            "createdAt": "2026-09-10 02:13:36"
+          },
+          {
+            "orderNumber": "SOF123459",
+            "items": "Windows 11 Pro",
+            "total": 116.1,
+            "status": "completed",
+            "paymentStatus": "paid",
+            "createdAt": "2026-09-10 02:13:35"
+          },
+          {
+            "orderNumber": "SOF123025",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "total": 138,
+            "status": "completed",
+            "paymentStatus": "paid",
+            "createdAt": "2026-09-07 00:02:12"
+          },
+          {
+            "orderNumber": "SOF123049",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "total": 138,
+            "status": "completed",
+            "paymentStatus": "paid",
+            "createdAt": "2026-09-07 00:02:12"
+          },
+          {
+            "orderNumber": "SOF123001",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "total": 138,
+            "status": "completed",
+            "paymentStatus": "paid",
+            "createdAt": "2026-09-07 00:02:11"
+          }
+        ],
+        "activity": [
+          {
+            "id": 28,
+            "type": "order",
+            "message": "New order placed #SOF123484",
+            "createdAt": "2026-09-10 10:38:08"
+          },
+          {
+            "id": 27,
+            "type": "order",
+            "message": "New order placed #SOF123483",
+            "createdAt": "2026-09-10 10:38:07"
+          },
+          {
+            "id": 9,
+            "type": "order",
+            "message": "New order placed #SOF123459",
+            "createdAt": "2026-09-10 02:13:36"
+          },
+          {
+            "id": 10,
+            "type": "order",
+            "message": "New order placed #SOF123460",
+            "createdAt": "2026-09-10 02:13:36"
+          },
+          {
+            "id": 1,
+            "type": "order",
+            "message": "New order placed #SOF123456",
+            "createdAt": "2026-09-10 00:00:12"
+          },
+          {
+            "id": 2,
+            "type": "payment",
+            "message": "Payment received $138.00",
+            "createdAt": "2026-09-09 23:50:12"
+          }
+        ]
+      }
+    },
+    "GET /account/orders?page=1": {
+      "as": "user",
+      "status": 200,
+      "response": {
+        "orders": [
+          {
+            "orderNumber": "SOF123460",
+            "items": "Microsoft Office 365",
+            "subtotal": 99,
+            "discount": 9.9,
+            "total": 89.1,
+            "paymentMethod": "card",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-10 02:13:36"
+          },
+          {
+            "orderNumber": "SOF123459",
+            "items": "Windows 11 Pro",
+            "subtotal": 129,
+            "discount": 12.9,
+            "total": 116.1,
+            "paymentMethod": "card",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-10 02:13:35"
+          },
+          {
+            "orderNumber": "SOF123025",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "subtotal": 148,
+            "discount": 10,
+            "total": 138,
+            "paymentMethod": "cash",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-07 00:02:12"
+          },
+          {
+            "orderNumber": "SOF123049",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "subtotal": 148,
+            "discount": 10,
+            "total": 138,
+            "paymentMethod": "bank_transfer",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-07 00:02:12"
+          },
+          {
+            "orderNumber": "SOF123001",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "subtotal": 148,
+            "discount": 10,
+            "total": 138,
+            "paymentMethod": "card",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-07 00:02:11"
+          },
+          {
+            "orderNumber": "SOF123456",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "subtotal": 148,
+            "discount": 10,
+            "total": 138,
+            "paymentMethod": "card",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-06 00:02:11"
+          },
+          {
+            "orderNumber": "SOF123033",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "subtotal": 148,
+            "discount": 0,
+            "total": 148,
+            "paymentMethod": "mobile_money",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-08-04 00:02:12"
+          },
+          {
+            "orderNumber": "SOF123057",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "subtotal": 148,
+            "discount": 0,
+            "total": 148,
+            "paymentMethod": "paypal",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-08-04 00:02:12"
+          },
+          {
+            "orderNumber": "SOF123009",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "subtotal": 148,
+            "discount": 0,
+            "total": 148,
+            "paymentMethod": "bank_transfer",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-08-04 00:02:11"
+          },
+          {
+            "orderNumber": "SOF123017",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "subtotal": 148,
+            "discount": 0,
+            "total": 148,
+            "paymentMethod": "paypal",
+            "paymentStatus": "pending",
+            "status": "pending",
+            "createdAt": "2026-07-01 00:02:12"
+          }
+        ],
+        "page": 1,
+        "pages": 2,
+        "total": 11,
+        "perPage": 10
+      }
+    },
+    "GET /account/licenses": {
+      "as": "user",
+      "status": 200,
+      "response": {
+        "licenses": [
+          {
+            "id": 60,
+            "key": "R7TKT-TBES4-4P9UP-E3RCW",
+            "status": "active",
+            "issuedAt": "2026-09-10 02:13:36",
+            "expiresAt": "2027-09-10",
+            "orderNumber": "SOF123460",
+            "productName": "Microsoft Office 365",
+            "productSlug": "microsoft-office-365",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "file",
+            "accent": "orange"
+          },
+          {
+            "id": 59,
+            "key": "C6SWA-863DC-BPVU3-UU5SX",
+            "status": "active",
+            "issuedAt": "2026-09-10 02:13:36",
+            "expiresAt": null,
+            "orderNumber": "SOF123459",
+            "productName": "Windows 11 Pro",
+            "productSlug": "windows-11-pro",
+            "licenceTerm": "Lifetime Licence",
+            "icon": "monitor",
+            "accent": "blue"
+          },
+          {
+            "id": 46,
+            "key": "3SJC2-4T8G6-EGQ9Y-G2B4Q",
+            "status": "active",
+            "issuedAt": "2026-09-07 00:02:12",
+            "expiresAt": "2027-09-06",
+            "orderNumber": "SOF123049",
+            "productName": "Adobe Photoshop",
+            "productSlug": "adobe-photoshop",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "edit",
+            "accent": "blue"
+          },
+          {
+            "id": 45,
+            "key": "CGPHS-X2HWB-9JYXJ-AYUAC",
+            "status": "active",
+            "issuedAt": "2026-09-07 00:02:12",
+            "expiresAt": "2027-09-06",
+            "orderNumber": "SOF123049",
+            "productName": "Microsoft Office 365",
+            "productSlug": "microsoft-office-365",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "file",
+            "accent": "orange"
+          },
+          {
+            "id": 25,
+            "key": "ST8X5-3SRDZ-YER96-3WM7T",
+            "status": "active",
+            "issuedAt": "2026-09-07 00:02:12",
+            "expiresAt": "2027-09-06",
+            "orderNumber": "SOF123025",
+            "productName": "Microsoft Office 365",
+            "productSlug": "microsoft-office-365",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "file",
+            "accent": "orange"
+          },
+          {
+            "id": 26,
+            "key": "6TMAG-2R5KQ-HMUKA-V2AFH",
+            "status": "active",
+            "issuedAt": "2026-09-07 00:02:12",
+            "expiresAt": "2027-09-06",
+            "orderNumber": "SOF123025",
+            "productName": "Adobe Photoshop",
+            "productSlug": "adobe-photoshop",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "edit",
+            "accent": "blue"
+          },
+          {
+            "id": 5,
+            "key": "5CMQF-8B52B-727Y6-JDK9J",
+            "status": "active",
+            "issuedAt": "2026-09-07 00:02:11",
+            "expiresAt": "2027-09-06",
+            "orderNumber": "SOF123001",
+            "productName": "Microsoft Office 365",
+            "productSlug": "microsoft-office-365",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "file",
+            "accent": "orange"
+          },
+          {
+            "id": 6,
+            "key": "FDSSV-PYCEK-G5JJJ-LE4TY",
+            "status": "active",
+            "issuedAt": "2026-09-07 00:02:11",
+            "expiresAt": "2027-09-06",
+            "orderNumber": "SOF123001",
+            "productName": "Adobe Photoshop",
+            "productSlug": "adobe-photoshop",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "edit",
+            "accent": "blue"
+          },
+          {
+            "id": 1,
+            "key": "CY75K-C6SEV-MVX43-FKJ9W",
+            "status": "active",
+            "issuedAt": "2026-09-06 00:02:11",
+            "expiresAt": "2027-09-05",
+            "orderNumber": "SOF123456",
+            "productName": "Microsoft Office 365",
+            "productSlug": "microsoft-office-365",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "file",
+            "accent": "orange"
+          },
+          {
+            "id": 2,
+            "key": "SMVUC-TU4RB-HNESZ-56WJP",
+            "status": "active",
+            "issuedAt": "2026-09-06 00:02:11",
+            "expiresAt": "2027-09-05",
+            "orderNumber": "SOF123456",
+            "productName": "Adobe Photoshop",
+            "productSlug": "adobe-photoshop",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "edit",
+            "accent": "blue"
+          },
+          {
+            "id": 33,
+            "key": "V7WHG-UMARH-WC8AN-VGGDM",
+            "status": "active",
+            "issuedAt": "2026-08-04 00:02:12",
+            "expiresAt": "2027-08-03",
+            "orderNumber": "SOF123033",
+            "productName": "Adobe Photoshop",
+            "productSlug": "adobe-photoshop",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "edit",
+            "accent": "blue"
+          },
+          {
+            "id": 52,
+            "key": "NRDS8-HT3FT-PQSTD-UGFQM",
+            "status": "active",
+            "issuedAt": "2026-08-04 00:02:12",
+            "expiresAt": "2027-08-03",
+            "orderNumber": "SOF123057",
+            "productName": "Microsoft Office 365",
+            "productSlug": "microsoft-office-365",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "file",
+            "accent": "orange"
+          },
+          {
+            "id": 53,
+            "key": "F7XLZ-R3QTS-5X328-5EFXB",
+            "status": "active",
+            "issuedAt": "2026-08-04 00:02:12",
+            "expiresAt": "2027-08-03",
+            "orderNumber": "SOF123057",
+            "productName": "Adobe Photoshop",
+            "productSlug": "adobe-photoshop",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "edit",
+            "accent": "blue"
+          },
+          {
+            "id": 32,
+            "key": "V7CQ8-HGRMM-QCHRN-R9CW5",
+            "status": "active",
+            "issuedAt": "2026-08-04 00:02:12",
+            "expiresAt": "2027-08-03",
+            "orderNumber": "SOF123033",
+            "productName": "Microsoft Office 365",
+            "productSlug": "microsoft-office-365",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "file",
+            "accent": "orange"
+          },
+          {
+            "id": 13,
+            "key": "3678P-8RA4N-A6YTP-3SZV7",
+            "status": "active",
+            "issuedAt": "2026-08-04 00:02:11",
+            "expiresAt": "2027-08-03",
+            "orderNumber": "SOF123009",
+            "productName": "Adobe Photoshop",
+            "productSlug": "adobe-photoshop",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "edit",
+            "accent": "blue"
+          },
+          {
+            "id": 12,
+            "key": "TBDHX-9F3Y9-UEHAP-TS4UF",
+            "status": "active",
+            "issuedAt": "2026-08-04 00:02:11",
+            "expiresAt": "2027-08-03",
+            "orderNumber": "SOF123009",
+            "productName": "Microsoft Office 365",
+            "productSlug": "microsoft-office-365",
+            "licenceTerm": "1 Year Subscription",
+            "icon": "file",
+            "accent": "orange"
+          }
+        ]
+      }
+    },
+    "GET /account/downloads": {
+      "as": "user",
+      "status": 200,
+      "response": {
+        "products": [
+          {
+            "id": 2,
+            "name": "Adobe Photoshop",
+            "slug": "adobe-photoshop",
+            "icon": "edit",
+            "accent": "blue",
+            "imageUrl": null,
+            "licenceTerm": "1 Year Subscription",
+            "quantity": 7,
+            "licences": 7,
+            "licenceExpiresAt": "2027-09-06",
+            "licenceExpired": false,
+            "purchasedAt": "2026-08-04 00:02:11",
+            "packages": [],
+            "files": [
+              {
+                "id": 3,
+                "label": "Photoshop Installer",
+                "kind": "installer",
+                "packageId": null,
+                "packageName": null,
+                "platform": "windows",
+                "version": "25.9",
+                "size": 542,
+                "isExternal": false,
+                "downloadCount": 0,
+                "available": true
+              }
+            ]
+          },
+          {
+            "id": 1,
+            "name": "Microsoft Office 365",
+            "slug": "microsoft-office-365",
+            "icon": "file",
+            "accent": "orange",
+            "imageUrl": null,
+            "licenceTerm": "1 Year Subscription",
+            "quantity": 8,
+            "licences": 8,
+            "licenceExpiresAt": "2027-09-10",
+            "licenceExpired": false,
+            "purchasedAt": "2026-08-04 00:02:11",
+            "packages": [],
+            "files": [
+              {
+                "id": 1,
+                "label": "Office 365 Installer",
+                "kind": "installer",
+                "packageId": null,
+                "packageName": null,
+                "platform": "windows",
+                "version": "16.0.17328",
+                "size": 569,
+                "isExternal": false,
+                "downloadCount": 2,
+                "available": true
+              },
+              {
+                "id": 2,
+                "label": "Office 365 for Mac",
+                "kind": "installer",
+                "packageId": null,
+                "packageName": null,
+                "platform": "mac",
+                "version": "16.83",
+                "size": 555,
+                "isExternal": false,
+                "downloadCount": 0,
+                "available": true
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "name": "Windows 11 Pro",
+            "slug": "windows-11-pro",
+            "icon": "monitor",
+            "accent": "blue",
+            "imageUrl": null,
+            "licenceTerm": "Lifetime Licence",
+            "quantity": 1,
+            "licences": 1,
+            "licenceExpiresAt": null,
+            "licenceExpired": false,
+            "purchasedAt": "2026-09-10 02:13:35",
+            "packages": [],
+            "files": [
+              {
+                "id": 4,
+                "label": "Windows 11 Pro ISO",
+                "kind": "installer",
+                "packageId": null,
+                "packageName": null,
+                "platform": "windows",
+                "version": "23H2",
+                "size": null,
+                "isExternal": true,
+                "downloadCount": 1,
+                "available": true
+              }
+            ]
+          }
+        ],
+        "addons": [],
+        "files": [
+          {
+            "id": 3,
+            "label": "Photoshop Installer",
+            "kind": "installer",
+            "packageId": null,
+            "packageName": null,
+            "platform": "windows",
+            "version": "25.9",
+            "size": 542,
+            "isExternal": false,
+            "downloadCount": 0,
+            "available": true,
+            "productName": "Adobe Photoshop",
+            "productSlug": "adobe-photoshop",
+            "icon": "edit",
+            "accent": "blue"
+          },
+          {
+            "id": 1,
+            "label": "Office 365 Installer",
+            "kind": "installer",
+            "packageId": null,
+            "packageName": null,
+            "platform": "windows",
+            "version": "16.0.17328",
+            "size": 569,
+            "isExternal": false,
+            "downloadCount": 2,
+            "available": true,
+            "productName": "Microsoft Office 365",
+            "productSlug": "microsoft-office-365",
+            "icon": "file",
+            "accent": "orange"
+          },
+          {
+            "id": 2,
+            "label": "Office 365 for Mac",
+            "kind": "installer",
+            "packageId": null,
+            "packageName": null,
+            "platform": "mac",
+            "version": "16.83",
+            "size": 555,
+            "isExternal": false,
+            "downloadCount": 0,
+            "available": true,
+            "productName": "Microsoft Office 365",
+            "productSlug": "microsoft-office-365",
+            "icon": "file",
+            "accent": "orange"
+          },
+          {
+            "id": 4,
+            "label": "Windows 11 Pro ISO",
+            "kind": "installer",
+            "packageId": null,
+            "packageName": null,
+            "platform": "windows",
+            "version": "23H2",
+            "size": null,
+            "isExternal": true,
+            "downloadCount": 1,
+            "available": true,
+            "productName": "Windows 11 Pro",
+            "productSlug": "windows-11-pro",
+            "icon": "monitor",
+            "accent": "blue"
+          }
+        ],
+        "demos": [
+          {
+            "id": 1,
+            "title": "Antivirus Pro - Android Beta",
+            "platform": "android",
+            "description": "The Android build of Antivirus Pro. Enable \"Install unknown apps\" for your browser before installing the APK.",
+            "webUrl": null,
+            "reviewUrl": "https://review.softflow.com/antivirus-pro/beta-notes",
+            "hasApk": false,
+            "apkName": null,
+            "apkSize": null,
+            "apkVersion": "8.2.1-beta",
+            "apkUploadedAt": null,
+            "downloadCount": 0,
+            "productName": "Antivirus Pro",
+            "previewImages": []
+          },
+          {
+            "id": 2,
+            "title": "SoftFlow Store - Live Demo",
+            "platform": "both",
+            "description": "A sandbox copy of the storefront with test checkout enabled. No real payments are taken.",
+            "webUrl": "https://demo.softflow.com/store",
+            "reviewUrl": "https://review.softflow.com/store/walkthrough",
+            "hasApk": false,
+            "apkName": null,
+            "apkSize": null,
+            "apkVersion": "1.4.0",
+            "apkUploadedAt": null,
+            "downloadCount": 0,
+            "productName": null,
+            "previewImages": []
+          },
+          {
+            "id": 3,
+            "title": "Office 365 - Guided Walkthrough",
+            "platform": "web",
+            "description": "A recorded walkthrough of activation and first-run setup, for buyers who want to see it before purchasing.",
+            "webUrl": "https://demo.softflow.com/office365",
+            "reviewUrl": "https://review.softflow.com/office365",
+            "hasApk": false,
+            "apkName": null,
+            "apkSize": null,
+            "apkVersion": null,
+            "apkUploadedAt": null,
+            "downloadCount": 0,
+            "productName": "Microsoft Office 365",
+            "previewImages": []
+          },
+          {
+            "id": 4,
+            "title": "MoneyPay",
+            "platform": "both",
+            "description": "Try the MoneyPay wallet, vendor and rider apps.",
+            "webUrl": "https://gpay-ss.netlify.app/login",
+            "reviewUrl": "https://gpay-ss.netlify.app/login",
+            "hasApk": true,
+            "apkName": "app-release.apk",
+            "apkSize": 70205272,
+            "apkVersion": "1.0.0",
+            "apkUploadedAt": "2026-09-10 02:02:53",
+            "downloadCount": 0,
+            "productName": "MoneyPay",
+            "previewImages": [
+              {
+                "id": 4,
+                "caption": "Dashboard overview",
+                "url": "/api/shop/review-images/preview-1-dashboard-1788981882784-8a6395d7.svg"
+              },
+              {
+                "id": 5,
+                "caption": "Transactions list",
+                "url": "/api/shop/review-images/preview-2-transactions-1788981882787-901d3da0.svg"
+              },
+              {
+                "id": 6,
+                "caption": "Settings panel",
+                "url": "/api/shop/review-images/preview-3-settings-1788981882787-ddfd0f45.svg"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "GET /account/support": {
+      "as": "user",
+      "status": 200,
+      "response": {
+        "tickets": [
+          {
+            "id": 1,
+            "subject": "Activation code not working",
+            "message": "I entered the key for Office 365 and it says already in use. Order SOF123456.",
+            "status": "closed",
+            "reply": "We reissued the key on your order and emailed a fresh copy. It is also on your Downloads page now.",
+            "repliedAt": "2026-09-10 03:47:38",
+            "repliedBy": "Admin",
+            "orderNumber": null,
+            "createdAt": "2026-09-10 02:02:12"
+          }
+        ],
+        "orders": [
+          {
+            "id": 68,
+            "orderNumber": "SOF123460"
+          },
+          {
+            "id": 67,
+            "orderNumber": "SOF123459"
+          },
+          {
+            "id": 53,
+            "orderNumber": "SOF123049"
+          },
+          {
+            "id": 29,
+            "orderNumber": "SOF123025"
+          },
+          {
+            "id": 5,
+            "orderNumber": "SOF123001"
+          },
+          {
+            "id": 1,
+            "orderNumber": "SOF123456"
+          },
+          {
+            "id": 61,
+            "orderNumber": "SOF123057"
+          },
+          {
+            "id": 37,
+            "orderNumber": "SOF123033"
+          },
+          {
+            "id": 13,
+            "orderNumber": "SOF123009"
+          },
+          {
+            "id": 45,
+            "orderNumber": "SOF123041"
+          },
+          {
+            "id": 21,
+            "orderNumber": "SOF123017"
+          }
+        ]
+      }
+    },
+    "GET /account/orders/SOF123460": {
+      "as": "user",
+      "status": 200,
+      "response": {
+        "order": {
+          "orderNumber": "SOF123460",
+          "customerName": "John Deng",
+          "customerEmail": "john@example.com",
+          "customerPhone": "+211920000222",
+          "subtotal": 99,
+          "discount": 9.9,
+          "total": 89.1,
+          "paymentMethod": "card",
+          "paymentStatus": "paid",
+          "status": "completed",
+          "createdAt": "2026-09-10 02:13:36"
+        },
+        "items": [
+          {
+            "productName": "Microsoft Office 365",
+            "slug": "microsoft-office-365",
+            "icon": "file",
+            "accent": "orange",
+            "unitPrice": 99,
+            "quantity": 1,
+            "lineTotal": 99
+          }
+        ],
+        "licenses": [
+          {
+            "key": "R7TKT-TBES4-4P9UP-E3RCW",
+            "status": "active",
+            "expiresAt": "2027-09-10",
+            "productName": "Microsoft Office 365"
+          }
+        ]
+      }
+    },
+    "GET /admin/dashboard": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "kpis": {
+          "revenue": 4901.2,
+          "revenueGrowth": 170,
+          "orders": 66,
+          "orderGrowth": 113,
+          "customers": 8,
+          "customerGrowth": 14,
+          "products": 9
+        },
+        "badges": {
+          "newMessages": 0,
+          "pendingOrders": 20
+        },
+        "series": [
+          {
+            "label": "Oct",
+            "value": 0
+          },
+          {
+            "label": "Nov",
+            "value": 0
+          },
+          {
+            "label": "Dec",
+            "value": 0
+          },
+          {
+            "label": "Jan",
+            "value": 0
+          },
+          {
+            "label": "Feb",
+            "value": 0
+          },
+          {
+            "label": "Mar",
+            "value": 0
+          },
+          {
+            "label": "Apr",
+            "value": 0
+          },
+          {
+            "label": "May",
+            "value": 157
+          },
+          {
+            "label": "Jun",
+            "value": 186
+          },
+          {
+            "label": "Jul",
+            "value": 673
+          },
+          {
+            "label": "Aug",
+            "value": 2643
+          },
+          {
+            "label": "Sep",
+            "value": 1242.2
+          }
+        ],
+        "recentOrders": [
+          {
+            "id": 68,
+            "orderNumber": "SOF123460",
+            "customerName": "John Deng",
+            "items": "Microsoft Office 365",
+            "total": 89.1,
+            "status": "completed",
+            "createdAt": "2026-09-10 02:13:36"
+          },
+          {
+            "id": 67,
+            "orderNumber": "SOF123459",
+            "customerName": "John Deng",
+            "items": "Windows 11 Pro",
+            "total": 116.1,
+            "status": "completed",
+            "createdAt": "2026-09-10 02:13:35"
+          },
+          {
+            "id": 29,
+            "orderNumber": "SOF123025",
+            "customerName": "John Doe",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "total": 138,
+            "status": "completed",
+            "createdAt": "2026-09-07 00:02:12"
+          },
+          {
+            "id": 53,
+            "orderNumber": "SOF123049",
+            "customerName": "John Doe",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "total": 138,
+            "status": "completed",
+            "createdAt": "2026-09-07 00:02:12"
+          },
+          {
+            "id": 5,
+            "orderNumber": "SOF123001",
+            "customerName": "John Doe",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "total": 138,
+            "status": "completed",
+            "createdAt": "2026-09-07 00:02:11"
+          }
+        ],
+        "topProducts": [
+          {
+            "name": "JetBrains IntelliJ IDEA",
+            "icon": "code",
+            "accent": "purple",
+            "units": 14,
+            "revenue": 2086,
+            "share": 34
+          },
+          {
+            "name": "Windows 11 Pro",
+            "icon": "monitor",
+            "accent": "blue",
+            "units": 9,
+            "revenue": 1161,
+            "share": 19
+          },
+          {
+            "name": "Microsoft Office 365",
+            "icon": "file",
+            "accent": "orange",
+            "units": 11,
+            "revenue": 1089,
+            "share": 18
+          },
+          {
+            "name": "Adobe Photoshop",
+            "icon": "edit",
+            "accent": "blue",
+            "units": 18,
+            "revenue": 882,
+            "share": 15
+          },
+          {
+            "name": "CorelDRAW Graphics Suite",
+            "icon": "tag",
+            "accent": "teal",
+            "units": 7,
+            "revenue": 833,
+            "share": 14
+          }
+        ],
+        "activity": [
+          {
+            "id": 47,
+            "type": "email",
+            "message": "Deals announcement (3 discounted) sent to 2 of 2 recipients",
+            "userName": "Admin",
+            "createdAt": "2026-09-10 16:00:40"
+          },
+          {
+            "id": 46,
+            "type": "email",
+            "message": "Deals announcement (3 discounted) sent to 0 of 1 subscribers",
+            "userName": "Admin",
+            "createdAt": "2026-09-10 15:57:49"
+          },
+          {
+            "id": 45,
+            "type": "email",
+            "message": "Deals announcement (2 discounted) sent to 1 of 1 subscribers",
+            "userName": "Admin",
+            "createdAt": "2026-09-10 15:48:37"
+          },
+          {
+            "id": 44,
+            "type": "email",
+            "message": "Deals announcement (2 discounted) sent to 1 of 1 subscribers",
+            "userName": "Admin",
+            "createdAt": "2026-09-10 15:43:45"
+          },
+          {
+            "id": 43,
+            "type": "email",
+            "message": "Newsletter \"Links are live\" sent to 3 of 3 subscribers",
+            "userName": "Admin",
+            "createdAt": "2026-09-10 15:25:35"
+          },
+          {
+            "id": 42,
+            "type": "settings",
+            "message": "General settings updated",
+            "userName": "Admin",
+            "createdAt": "2026-09-10 15:19:29"
+          }
+        ],
+        "lowStock": [
+          {
+            "id": 8,
+            "name": "CorelDRAW Graphics Suite",
+            "stock": 25
+          },
+          {
+            "id": 6,
+            "name": "JetBrains IntelliJ IDEA",
+            "stock": 30
+          }
+        ]
+      }
+    },
+    "GET /admin/products?page=1": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "licenceTerms": [
+          "Lifetime",
+          "1 Year Subscription",
+          "2 Year Subscription",
+          "3 Year Subscription",
+          "Monthly Subscription",
+          "Perpetual with 1 Year Updates"
+        ],
+        "products": [
+          {
+            "id": 1,
+            "name": "Microsoft Office 365",
+            "slug": "microsoft-office-365",
+            "sku": "SF-MS365",
+            "vendor": "Microsoft",
+            "shortDesc": "Productivity Suite for Business",
+            "description": "The complete Office suite for business. Word, Excel, PowerPoint and Outlook, kept up to date automatically, with 1TB of cloud storage per user and email hosting on your own domain.",
+            "price": 99,
+            "pricingMode": "simple",
+            "comparePrice": 149,
+            "discountPercent": 0,
+            "salePrice": 99,
+            "discountLabel": null,
+            "announceDiscount": true,
+            "stock": 53,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows & Mac",
+            "badge": "Best Seller",
+            "icon": "file",
+            "accent": "orange",
+            "rating": 4.5,
+            "reviewCount": 124,
+            "imageUrl": null,
+            "isFeatured": true,
+            "status": "active",
+            "categoryId": 1,
+            "categoryName": "Productivity",
+            "sold": 11,
+            "fileCount": 2
+          },
+          {
+            "id": 2,
+            "name": "Adobe Photoshop",
+            "slug": "adobe-photoshop",
+            "sku": "SF-PSCC",
+            "vendor": "Adobe",
+            "shortDesc": "Industry-standard image editing",
+            "description": "Photo editing, compositing and digital painting used by designers everywhere. Includes generative fill, RAW editing and every brush engine Photoshop ships with.",
+            "price": 49,
+            "pricingMode": "simple",
+            "comparePrice": 79,
+            "discountPercent": 25,
+            "salePrice": 36.75,
+            "discountLabel": "Black Friday",
+            "announceDiscount": true,
+            "stock": 85,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows & Mac",
+            "badge": null,
+            "icon": "edit",
+            "accent": "blue",
+            "rating": 4.7,
+            "reviewCount": 96,
+            "imageUrl": null,
+            "isFeatured": true,
+            "status": "active",
+            "categoryId": 3,
+            "categoryName": "Design & Creative",
+            "sold": 18,
+            "fileCount": 1
+          },
+          {
+            "id": 3,
+            "name": "Windows 11 Pro",
+            "slug": "windows-11-pro",
+            "sku": "SF-W11P",
+            "vendor": "Microsoft",
+            "shortDesc": "Operating system for professionals",
+            "description": "Windows 11 Pro with BitLocker encryption, Remote Desktop, Hyper-V and Windows Sandbox. Delivered as a retail licence key you can activate immediately.",
+            "price": 129,
+            "pricingMode": "simple",
+            "comparePrice": 199,
+            "discountPercent": 15,
+            "salePrice": 109.65,
+            "discountLabel": "Independence Day Sale",
+            "announceDiscount": true,
+            "stock": 59,
+            "licenceTerm": "Lifetime Licence",
+            "platforms": "Windows",
+            "badge": null,
+            "icon": "monitor",
+            "accent": "blue",
+            "rating": 4.6,
+            "reviewCount": 78,
+            "imageUrl": null,
+            "isFeatured": true,
+            "status": "active",
+            "categoryId": 1,
+            "categoryName": "Productivity",
+            "sold": 9,
+            "fileCount": 1
+          },
+          {
+            "id": 4,
+            "name": "Antivirus Pro",
+            "slug": "antivirus-pro",
+            "sku": "SF-AVPRO",
+            "vendor": "SoftFlow Labs",
+            "shortDesc": "Real-time protection for up to 5 devices",
+            "description": "Real-time malware protection, ransomware shielding, a VPN and a password manager, covering up to five devices on one licence.",
+            "price": 39,
+            "pricingMode": "simple",
+            "comparePrice": 59,
+            "discountPercent": 40,
+            "salePrice": 23.4,
+            "discountLabel": "Ramadan Offer",
+            "announceDiscount": true,
+            "stock": 200,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows, Mac & Android",
+            "badge": null,
+            "icon": "shield",
+            "accent": "green",
+            "rating": 4.4,
+            "reviewCount": 152,
+            "imageUrl": null,
+            "isFeatured": true,
+            "status": "active",
+            "categoryId": 2,
+            "categoryName": "Security",
+            "sold": 8,
+            "fileCount": 2
+          },
+          {
+            "id": 5,
+            "name": "QuickBooks Accounting",
+            "slug": "quickbooks-accounting",
+            "sku": "SF-QBACC",
+            "vendor": "Intuit",
+            "shortDesc": "Bookkeeping built for small business",
+            "description": "Invoicing, expense tracking, VAT returns and payroll in one ledger your accountant can work from directly.",
+            "price": 89,
+            "pricingMode": "simple",
+            "comparePrice": 119,
+            "discountPercent": 0,
+            "salePrice": 89,
+            "discountLabel": null,
+            "announceDiscount": true,
+            "stock": 45,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows & Web",
+            "badge": null,
+            "icon": "money",
+            "accent": "green",
+            "rating": 4.3,
+            "reviewCount": 64,
+            "imageUrl": null,
+            "isFeatured": false,
+            "status": "active",
+            "categoryId": 4,
+            "categoryName": "Business",
+            "sold": 7,
+            "fileCount": 0
+          },
+          {
+            "id": 6,
+            "name": "JetBrains IntelliJ IDEA",
+            "slug": "intellij-idea-ultimate",
+            "sku": "SF-IJIDEA",
+            "vendor": "JetBrains",
+            "shortDesc": "The IDE professional developers reach for",
+            "description": "Ultimate edition with full framework support, database tools, profiling and remote development built in.",
+            "price": 149,
+            "pricingMode": "simple",
+            "comparePrice": 199,
+            "discountPercent": 0,
+            "salePrice": 149,
+            "discountLabel": null,
+            "announceDiscount": true,
+            "stock": 30,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows, Mac & Linux",
+            "badge": null,
+            "icon": "code",
+            "accent": "purple",
+            "rating": 4.8,
+            "reviewCount": 41,
+            "imageUrl": null,
+            "isFeatured": false,
+            "status": "active",
+            "categoryId": 5,
+            "categoryName": "Developer Tools",
+            "sold": 14,
+            "fileCount": 0
+          },
+          {
+            "id": 7,
+            "name": "Zoom Business",
+            "slug": "zoom-business",
+            "sku": "SF-ZOOMB",
+            "vendor": "Zoom",
+            "shortDesc": "Meetings for growing teams",
+            "description": "Up to 300 participants, 30-hour meetings, cloud recording, transcripts and company branding.",
+            "price": 59,
+            "pricingMode": "simple",
+            "comparePrice": 89,
+            "discountPercent": 0,
+            "salePrice": 59,
+            "discountLabel": null,
+            "announceDiscount": true,
+            "stock": 75,
+            "licenceTerm": "1 Year Subscription",
+            "platforms": "Windows, Mac, Android & iOS",
+            "badge": null,
+            "icon": "users",
+            "accent": "blue",
+            "rating": 4.2,
+            "reviewCount": 37,
+            "imageUrl": null,
+            "isFeatured": false,
+            "status": "active",
+            "categoryId": 4,
+            "categoryName": "Business",
+            "sold": 8,
+            "fileCount": 0
+          },
+          {
+            "id": 8,
+            "name": "CorelDRAW Graphics Suite",
+            "slug": "coreldraw-graphics-suite",
+            "sku": "SF-CDGS",
+            "vendor": "Corel",
+            "shortDesc": "Vector illustration and layout",
+            "description": "Vector illustration, page layout, photo editing and typography in one long-standing design suite.",
+            "price": 119,
+            "pricingMode": "simple",
+            "comparePrice": 179,
+            "discountPercent": 0,
+            "salePrice": 119,
+            "discountLabel": null,
+            "announceDiscount": true,
+            "stock": 25,
+            "licenceTerm": "Lifetime Licence",
+            "platforms": "Windows & Mac",
+            "badge": null,
+            "icon": "tag",
+            "accent": "teal",
+            "rating": 4.1,
+            "reviewCount": 22,
+            "imageUrl": null,
+            "isFeatured": false,
+            "status": "active",
+            "categoryId": 3,
+            "categoryName": "Design & Creative",
+            "sold": 7,
+            "fileCount": 0
+          },
+          {
+            "id": 12,
+            "name": "MoneyPay",
+            "slug": "moneypay",
+            "sku": "SF-MONPAY",
+            "vendor": "JunubSoft",
+            "shortDesc": "Multi-vendor wallet, payments and delivery platform",
+            "description": "MoneyPay is a complete wallet and payments platform: customer app, vendor app and admin dashboard, with source code delivered per package.",
+            "price": 99,
+            "pricingMode": "packages",
+            "comparePrice": 149,
+            "discountPercent": 0,
+            "salePrice": 99,
+            "discountLabel": null,
+            "announceDiscount": true,
+            "stock": 100,
+            "licenceTerm": "Life time",
+            "platforms": "Web, Android and IOS",
+            "badge": "New",
+            "icon": "money",
+            "accent": "green",
+            "rating": 5,
+            "reviewCount": 0,
+            "imageUrl": "/api/shop/review-images/moneypay-logo-1788983189239-aebc50c0.svg",
+            "isFeatured": true,
+            "status": "active",
+            "categoryId": 4,
+            "categoryName": "Business",
+            "sold": 0,
+            "fileCount": 3
+          }
+        ],
+        "page": 1,
+        "pages": 1,
+        "perPage": 12,
+        "total": 9,
+        "offset": 0
+      }
+    },
+    "GET /admin/products/12": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "product": {
+          "skuLocked": false,
+          "id": 12,
+          "name": "MoneyPay",
+          "slug": "moneypay",
+          "sku": "SF-MONPAY",
+          "vendor": "JunubSoft",
+          "shortDesc": "Multi-vendor wallet, payments and delivery platform",
+          "description": "MoneyPay is a complete wallet and payments platform: customer app, vendor app and admin dashboard, with source code delivered per package.",
+          "price": 99,
+          "comparePrice": 149,
+          "discountPercent": 0,
+          "salePrice": 99,
+          "discountLabel": null,
+          "announceDiscount": true,
+          "stock": 100,
+          "licenceTerm": "Life time",
+          "platforms": "Web, Android and IOS",
+          "badge": "New",
+          "icon": "money",
+          "accent": "green",
+          "isFeatured": true,
+          "status": "active",
+          "imageUrl": "/api/shop/review-images/moneypay-logo-1788983189239-aebc50c0.svg",
+          "categoryId": 4,
+          "features": []
+        }
+      }
+    },
+    "GET /admin/products/12/files": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "product": {
+          "id": 12,
+          "name": "MoneyPay"
+        },
+        "maxFileMb": 4096,
+        "maxBundleTotalMb": 1024,
+        "maxImages": 12,
+        "files": [
+          {
+            "id": 7,
+            "label": "MoneyPay source code",
+            "kind": "source",
+            "platform": "web",
+            "version": "1.0.0",
+            "packageId": null,
+            "packageName": null,
+            "originalName": "moneypay-source-code.zip",
+            "size": 863,
+            "externalUrl": null,
+            "requiresPurchase": true,
+            "downloadCount": 0,
+            "missing": false
+          },
+          {
+            "id": 8,
+            "label": "Starter source folder",
+            "kind": "source",
+            "platform": "web",
+            "version": null,
+            "packageId": 1,
+            "packageName": "Starter",
+            "originalName": "starter-source-folder.zip",
+            "size": 355,
+            "externalUrl": null,
+            "requiresPurchase": true,
+            "downloadCount": 0,
+            "missing": false
+          },
+          {
+            "id": 9,
+            "label": "Super Combo source folder",
+            "kind": "source",
+            "platform": "web",
+            "version": null,
+            "packageId": 3,
+            "packageName": "Super Combo",
+            "originalName": "super-combo-source-folder.zip",
+            "size": 753,
+            "externalUrl": null,
+            "requiresPurchase": true,
+            "downloadCount": 0,
+            "missing": false
+          }
+        ],
+        "images": [
+          {
+            "id": 4,
+            "caption": "Dashboard overview",
+            "originalName": "preview-1-dashboard.svg",
+            "size": 733,
+            "url": "/api/shop/review-images/preview-1-dashboard-1788981882784-8a6395d7.svg"
+          },
+          {
+            "id": 5,
+            "caption": "Transactions list",
+            "originalName": "preview-2-transactions.svg",
+            "size": 739,
+            "url": "/api/shop/review-images/preview-2-transactions-1788981882787-901d3da0.svg"
+          },
+          {
+            "id": 6,
+            "caption": "Settings panel",
+            "originalName": "preview-3-settings.svg",
+            "size": 731,
+            "url": "/api/shop/review-images/preview-3-settings-1788981882787-ddfd0f45.svg"
+          }
+        ]
+      }
+    },
+    "GET /admin/products/12/packages": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "product": {
+          "id": 12,
+          "name": "MoneyPay",
+          "pricingMode": "packages"
+        },
+        "licenseTypes": [
+          "regular",
+          "extended",
+          "agency"
+        ],
+        "packages": [
+          {
+            "id": 1,
+            "licenseType": "regular",
+            "name": "Starter",
+            "tagline": null,
+            "price": 99,
+            "comparePrice": null,
+            "licenseCount": 1,
+            "isPopular": false,
+            "ctaLabel": "Buy Now",
+            "status": "active",
+            "included": [
+              "Admin Panel",
+              "Vendor Panel",
+              "Customer App",
+              "Landing page"
+            ],
+            "addons": [],
+            "benefits": [],
+            "fileCount": 1
+          },
+          {
+            "id": 2,
+            "licenseType": "regular",
+            "name": "Combo",
+            "tagline": null,
+            "price": 234,
+            "comparePrice": 276,
+            "licenseCount": 1,
+            "isPopular": false,
+            "ctaLabel": "Buy Now",
+            "status": "active",
+            "included": [
+              "Admin Panel",
+              "Vendor Panel",
+              "Customer App",
+              "Landing page"
+            ],
+            "addons": [
+              "Vendor App",
+              "Deliveryman App",
+              "React Website"
+            ],
+            "benefits": [],
+            "fileCount": 0
+          },
+          {
+            "id": 3,
+            "licenseType": "regular",
+            "name": "Super Combo",
+            "tagline": null,
+            "price": 289,
+            "comparePrice": 414,
+            "licenseCount": 1,
+            "isPopular": true,
+            "ctaLabel": "Buy Now",
+            "status": "active",
+            "included": [
+              "Admin Panel",
+              "Vendor Panel",
+              "Customer App",
+              "Landing page"
+            ],
+            "addons": [
+              "Vendor App",
+              "Deliveryman App",
+              "React Website",
+              "Car Rental Module",
+              "Vendor Website Builder"
+            ],
+            "benefits": [],
+            "fileCount": 1
+          },
+          {
+            "id": 4,
+            "licenseType": "extended",
+            "name": "Starter",
+            "tagline": null,
+            "price": 399,
+            "comparePrice": null,
+            "licenseCount": 1,
+            "isPopular": false,
+            "ctaLabel": "Buy Now",
+            "status": "active",
+            "included": [
+              "Admin Panel",
+              "Vendor Panel",
+              "Customer App",
+              "Landing page"
+            ],
+            "addons": [],
+            "benefits": [],
+            "fileCount": 0
+          },
+          {
+            "id": 5,
+            "licenseType": "extended",
+            "name": "Combo",
+            "tagline": null,
+            "price": 846,
+            "comparePrice": 996,
+            "licenseCount": 1,
+            "isPopular": false,
+            "ctaLabel": "Buy Now",
+            "status": "active",
+            "included": [
+              "Admin Panel",
+              "Vendor Panel",
+              "Customer App",
+              "Landing page"
+            ],
+            "addons": [
+              "Vendor App",
+              "Deliveryman App",
+              "React Website"
+            ],
+            "benefits": [],
+            "fileCount": 0
+          },
+          {
+            "id": 6,
+            "licenseType": "extended",
+            "name": "Super Combo",
+            "tagline": null,
+            "price": 1045,
+            "comparePrice": 1494,
+            "licenseCount": 1,
+            "isPopular": true,
+            "ctaLabel": "Buy Now",
+            "status": "active",
+            "included": [
+              "Admin Panel",
+              "Vendor Panel",
+              "Customer App",
+              "Landing page"
+            ],
+            "addons": [
+              "Vendor App",
+              "Deliveryman App",
+              "React Website",
+              "Car Rental Module",
+              "Vendor Website Builder"
+            ],
+            "benefits": [],
+            "fileCount": 0
+          },
+          {
+            "id": 7,
+            "licenseType": "agency",
+            "name": "Launch",
+            "tagline": "For agencies taking on their first client builds",
+            "price": 2599,
+            "comparePrice": 3135,
+            "licenseCount": 3,
+            "isPopular": false,
+            "ctaLabel": "Buy Now",
+            "status": "active",
+            "included": [
+              "Admin Panel",
+              "Vendor Panel",
+              "Customer App",
+              "Landing page"
+            ],
+            "addons": [
+              "Vendor App",
+              "Deliveryman App",
+              "React Website",
+              "Car Rental Module",
+              "Vendor Website Builder"
+            ],
+            "benefits": [
+              "One production domain per license",
+              "Client build & commercial rights",
+              "White-label / rebranding rights",
+              "12 months support"
+            ],
+            "fileCount": 0
+          },
+          {
+            "id": 8,
+            "licenseType": "agency",
+            "name": "Growth",
+            "tagline": "For agencies with a steady client pipeline",
+            "price": 3699,
+            "comparePrice": 5225,
+            "licenseCount": 5,
+            "isPopular": false,
+            "ctaLabel": "Buy Now",
+            "status": "active",
+            "included": [
+              "Admin Panel",
+              "Vendor Panel",
+              "Customer App",
+              "Landing page"
+            ],
+            "addons": [
+              "Vendor App",
+              "Deliveryman App",
+              "React Website",
+              "Car Rental Module",
+              "Vendor Website Builder"
+            ],
+            "benefits": [
+              "Everything in Launch",
+              "5 licenses - one production domain each"
+            ],
+            "fileCount": 0
+          },
+          {
+            "id": 9,
+            "licenseType": "agency",
+            "name": "Empire",
+            "tagline": "For high-volume agencies & multi-market operators",
+            "price": 5999,
+            "comparePrice": 10450,
+            "licenseCount": 10,
+            "isPopular": true,
+            "ctaLabel": "Buy Now",
+            "status": "active",
+            "included": [
+              "Admin Panel",
+              "Vendor Panel",
+              "Customer App",
+              "Landing page"
+            ],
+            "addons": [
+              "Vendor App",
+              "Deliveryman App",
+              "React Website",
+              "Car Rental Module",
+              "Vendor Website Builder"
+            ],
+            "benefits": [
+              "Everything in Growth",
+              "10 licenses - one production domain each",
+              "Dedicated support manager"
+            ],
+            "fileCount": 0
+          }
+        ],
+        "matrix": [
+          {
+            "id": 1721,
+            "licenseType": "regular",
+            "label": "Lifetime License Validity (edited)",
+            "included": true
+          },
+          {
+            "id": 1722,
+            "licenseType": "regular",
+            "label": "Permitted for 1 Domain",
+            "included": true
+          },
+          {
+            "id": 1723,
+            "licenseType": "regular",
+            "label": "6 months of general & technical support",
+            "included": true
+          },
+          {
+            "id": 1724,
+            "licenseType": "regular",
+            "label": "All Premium Features",
+            "included": true
+          },
+          {
+            "id": 1725,
+            "licenseType": "regular",
+            "label": "Lifetime FREE Update",
+            "included": true
+          },
+          {
+            "id": 1726,
+            "licenseType": "regular",
+            "label": "For Personal Project",
+            "included": true
+          },
+          {
+            "id": 1727,
+            "licenseType": "regular",
+            "label": "For Commercial Projects (if end-product is paid)",
+            "included": false
+          },
+          {
+            "id": 1728,
+            "licenseType": "regular",
+            "label": "Postman Collection for REST API Docs",
+            "included": false
+          },
+          {
+            "id": 1729,
+            "licenseType": "regular",
+            "label": "Admin Panel FREE Installation in cPanel",
+            "included": false
+          },
+          {
+            "id": 1730,
+            "licenseType": "regular",
+            "label": "Priority Support",
+            "included": false
+          },
+          {
+            "id": 1731,
+            "licenseType": "extended",
+            "label": "Lifetime License Validity",
+            "included": true
+          },
+          {
+            "id": 1732,
+            "licenseType": "extended",
+            "label": "Permitted for 1 Domain",
+            "included": true
+          },
+          {
+            "id": 1733,
+            "licenseType": "extended",
+            "label": "6 months of general & technical support",
+            "included": true
+          },
+          {
+            "id": 1734,
+            "licenseType": "extended",
+            "label": "All Premium Features",
+            "included": true
+          },
+          {
+            "id": 1735,
+            "licenseType": "extended",
+            "label": "Lifetime FREE Update",
+            "included": true
+          },
+          {
+            "id": 1736,
+            "licenseType": "extended",
+            "label": "For Personal Project",
+            "included": true
+          },
+          {
+            "id": 1737,
+            "licenseType": "extended",
+            "label": "For Commercial Projects (if end-product is paid)",
+            "included": true
+          },
+          {
+            "id": 1738,
+            "licenseType": "extended",
+            "label": "Postman Collection for REST API Docs",
+            "included": true
+          },
+          {
+            "id": 1739,
+            "licenseType": "extended",
+            "label": "Admin Panel FREE Installation in cPanel (One Time)",
+            "included": true
+          },
+          {
+            "id": 1740,
+            "licenseType": "extended",
+            "label": "Priority Support",
+            "included": true
+          }
+        ],
+        "addons": [
+          {
+            "id": 1,
+            "name": "MoneyPay - Vendor App",
+            "description": null,
+            "regularPrice": 39,
+            "extendedPrice": 99,
+            "status": "active",
+            "fileCount": 1
+          },
+          {
+            "id": 3,
+            "name": "MoneyPay - React User Website",
+            "description": null,
+            "regularPrice": 99,
+            "extendedPrice": 399,
+            "status": "active",
+            "fileCount": 0
+          },
+          {
+            "id": 5,
+            "name": "MoneyPay - Vendor Website Builder",
+            "description": null,
+            "regularPrice": 79,
+            "extendedPrice": 199,
+            "status": "active",
+            "fileCount": 0
+          }
+        ]
+      }
+    },
+    "GET /admin/packages/1/files": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "package": {
+          "id": 1,
+          "name": "Starter",
+          "licenseType": "regular",
+          "price": 99,
+          "licenseCount": 1,
+          "isPopular": false,
+          "status": "active",
+          "productId": 12,
+          "productName": "MoneyPay",
+          "buyers": 0
+        },
+        "maxFileMb": 4096,
+        "maxBundleTotalMb": 1024,
+        "sharedFiles": [
+          {
+            "id": 7,
+            "label": "MoneyPay source code",
+            "kind": "source"
+          }
+        ],
+        "siblings": [
+          {
+            "id": 1,
+            "name": "Starter",
+            "licenseType": "regular",
+            "fileCount": 1
+          },
+          {
+            "id": 2,
+            "name": "Combo",
+            "licenseType": "regular",
+            "fileCount": 0
+          },
+          {
+            "id": 3,
+            "name": "Super Combo",
+            "licenseType": "regular",
+            "fileCount": 1
+          },
+          {
+            "id": 4,
+            "name": "Starter",
+            "licenseType": "extended",
+            "fileCount": 0
+          },
+          {
+            "id": 5,
+            "name": "Combo",
+            "licenseType": "extended",
+            "fileCount": 0
+          },
+          {
+            "id": 6,
+            "name": "Super Combo",
+            "licenseType": "extended",
+            "fileCount": 0
+          },
+          {
+            "id": 7,
+            "name": "Launch",
+            "licenseType": "agency",
+            "fileCount": 0
+          },
+          {
+            "id": 8,
+            "name": "Growth",
+            "licenseType": "agency",
+            "fileCount": 0
+          },
+          {
+            "id": 9,
+            "name": "Empire",
+            "licenseType": "agency",
+            "fileCount": 0
+          }
+        ],
+        "files": [
+          {
+            "id": 8,
+            "label": "Starter source folder",
+            "kind": "source",
+            "platform": "web",
+            "version": null,
+            "originalName": "starter-source-folder.zip",
+            "size": 355,
+            "externalUrl": null,
+            "requiresPurchase": true,
+            "downloadCount": 0,
+            "missing": false
+          }
+        ]
+      }
+    },
+    "GET /admin/addons/1/files": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "addon": {
+          "id": 1,
+          "name": "MoneyPay - Vendor App",
+          "productId": 12,
+          "productName": "MoneyPay"
+        },
+        "maxFileMb": 4096,
+        "maxBundleTotalMb": 1024,
+        "files": [
+          {
+            "id": 10,
+            "label": "Vendor App source",
+            "kind": "source",
+            "platform": "web",
+            "version": "1.0.0",
+            "originalName": "vendor-app-source.zip",
+            "size": 461,
+            "externalUrl": null,
+            "requiresPurchase": true,
+            "downloadCount": 0,
+            "missing": false
+          }
+        ]
+      }
+    },
+    "GET /admin/orders?page=1": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "orders": [
+          {
+            "id": 68,
+            "orderNumber": "SOF123460",
+            "customerName": "John Deng",
+            "customerEmail": "john@example.com",
+            "items": "Microsoft Office 365",
+            "subtotal": 99,
+            "discount": 9.9,
+            "total": 89.1,
+            "paymentMethod": "card",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-10 02:13:36"
+          },
+          {
+            "id": 67,
+            "orderNumber": "SOF123459",
+            "customerName": "John Deng",
+            "customerEmail": "john@example.com",
+            "items": "Windows 11 Pro",
+            "subtotal": 129,
+            "discount": 12.9,
+            "total": 116.1,
+            "paymentMethod": "card",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-10 02:13:35"
+          },
+          {
+            "id": 29,
+            "orderNumber": "SOF123025",
+            "customerName": "John Doe",
+            "customerEmail": "john@example.com",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "subtotal": 148,
+            "discount": 10,
+            "total": 138,
+            "paymentMethod": "cash",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-07 00:02:12"
+          },
+          {
+            "id": 53,
+            "orderNumber": "SOF123049",
+            "customerName": "John Doe",
+            "customerEmail": "john@example.com",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "subtotal": 148,
+            "discount": 10,
+            "total": 138,
+            "paymentMethod": "bank_transfer",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-07 00:02:12"
+          },
+          {
+            "id": 5,
+            "orderNumber": "SOF123001",
+            "customerName": "John Doe",
+            "customerEmail": "john@example.com",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "subtotal": 148,
+            "discount": 10,
+            "total": 138,
+            "paymentMethod": "card",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-07 00:02:11"
+          },
+          {
+            "id": 1,
+            "orderNumber": "SOF123456",
+            "customerName": "John Doe",
+            "customerEmail": "john@example.com",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "subtotal": 148,
+            "discount": 10,
+            "total": 138,
+            "paymentMethod": "card",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-06 00:02:11"
+          },
+          {
+            "id": 42,
+            "orderNumber": "SOF123038",
+            "customerName": "Peter Deng",
+            "customerEmail": "peter@example.com",
+            "items": "CorelDRAW Graphics Suite",
+            "subtotal": 119,
+            "discount": 0,
+            "total": 119,
+            "paymentMethod": "mobile_money",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-05 00:02:12"
+          },
+          {
+            "id": 2,
+            "orderNumber": "SOF123450",
+            "customerName": "Sarah Juma",
+            "customerEmail": "sarah@example.com",
+            "items": "Adobe Photoshop",
+            "subtotal": 49,
+            "discount": 0,
+            "total": 49,
+            "paymentMethod": "mobile_money",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-05 00:02:11"
+          },
+          {
+            "id": 44,
+            "orderNumber": "SOF123040",
+            "customerName": "Emmanuel Ladu",
+            "customerEmail": "emmanuel@example.com",
+            "items": "JetBrains IntelliJ IDEA",
+            "subtotal": 149,
+            "discount": 0,
+            "total": 149,
+            "paymentMethod": "cash",
+            "paymentStatus": "paid",
+            "status": "processing",
+            "createdAt": "2026-09-04 00:02:12"
+          },
+          {
+            "id": 51,
+            "orderNumber": "SOF123047",
+            "customerName": "Rebecca Nyandeng",
+            "customerEmail": "rebecca@example.com",
+            "items": "Windows 11 Pro",
+            "subtotal": 129,
+            "discount": 0,
+            "total": 129,
+            "paymentMethod": "paypal",
+            "paymentStatus": "pending",
+            "status": "pending",
+            "createdAt": "2026-09-04 00:02:12"
+          },
+          {
+            "id": 3,
+            "orderNumber": "SOF123400",
+            "customerName": "Ahmed Ali",
+            "customerEmail": "ahmed@example.com",
+            "items": "Microsoft Office 365",
+            "subtotal": 99,
+            "discount": 0,
+            "total": 99,
+            "paymentMethod": "bank_transfer",
+            "paymentStatus": "pending",
+            "status": "pending",
+            "createdAt": "2026-09-04 00:02:11"
+          },
+          {
+            "id": 4,
+            "orderNumber": "SOF123448",
+            "customerName": "Mary K.",
+            "customerEmail": "mary@example.com",
+            "items": "Windows 11 Pro",
+            "subtotal": 129,
+            "discount": 0,
+            "total": 129,
+            "paymentMethod": "card",
+            "paymentStatus": "paid",
+            "status": "completed",
+            "createdAt": "2026-09-03 00:02:11"
+          }
+        ],
+        "tabCounts": {
+          "all": 66,
+          "pending": 11,
+          "processing": 9,
+          "completed": 36,
+          "cancelled": 10
+        },
+        "page": 1,
+        "pages": 6,
+        "perPage": 12,
+        "total": 66,
+        "offset": 0
+      }
+    },
+    "GET /admin/customers?page=1": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "customers": [
+          {
+            "id": 9,
+            "name": "Emmanuel Ladu",
+            "email": "emmanuel@example.com",
+            "phone": "+211 929777888",
+            "company": "Ladu Motors",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "orderCount": 7,
+            "spent": 745,
+            "createdAt": "2026-08-16 00:02:11",
+            "lastLoginAt": "2026-09-09 00:02:11"
+          },
+          {
+            "id": 8,
+            "name": "Rebecca Nyandeng",
+            "email": "rebecca@example.com",
+            "phone": "+211 928555666",
+            "company": "Sunrise Foods",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "orderCount": 7,
+            "spent": 615,
+            "createdAt": "2026-07-28 00:02:11",
+            "lastLoginAt": "2026-09-08 00:02:11"
+          },
+          {
+            "id": 7,
+            "name": "Peter Deng",
+            "email": "peter@example.com",
+            "phone": "+211 927333444",
+            "company": "Deng Logistics",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "orderCount": 7,
+            "spent": 476,
+            "createdAt": "2026-07-12 00:02:11",
+            "lastLoginAt": "2026-09-07 00:02:11"
+          },
+          {
+            "id": 6,
+            "name": "Grace Lomoro",
+            "email": "grace@example.com",
+            "phone": "+211 926111222",
+            "company": "Nile Traders",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "orderCount": 7,
+            "spent": 932,
+            "createdAt": "2026-06-26 00:02:11",
+            "lastLoginAt": "2026-09-07 00:02:11"
+          },
+          {
+            "id": 2,
+            "name": "John Doe",
+            "email": "john@example.com",
+            "phone": "+211 912345678",
+            "company": "Doe Enterprises",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "orderCount": 11,
+            "spent": 1201.2,
+            "createdAt": "2026-05-28 00:02:11",
+            "lastLoginAt": "2026-09-10 16:45:39"
+          },
+          {
+            "id": 3,
+            "name": "Sarah Juma",
+            "email": "sarah@example.com",
+            "phone": "+211 923456789",
+            "company": "Juma Traders",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "orderCount": 9,
+            "spent": 283,
+            "createdAt": "2026-05-25 00:02:11",
+            "lastLoginAt": "2026-09-10 15:49:18"
+          },
+          {
+            "id": 4,
+            "name": "Ahmed Ali",
+            "email": "ahmed@example.com",
+            "phone": "+211 934567890",
+            "company": "Ali Logistics",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "orderCount": 9,
+            "spent": 275,
+            "createdAt": "2026-05-23 00:02:11",
+            "lastLoginAt": "2026-09-05 00:02:11"
+          },
+          {
+            "id": 5,
+            "name": "Mary K.",
+            "email": "mary@example.com",
+            "phone": "+211 925678901",
+            "company": "Mary Consulting",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "orderCount": 9,
+            "spent": 374,
+            "createdAt": "2026-05-21 00:02:11",
+            "lastLoginAt": "2026-09-05 00:02:11"
+          }
+        ],
+        "page": 1,
+        "pages": 1,
+        "perPage": 12,
+        "total": 8,
+        "offset": 0
+      }
+    },
+    "GET /admin/categories": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "categories": [
+          {
+            "id": 1,
+            "name": "Productivity",
+            "slug": "productivity",
+            "description": "Office tools and productivity apps",
+            "icon": "file",
+            "accent": "blue",
+            "status": "active",
+            "productCount": 2
+          },
+          {
+            "id": 2,
+            "name": "Security",
+            "slug": "security",
+            "description": "Antivirus and security software",
+            "icon": "shield",
+            "accent": "green",
+            "status": "active",
+            "productCount": 1
+          },
+          {
+            "id": 3,
+            "name": "Design & Creative",
+            "slug": "design-creative",
+            "description": "Design and creative software",
+            "icon": "edit",
+            "accent": "purple",
+            "status": "active",
+            "productCount": 2
+          },
+          {
+            "id": 4,
+            "name": "Business",
+            "slug": "business",
+            "description": "Business management tools",
+            "icon": "chart",
+            "accent": "orange",
+            "status": "active",
+            "productCount": 3
+          },
+          {
+            "id": 5,
+            "name": "Developer Tools",
+            "slug": "developer-tools",
+            "description": "Developer and coding tools",
+            "icon": "code",
+            "accent": "teal",
+            "status": "active",
+            "productCount": 1
+          }
+        ]
+      }
+    },
+    "GET /admin/reports?range=30": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "from": "2025-09-30",
+        "to": "2026-09-10",
+        "totals": {
+          "revenue": 4901.2,
+          "orders": 66,
+          "customers": 8
+        },
+        "series": [
+          {
+            "label": "Oct",
+            "value": 0
+          },
+          {
+            "label": "Nov",
+            "value": 0
+          },
+          {
+            "label": "Dec",
+            "value": 0
+          },
+          {
+            "label": "Jan",
+            "value": 0
+          },
+          {
+            "label": "Feb",
+            "value": 0
+          },
+          {
+            "label": "Mar",
+            "value": 0
+          },
+          {
+            "label": "Apr",
+            "value": 0
+          },
+          {
+            "label": "May",
+            "value": 157
+          },
+          {
+            "label": "Jun",
+            "value": 186
+          },
+          {
+            "label": "Jul",
+            "value": 673
+          },
+          {
+            "label": "Aug",
+            "value": 2643
+          },
+          {
+            "label": "Sep",
+            "value": 1242.2
+          }
+        ],
+        "topProducts": [
+          {
+            "name": "JetBrains IntelliJ IDEA",
+            "icon": "code",
+            "accent": "purple",
+            "units": 9,
+            "revenue": 1341,
+            "share": 30
+          },
+          {
+            "name": "Windows 11 Pro",
+            "icon": "monitor",
+            "accent": "blue",
+            "units": 7,
+            "revenue": 903,
+            "share": 20
+          },
+          {
+            "name": "Microsoft Office 365",
+            "icon": "file",
+            "accent": "orange",
+            "units": 8,
+            "revenue": 792,
+            "share": 18
+          },
+          {
+            "name": "Adobe Photoshop",
+            "icon": "edit",
+            "accent": "blue",
+            "units": 13,
+            "revenue": 637,
+            "share": 14
+          },
+          {
+            "name": "CorelDRAW Graphics Suite",
+            "icon": "tag",
+            "accent": "teal",
+            "units": 4,
+            "revenue": 476,
+            "share": 11
+          },
+          {
+            "name": "QuickBooks Accounting",
+            "icon": "money",
+            "accent": "green",
+            "units": 4,
+            "revenue": 356,
+            "share": 8
+          }
+        ],
+        "byCategory": [
+          {
+            "name": "Productivity",
+            "revenue": 2250,
+            "units": 20
+          },
+          {
+            "name": "Developer Tools",
+            "revenue": 2086,
+            "units": 14
+          },
+          {
+            "name": "Design & Creative",
+            "revenue": 1715,
+            "units": 25
+          },
+          {
+            "name": "Business",
+            "revenue": 1095,
+            "units": 15
+          },
+          {
+            "name": "Security",
+            "revenue": 312,
+            "units": 8
+          }
+        ],
+        "byMethod": [
+          {
+            "method": "card",
+            "count": 12,
+            "total": 1482.2
+          },
+          {
+            "method": "paypal",
+            "count": 8,
+            "total": 910
+          },
+          {
+            "method": "cash",
+            "count": 8,
+            "total": 900
+          },
+          {
+            "method": "mobile_money",
+            "count": 9,
+            "total": 889
+          },
+          {
+            "method": "bank_transfer",
+            "count": 8,
+            "total": 720
+          }
+        ],
+        "byStatus": [
+          {
+            "status": "pending",
+            "count": 11,
+            "total": 1544
+          },
+          {
+            "status": "processing",
+            "count": 9,
+            "total": 761
+          },
+          {
+            "status": "completed",
+            "count": 36,
+            "total": 4140.2
+          },
+          {
+            "status": "cancelled",
+            "count": 10,
+            "total": 880
+          }
+        ]
+      }
+    },
+    "GET /admin/settings": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "settings": {
+          "checkout_discount": "10",
+          "currency": "USD",
+          "email_from_address": "junubsoftflow@gmail.com",
+          "email_from_name": "JunubSoftFlow",
+          "email_order_confirmation": "1",
+          "hero_banner": "Buy Software Online - Fast, Secure, and Easy",
+          "hero_banner_sub": "Everything you need to power your business. From productivity tools to enterprise solutions - all in one place.",
+          "hero_highlight": "Growth",
+          "hero_subtitle": "Powerful. Secure. Scalable",
+          "hero_title": "The Right Software for Your Business Growth",
+          "licence_terms": "Lifetime\n1 Year Subscription\n2 Year Subscription\n3 Year Subscription\nMonthly Subscription\nPerpetual with 1 Year Updates",
+          "office_address": "Juba, South Sudan",
+          "payment_bank_transfer": "1",
+          "payment_card": "1",
+          "payment_cash": "1",
+          "payment_mobile_money": "1",
+          "payment_paypal": "1",
+          "site_name": "Junub SoftFlow",
+          "site_tagline": "Software for a smarter tomorrow",
+          "site_url": "http://localhost:5173",
+          "support_email": "junubsoftflow@gmail.com",
+          "support_phone": "+211 911771111",
+          "timezone": "(UTC+3) Nairobi"
+        },
+        "groups": {
+          "general": [
+            "site_name",
+            "site_url",
+            "site_tagline",
+            "hero_title",
+            "hero_highlight",
+            "hero_subtitle",
+            "hero_banner",
+            "hero_banner_sub",
+            "support_email",
+            "support_phone",
+            "office_address",
+            "timezone",
+            "currency",
+            "licence_terms"
+          ],
+          "payment": [
+            "payment_card",
+            "payment_paypal",
+            "payment_mobile_money",
+            "payment_bank_transfer",
+            "payment_cash",
+            "checkout_discount",
+            "discount_card",
+            "discount_paypal",
+            "discount_mobile_money",
+            "discount_bank_transfer",
+            "discount_cash"
+          ],
+          "email": [
+            "email_from_name",
+            "email_from_address",
+            "email_order_confirmation"
+          ]
+        },
+        "permissionRoles": [
+          {
+            "id": 1,
+            "name": "Administrator",
+            "slug": "administrator",
+            "description": "Full access to all features"
+          },
+          {
+            "id": 2,
+            "name": "Manager",
+            "slug": "manager",
+            "description": "Manage orders and customers"
+          },
+          {
+            "id": 3,
+            "name": "Support",
+            "slug": "support",
+            "description": "Handle customer support"
+          },
+          {
+            "id": 4,
+            "name": "Editor",
+            "slug": "editor",
+            "description": "Manage content and products"
+          }
+        ],
+        "discountRates": {
+          "default": 10,
+          "card": 10,
+          "paypal": 10,
+          "mobile_money": 10,
+          "bank_transfer": 10,
+          "cash": 10
+        },
+        "licenceTerms": [
+          "Lifetime",
+          "1 Year Subscription",
+          "2 Year Subscription",
+          "3 Year Subscription",
+          "Monthly Subscription",
+          "Perpetual with 1 Year Updates"
+        ],
+        "defaultLicenceTerms": [
+          "Lifetime",
+          "1 Year Subscription",
+          "2 Year Subscription",
+          "3 Year Subscription",
+          "Monthly Subscription",
+          "Perpetual with 1 Year Updates"
+        ],
+        "admins": [
+          {
+            "id": 1,
+            "name": "Admin",
+            "email": "admin@softflow.com",
+            "status": "active",
+            "roleId": 1,
+            "roleName": "Administrator",
+            "lastLoginAt": "2026-09-10 16:45:39",
+            "createdAt": "2025-08-06 00:02:11"
+          }
+        ]
+      }
+    },
+    "GET /admin/roles": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "roles": [
+          {
+            "id": 1,
+            "name": "Administrator",
+            "slug": "administrator",
+            "description": "Full access to all features",
+            "permissions": [
+              "view",
+              "edit",
+              "delete"
+            ],
+            "isSystem": true,
+            "userCount": 1
+          },
+          {
+            "id": 2,
+            "name": "Manager",
+            "slug": "manager",
+            "description": "Manage orders and customers",
+            "permissions": [
+              "view",
+              "edit"
+            ],
+            "isSystem": true,
+            "userCount": 0
+          },
+          {
+            "id": 3,
+            "name": "Support",
+            "slug": "support",
+            "description": "Handle customer support",
+            "permissions": [
+              "view"
+            ],
+            "isSystem": false,
+            "userCount": 0
+          },
+          {
+            "id": 4,
+            "name": "Editor",
+            "slug": "editor",
+            "description": "Manage content and products",
+            "permissions": [
+              "view",
+              "edit"
+            ],
+            "isSystem": false,
+            "userCount": 0
+          }
+        ],
+        "allPermissions": [
+          "view",
+          "edit",
+          "delete"
+        ]
+      }
+    },
+    "GET /admin/demos": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "demos": [
+          {
+            "id": 1,
+            "title": "Antivirus Pro - Android Beta",
+            "slug": "antivirus-pro-android-beta",
+            "description": "The Android build of Antivirus Pro. Enable \"Install unknown apps\" for your browser before installing the APK.",
+            "platform": "android",
+            "webUrl": null,
+            "reviewUrl": "https://review.softflow.com/antivirus-pro/beta-notes",
+            "hasApk": false,
+            "apkName": null,
+            "apkSize": null,
+            "apkVersion": "8.2.1-beta",
+            "apkUploadedAt": null,
+            "apkMissing": false,
+            "visibility": "public",
+            "status": "published",
+            "downloadCount": 0,
+            "productId": 4,
+            "productName": "Antivirus Pro",
+            "author": "Admin"
+          },
+          {
+            "id": 2,
+            "title": "SoftFlow Store - Live Demo",
+            "slug": "softflow-store-demo",
+            "description": "A sandbox copy of the storefront with test checkout enabled. No real payments are taken.",
+            "platform": "both",
+            "webUrl": "https://demo.softflow.com/store",
+            "reviewUrl": "https://review.softflow.com/store/walkthrough",
+            "hasApk": false,
+            "apkName": null,
+            "apkSize": null,
+            "apkVersion": "1.4.0",
+            "apkUploadedAt": null,
+            "apkMissing": false,
+            "visibility": "public",
+            "status": "published",
+            "downloadCount": 0,
+            "productId": null,
+            "productName": null,
+            "author": "Admin"
+          },
+          {
+            "id": 3,
+            "title": "Office 365 - Guided Walkthrough",
+            "slug": "office-365-walkthrough",
+            "description": "A recorded walkthrough of activation and first-run setup, for buyers who want to see it before purchasing.",
+            "platform": "web",
+            "webUrl": "https://demo.softflow.com/office365",
+            "reviewUrl": "https://review.softflow.com/office365",
+            "hasApk": false,
+            "apkName": null,
+            "apkSize": null,
+            "apkVersion": null,
+            "apkUploadedAt": null,
+            "apkMissing": false,
+            "visibility": "public",
+            "status": "published",
+            "downloadCount": 0,
+            "productId": 1,
+            "productName": "Microsoft Office 365",
+            "author": "Admin"
+          },
+          {
+            "id": 4,
+            "title": "MoneyPay",
+            "slug": "moneypay-demo",
+            "description": "Try the MoneyPay wallet, vendor and rider apps.",
+            "platform": "both",
+            "webUrl": "https://gpay-ss.netlify.app/login",
+            "reviewUrl": "https://gpay-ss.netlify.app/login",
+            "hasApk": true,
+            "apkName": "app-release.apk",
+            "apkSize": 70205272,
+            "apkVersion": "1.0.0",
+            "apkUploadedAt": "2026-09-10 02:02:53",
+            "apkMissing": false,
+            "visibility": "public",
+            "status": "published",
+            "downloadCount": 0,
+            "productId": 12,
+            "productName": "MoneyPay",
+            "author": "Admin"
+          }
+        ],
+        "products": [
+          {
+            "id": 1,
+            "name": "Microsoft Office 365"
+          },
+          {
+            "id": 2,
+            "name": "Adobe Photoshop"
+          },
+          {
+            "id": 3,
+            "name": "Windows 11 Pro"
+          },
+          {
+            "id": 4,
+            "name": "Antivirus Pro"
+          },
+          {
+            "id": 5,
+            "name": "QuickBooks Accounting"
+          },
+          {
+            "id": 6,
+            "name": "JetBrains IntelliJ IDEA"
+          },
+          {
+            "id": 7,
+            "name": "Zoom Business"
+          },
+          {
+            "id": 8,
+            "name": "CorelDRAW Graphics Suite"
+          },
+          {
+            "id": 12,
+            "name": "MoneyPay"
+          }
+        ],
+        "recentDownloads": [],
+        "maxApkMb": 2048,
+        "platforms": [
+          "web",
+          "desktop",
+          "windows",
+          "mac",
+          "linux",
+          "android",
+          "ios",
+          "mobile",
+          "both"
+        ],
+        "totals": {
+          "demos": 4,
+          "published": 4,
+          "withApk": 1,
+          "downloads": 0
+        },
+        "matched": 4
+      }
+    },
+    "GET /admin/messages?page=1": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "messages": [
+          {
+            "id": 6,
+            "name": "Jane Doe",
+            "email": "jane@example.com",
+            "subject": "A question before I buy",
+            "message": "Checking the toast position.",
+            "status": "read",
+            "createdAt": "2026-09-10 10:31:04"
+          },
+          {
+            "id": 5,
+            "name": "Jane Doe",
+            "email": "jane@example.com",
+            "subject": "Licence keys or activation",
+            "message": "Testing the redesigned contact form.",
+            "status": "read",
+            "createdAt": "2026-09-10 03:25:49"
+          },
+          {
+            "id": 1,
+            "name": "Betty Aluel",
+            "email": "betty@example.com",
+            "subject": "Bulk licence pricing",
+            "message": "We need 25 Office 365 licences. Do you offer a discount at that volume?",
+            "status": "read",
+            "createdAt": "2026-09-10 02:02:12"
+          },
+          {
+            "id": 2,
+            "name": "Michael Taban",
+            "email": "michael@example.com",
+            "subject": "Does Antivirus Pro cover Android?",
+            "message": "I have two Android phones and a Windows laptop. Is one licence enough?",
+            "status": "read",
+            "createdAt": "2026-09-10 02:02:12"
+          },
+          {
+            "id": 3,
+            "name": "Josephine Ayen",
+            "email": "josephine@example.com",
+            "subject": "Payment failed",
+            "message": "My mobile money payment was deducted but the order did not complete.",
+            "status": "read",
+            "createdAt": "2026-09-10 02:02:12"
+          },
+          {
+            "id": 4,
+            "name": "Daniel Majok",
+            "email": "daniel@example.com",
+            "subject": "Refund request",
+            "message": "I bought the wrong version of Windows. Can I exchange it?",
+            "status": "replied",
+            "createdAt": "2026-09-10 02:02:12"
+          }
+        ],
+        "tickets": [
+          {
+            "id": 2,
+            "subject": "Need an invoice",
+            "message": "Could you send a VAT invoice for my Photoshop order?",
+            "status": "pending",
+            "userName": "Sarah Juma",
+            "userEmail": "sarah@example.com",
+            "orderNumber": null,
+            "createdAt": "2026-09-10 02:02:12",
+            "reply": null,
+            "repliedAt": null,
+            "repliedBy": null
+          },
+          {
+            "id": 1,
+            "subject": "Activation code not working",
+            "message": "I entered the key for Office 365 and it says already in use. Order SOF123456.",
+            "status": "closed",
+            "userName": "John Doe",
+            "userEmail": "john@example.com",
+            "orderNumber": null,
+            "createdAt": "2026-09-10 02:02:12",
+            "reply": "We reissued the key on your order and emailed a fresh copy. It is also on your Downloads page now.",
+            "repliedAt": "2026-09-10 03:47:38",
+            "repliedBy": "Admin"
+          },
+          {
+            "id": 3,
+            "subject": "Reinstall on a new laptop",
+            "message": "My laptop died. Can I move the Windows 11 licence?",
+            "status": "closed",
+            "userName": "Mary K.",
+            "userEmail": "mary@example.com",
+            "orderNumber": null,
+            "createdAt": "2026-09-10 02:02:12",
+            "reply": null,
+            "repliedAt": null,
+            "repliedBy": null
+          }
+        ],
+        "page": 1,
+        "pages": 1,
+        "perPage": 12,
+        "total": 6,
+        "offset": 0
+      }
+    },
+    "GET /admin/users": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "users": [
+          {
+            "id": 1,
+            "name": "Admin",
+            "email": "admin@softflow.com",
+            "role": "admin",
+            "roleId": 1,
+            "roleName": "Administrator",
+            "phone": "+211 920 000 111",
+            "company": "SoftFlow",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "lastLoginAt": "2026-09-10 16:45:39",
+            "createdAt": "2025-08-06 00:02:11"
+          },
+          {
+            "id": 9,
+            "name": "Emmanuel Ladu",
+            "email": "emmanuel@example.com",
+            "role": "customer",
+            "roleId": null,
+            "roleName": null,
+            "phone": "+211 929777888",
+            "company": "Ladu Motors",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "lastLoginAt": "2026-09-09 00:02:11",
+            "createdAt": "2026-08-16 00:02:11"
+          },
+          {
+            "id": 8,
+            "name": "Rebecca Nyandeng",
+            "email": "rebecca@example.com",
+            "role": "customer",
+            "roleId": null,
+            "roleName": null,
+            "phone": "+211 928555666",
+            "company": "Sunrise Foods",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "lastLoginAt": "2026-09-08 00:02:11",
+            "createdAt": "2026-07-28 00:02:11"
+          },
+          {
+            "id": 7,
+            "name": "Peter Deng",
+            "email": "peter@example.com",
+            "role": "customer",
+            "roleId": null,
+            "roleName": null,
+            "phone": "+211 927333444",
+            "company": "Deng Logistics",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "lastLoginAt": "2026-09-07 00:02:11",
+            "createdAt": "2026-07-12 00:02:11"
+          },
+          {
+            "id": 6,
+            "name": "Grace Lomoro",
+            "email": "grace@example.com",
+            "role": "customer",
+            "roleId": null,
+            "roleName": null,
+            "phone": "+211 926111222",
+            "company": "Nile Traders",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "lastLoginAt": "2026-09-07 00:02:11",
+            "createdAt": "2026-06-26 00:02:11"
+          },
+          {
+            "id": 2,
+            "name": "John Doe",
+            "email": "john@example.com",
+            "role": "customer",
+            "roleId": null,
+            "roleName": null,
+            "phone": "+211 912345678",
+            "company": "Doe Enterprises",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "lastLoginAt": "2026-09-10 16:45:39",
+            "createdAt": "2026-05-28 00:02:11"
+          },
+          {
+            "id": 3,
+            "name": "Sarah Juma",
+            "email": "sarah@example.com",
+            "role": "customer",
+            "roleId": null,
+            "roleName": null,
+            "phone": "+211 923456789",
+            "company": "Juma Traders",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "lastLoginAt": "2026-09-10 15:49:18",
+            "createdAt": "2026-05-25 00:02:11"
+          },
+          {
+            "id": 4,
+            "name": "Ahmed Ali",
+            "email": "ahmed@example.com",
+            "role": "customer",
+            "roleId": null,
+            "roleName": null,
+            "phone": "+211 934567890",
+            "company": "Ali Logistics",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "lastLoginAt": "2026-09-05 00:02:11",
+            "createdAt": "2026-05-23 00:02:11"
+          },
+          {
+            "id": 5,
+            "name": "Mary K.",
+            "email": "mary@example.com",
+            "role": "customer",
+            "roleId": null,
+            "roleName": null,
+            "phone": "+211 925678901",
+            "company": "Mary Consulting",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "lastLoginAt": "2026-09-05 00:02:11",
+            "createdAt": "2026-05-21 00:02:11"
+          }
+        ],
+        "roles": [
+          "customer",
+          "admin"
+        ],
+        "minPassword": {
+          "customer": 6,
+          "admin": 8
+        }
+      }
+    },
+    "GET /admin/users?role=admin": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "users": [
+          {
+            "id": 1,
+            "name": "Admin",
+            "email": "admin@softflow.com",
+            "role": "admin",
+            "roleId": 1,
+            "roleName": "Administrator",
+            "phone": "+211 920 000 111",
+            "company": "SoftFlow",
+            "country": "South Sudan",
+            "city": "Juba",
+            "status": "active",
+            "lastLoginAt": "2026-09-10 16:45:39",
+            "createdAt": "2025-08-06 00:02:11"
+          }
+        ],
+        "roles": [
+          "customer",
+          "admin"
+        ],
+        "minPassword": {
+          "customer": 6,
+          "admin": 8
+        }
+      }
+    },
+    "GET /admin/email": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "smtp": {
+          "configured": true,
+          "host": "smtp.gmail.com",
+          "port": 587,
+          "secure": false,
+          "user": "junubsoftflow@gmail.com",
+          "publicUrl": "http://localhost:5173",
+          "publicUrlIsPrivate": true
+        },
+        "subscribers": [
+          {
+            "id": 8,
+            "email": "subscriber@example.com",
+            "isActive": true,
+            "createdAt": "2026-09-10 13:14:35"
+          },
+          {
+            "id": 7,
+            "email": "junubsoftflow@gmail.com",
+            "isActive": true,
+            "createdAt": "2026-09-10 12:51:55"
+          },
+          {
+            "id": 6,
+            "email": "owner@example.com",
+            "isActive": true,
+            "createdAt": "2026-09-10 12:26:08"
+          },
+          {
+            "id": 18,
+            "email": "admin@softflow.com",
+            "isActive": false,
+            "createdAt": "2026-09-10 16:02:43"
+          },
+          {
+            "id": 11,
+            "email": "emmanuel@example.com",
+            "isActive": false,
+            "createdAt": "2026-09-10 16:00:25"
+          },
+          {
+            "id": 16,
+            "email": "rebecca@example.com",
+            "isActive": false,
+            "createdAt": "2026-09-10 16:00:25"
+          },
+          {
+            "id": 9,
+            "email": "peter@example.com",
+            "isActive": false,
+            "createdAt": "2026-09-10 15:59:15"
+          },
+          {
+            "id": 3,
+            "email": "ahmed@example.com",
+            "isActive": false,
+            "createdAt": "2026-09-10 02:02:12"
+          }
+        ],
+        "activeCount": 3,
+        "subscriberTotal": 12,
+        "subscriberPerPage": 8,
+        "log": [
+          {
+            "id": 47,
+            "recipient": "admin@softflow.com",
+            "subject": "Up to 40% off at Junub SoftFlow",
+            "kind": "newsletter",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 16:00:40"
+          },
+          {
+            "id": 46,
+            "recipient": "owner@example.com",
+            "subject": "Up to 40% off at Junub SoftFlow",
+            "kind": "newsletter",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 16:00:38"
+          },
+          {
+            "id": 45,
+            "recipient": "owner@example.com",
+            "subject": "Up to 40% off at Junub SoftFlow",
+            "kind": "newsletter",
+            "status": "failed",
+            "error": "Greeting never received",
+            "createdAt": "2026-09-10 15:57:49"
+          },
+          {
+            "id": 42,
+            "recipient": "buyer+test@example.com",
+            "subject": "Your Junub SoftFlow licence keys - order SOF123461",
+            "kind": "order",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 15:50:09"
+          },
+          {
+            "id": 41,
+            "recipient": "owner@example.com",
+            "subject": "Black Friday: up to 25% off",
+            "kind": "newsletter",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 15:48:37"
+          },
+          {
+            "id": 39,
+            "recipient": "owner@example.com",
+            "subject": "Up to 25% off at Junub SoftFlow",
+            "kind": "newsletter",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 15:43:45"
+          },
+          {
+            "id": 38,
+            "recipient": "owner@example.com",
+            "subject": "Junub SoftFlow test email",
+            "kind": "test",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 15:28:36"
+          },
+          {
+            "id": 33,
+            "recipient": "subscriber@example.com",
+            "subject": "Links are live",
+            "kind": "newsletter",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 15:25:35"
+          },
+          {
+            "id": 32,
+            "recipient": "junubsoftflow@gmail.com",
+            "subject": "Links are live",
+            "kind": "newsletter",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 15:25:33"
+          },
+          {
+            "id": 31,
+            "recipient": "owner@example.com",
+            "subject": "Links are live",
+            "kind": "newsletter",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 15:25:30"
+          },
+          {
+            "id": 28,
+            "recipient": "owner@example.com",
+            "subject": "Junub SoftFlow test email",
+            "kind": "test",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 15:10:08"
+          },
+          {
+            "id": 18,
+            "recipient": "owner@example.com",
+            "subject": "SoftFlow test email",
+            "kind": "test",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 14:45:37"
+          },
+          {
+            "id": 15,
+            "recipient": "owner@example.com",
+            "subject": "SoftFlow test email",
+            "kind": "test",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 14:29:26"
+          },
+          {
+            "id": 12,
+            "recipient": "buyer+test@example.com",
+            "subject": "Your SoftFlow licence keys - order SOF123466",
+            "kind": "order",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 14:20:33"
+          },
+          {
+            "id": 11,
+            "recipient": "subscriber@example.com",
+            "subject": "SoftFlow test email",
+            "kind": "test",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 13:15:18"
+          },
+          {
+            "id": 10,
+            "recipient": "subscriber@example.com",
+            "subject": "You are subscribed to SoftFlow",
+            "kind": "newsletter",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 13:14:40"
+          },
+          {
+            "id": 9,
+            "recipient": "junubsoftflow@gmail.com",
+            "subject": "School management system is Out",
+            "kind": "newsletter",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 13:07:22"
+          },
+          {
+            "id": 8,
+            "recipient": "owner@example.com",
+            "subject": "School management system is Out",
+            "kind": "newsletter",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 13:07:19"
+          },
+          {
+            "id": 7,
+            "recipient": "junubsoftflow@gmail.com",
+            "subject": "Test newsletter from JunubSoftFlow",
+            "kind": "newsletter",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 12:53:44"
+          },
+          {
+            "id": 6,
+            "recipient": "owner@example.com",
+            "subject": "Test newsletter from JunubSoftFlow",
+            "kind": "newsletter",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 12:53:42"
+          },
+          {
+            "id": 5,
+            "recipient": "owner@example.com",
+            "subject": "Your SoftFlow licence keys - order SOF123466",
+            "kind": "order",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 12:53:26"
+          },
+          {
+            "id": 4,
+            "recipient": "owner@example.com",
+            "subject": "SoftFlow test email",
+            "kind": "test",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 12:52:56"
+          },
+          {
+            "id": 3,
+            "recipient": "junubsoftflow@gmail.com",
+            "subject": "You are subscribed to SoftFlow",
+            "kind": "newsletter",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 12:51:58"
+          },
+          {
+            "id": 2,
+            "recipient": "junubsoftflow@gmail.com",
+            "subject": "Your SoftFlow licence keys - order SOF123466",
+            "kind": "order",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 12:51:31"
+          },
+          {
+            "id": 1,
+            "recipient": "junubsoftflow@gmail.com",
+            "subject": "SoftFlow test email",
+            "kind": "test",
+            "status": "sent",
+            "error": null,
+            "createdAt": "2026-09-10 12:50:24"
+          }
+        ],
+        "tally": {
+          "sent": 24,
+          "failed": 1,
+          "skipped": 0
+        },
+        "deals": [
+          {
+            "id": 4,
+            "name": "Antivirus Pro",
+            "slug": "antivirus-pro",
+            "shortDesc": "Real-time protection for up to 5 devices",
+            "label": "Ramadan Offer",
+            "announce": true,
+            "percent": 40,
+            "was": 39,
+            "now": 23.4
+          },
+          {
+            "id": 2,
+            "name": "Adobe Photoshop",
+            "slug": "adobe-photoshop",
+            "shortDesc": "Industry-standard image editing",
+            "label": "Black Friday",
+            "announce": true,
+            "percent": 25,
+            "was": 49,
+            "now": 36.75
+          },
+          {
+            "id": 3,
+            "name": "Windows 11 Pro",
+            "slug": "windows-11-pro",
+            "shortDesc": "Operating system for professionals",
+            "label": "Independence Day Sale",
+            "announce": true,
+            "percent": 15,
+            "was": 129,
+            "now": 109.65
+          }
+        ],
+        "audience": {
+          "total": 3,
+          "subscribers": 3,
+          "customers": 0
+        }
+      }
+    },
+    "GET /admin/orders/68": {
+      "as": "admin",
+      "status": 200,
+      "response": {
+        "order": {
+          "id": 68,
+          "orderNumber": "SOF123460",
+          "customerName": "John Deng",
+          "customerEmail": "john@example.com",
+          "customerPhone": "+211920000222",
+          "subtotal": 99,
+          "discount": 9.9,
+          "total": 89.1,
+          "paymentMethod": "card",
+          "paymentStatus": "paid",
+          "status": "completed",
+          "createdAt": "2026-09-10 02:13:36"
+        },
+        "items": [
+          {
+            "productName": "Microsoft Office 365",
+            "unitPrice": 99,
+            "quantity": 1,
+            "lineTotal": 99
+          }
+        ],
+        "licenses": [
+          {
+            "key": "R7TKT-TBES4-4P9UP-E3RCW",
+            "status": "active",
+            "expiresAt": "2027-09-10",
+            "productName": "Microsoft Office 365"
+          }
+        ]
+      }
+    },
+    "GET /admin/dashboard (Basic auth)": {
+      "as": "basic-auth",
+      "status": 200,
+      "note": "Authorization: Basic base64(admin@softflow.com:admin123) - no session cookie sent",
+      "response": {
+        "kpis": {
+          "revenue": 4901.2,
+          "revenueGrowth": 170,
+          "orders": 66,
+          "orderGrowth": 113,
+          "customers": 8,
+          "customerGrowth": 14,
+          "products": 9
+        },
+        "badges": {
+          "newMessages": 0,
+          "pendingOrders": 20
+        },
+        "series": [
+          {
+            "label": "Oct",
+            "value": 0
+          },
+          {
+            "label": "Nov",
+            "value": 0
+          },
+          {
+            "label": "Dec",
+            "value": 0
+          },
+          {
+            "label": "Jan",
+            "value": 0
+          },
+          {
+            "label": "Feb",
+            "value": 0
+          },
+          {
+            "label": "Mar",
+            "value": 0
+          },
+          {
+            "label": "Apr",
+            "value": 0
+          },
+          {
+            "label": "May",
+            "value": 157
+          },
+          {
+            "label": "Jun",
+            "value": 186
+          },
+          {
+            "label": "Jul",
+            "value": 673
+          },
+          {
+            "label": "Aug",
+            "value": 2643
+          },
+          {
+            "label": "Sep",
+            "value": 1242.2
+          }
+        ],
+        "recentOrders": [
+          {
+            "id": 68,
+            "orderNumber": "SOF123460",
+            "customerName": "John Deng",
+            "items": "Microsoft Office 365",
+            "total": 89.1,
+            "status": "completed",
+            "createdAt": "2026-09-10 02:13:36"
+          },
+          {
+            "id": 67,
+            "orderNumber": "SOF123459",
+            "customerName": "John Deng",
+            "items": "Windows 11 Pro",
+            "total": 116.1,
+            "status": "completed",
+            "createdAt": "2026-09-10 02:13:35"
+          },
+          {
+            "id": 29,
+            "orderNumber": "SOF123025",
+            "customerName": "John Doe",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "total": 138,
+            "status": "completed",
+            "createdAt": "2026-09-07 00:02:12"
+          },
+          {
+            "id": 53,
+            "orderNumber": "SOF123049",
+            "customerName": "John Doe",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "total": 138,
+            "status": "completed",
+            "createdAt": "2026-09-07 00:02:12"
+          },
+          {
+            "id": 5,
+            "orderNumber": "SOF123001",
+            "customerName": "John Doe",
+            "items": "Microsoft Office 365, Adobe Photoshop",
+            "total": 138,
+            "status": "completed",
+            "createdAt": "2026-09-07 00:02:11"
+          }
+        ],
+        "topProducts": [
+          {
+            "name": "JetBrains IntelliJ IDEA",
+            "icon": "code",
+            "accent": "purple",
+            "units": 14,
+            "revenue": 2086,
+            "share": 34
+          },
+          {
+            "name": "Windows 11 Pro",
+            "icon": "monitor",
+            "accent": "blue",
+            "units": 9,
+            "revenue": 1161,
+            "share": 19
+          },
+          {
+            "name": "Microsoft Office 365",
+            "icon": "file",
+            "accent": "orange",
+            "units": 11,
+            "revenue": 1089,
+            "share": 18
+          },
+          {
+            "name": "Adobe Photoshop",
+            "icon": "edit",
+            "accent": "blue",
+            "units": 18,
+            "revenue": 882,
+            "share": 15
+          },
+          {
+            "name": "CorelDRAW Graphics Suite",
+            "icon": "tag",
+            "accent": "teal",
+            "units": 7,
+            "revenue": 833,
+            "share": 14
+          }
+        ],
+        "activity": [
+          {
+            "id": 47,
+            "type": "email",
+            "message": "Deals announcement (3 discounted) sent to 2 of 2 recipients",
+            "userName": "Admin",
+            "createdAt": "2026-09-10 16:00:40"
+          },
+          {
+            "id": 46,
+            "type": "email",
+            "message": "Deals announcement (3 discounted) sent to 0 of 1 subscribers",
+            "userName": "Admin",
+            "createdAt": "2026-09-10 15:57:49"
+          },
+          {
+            "id": 45,
+            "type": "email",
+            "message": "Deals announcement (2 discounted) sent to 1 of 1 subscribers",
+            "userName": "Admin",
+            "createdAt": "2026-09-10 15:48:37"
+          },
+          {
+            "id": 44,
+            "type": "email",
+            "message": "Deals announcement (2 discounted) sent to 1 of 1 subscribers",
+            "userName": "Admin",
+            "createdAt": "2026-09-10 15:43:45"
+          },
+          {
+            "id": 43,
+            "type": "email",
+            "message": "Newsletter \"Links are live\" sent to 3 of 3 subscribers",
+            "userName": "Admin",
+            "createdAt": "2026-09-10 15:25:35"
+          },
+          {
+            "id": 42,
+            "type": "settings",
+            "message": "General settings updated",
+            "userName": "Admin",
+            "createdAt": "2026-09-10 15:19:29"
+          }
+        ],
+        "lowStock": [
+          {
+            "id": 8,
+            "name": "CorelDRAW Graphics Suite",
+            "stock": 25
+          },
+          {
+            "id": 6,
+            "name": "JetBrains IntelliJ IDEA",
+            "stock": 30
+          }
+        ]
+      }
+    },
+    "GET /account/summary [401 not signed in]": {
+      "as": "guest",
+      "status": 401,
+      "note": "not signed in",
+      "response": {
+        "error": "Please sign in to continue."
+      }
+    },
+    "GET /admin/dashboard [403 signed in, wrong role]": {
+      "as": "user",
+      "status": 403,
+      "note": "signed in, wrong role",
+      "response": {
+        "error": "You need an administrator account for this."
+      }
+    },
+    "GET /shop/products/does-not-exist": {
+      "as": "guest",
+      "status": 404,
+      "note": "unknown slug",
+      "response": {
+        "error": "Product not found."
+      }
+    },
+    "POST /auth/login [401 bad credentials]": {
+      "as": "guest",
+      "status": 401,
+      "note": "bad credentials",
+      "request": {
+        "email": "admin@softflow.com",
+        "password": "wrong"
+      },
+      "response": {
+        "error": "That email and password do not match an account."
+      }
+    },
+    "POST /shop/contact": {
+      "as": "guest",
+      "status": 400,
+      "note": "validation",
+      "request": {
+        "name": "",
+        "email": "not-an-email",
+        "message": ""
+      },
+      "response": {
+        "error": "Please fill in your name, email and message."
+      }
+    },
+    "POST /admin/tickets/1/reply": {
+      "as": "user",
+      "status": 403,
+      "note": "customer cannot reply to tickets",
+      "request": {
+        "message": "x"
+      },
+      "response": {
+        "error": "You need an administrator account for this."
+      }
+    },
+    "POST /admin/users": {
+      "as": "admin",
+      "status": 400,
+      "note": "admin passwords need 8+ characters",
+      "request": {
+        "name": "Weak Admin",
+        "email": "weak-admin@softflow.com",
+        "password": "abc123",
+        "role": "admin"
+      },
+      "response": {
+        "error": "An admin password must be at least 8 characters."
+      }
+    },
+    "POST /admin/users [409 email already taken]": {
+      "as": "admin",
+      "status": 409,
+      "note": "email already taken",
+      "request": {
+        "name": "Duplicate",
+        "email": "admin@softflow.com",
+        "password": "abcd1234",
+        "role": "admin"
+      },
+      "response": {
+        "error": "An account with that email already exists."
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+backend/storage/apk/*
+backend/storage/files/*
+!backend/storage/apk/.gitkeep
+!backend/storage/files/.gitkeep
+*.log
+.DS_Store

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--
+      Facebook and Twitter scrapers do NOT run JavaScript, so every tag a share card
+      needs has to be in this static file - setting them from React would be too late.
+      Replace https://junubsoftflow.com throughout when the real domain is live.
+    -->
+    <title>JunubSoftFlow - Buy Genuine Software Licences Online</title>
+    <meta
+      name="description"
+      content="JunubSoftFlow sells genuine software licences and delivers them the moment you pay. Productivity, security, design and business software, with instant licence keys and real support."
+    />
+    <meta name="keywords" content="junubsoftflow, junub softflow, softflow, buy software online, software licences, South Sudan software, genuine software keys" />
+    <meta name="author" content="JunubSoftFlow" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta name="theme-color" content="#2563eb" />
+    <link rel="canonical" href="https://junubsoftflow.com/" />
+
+    <!-- Open Graph: Facebook, LinkedIn, WhatsApp -->
+    <meta property="og:site_name" content="JunubSoftFlow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://junubsoftflow.com/" />
+    <meta property="og:title" content="JunubSoftFlow - Buy Genuine Software Licences Online" />
+    <meta
+      property="og:description"
+      content="Genuine software licences delivered the moment you pay. Instant keys, real support, fair returns."
+    />
+    <meta property="og:image" content="https://junubsoftflow.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="JunubSoftFlow - buy genuine software licences online" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="JunubSoftFlow - Buy Genuine Software Licences Online" />
+    <meta
+      name="twitter:description"
+      content="Genuine software licences delivered the moment you pay. Instant keys, real support, fair returns."
+    />
+    <meta name="twitter:image" content="https://junubsoftflow.com/og-image.png" />
+    <meta name="twitter:image:alt" content="JunubSoftFlow - buy genuine software licences online" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+    <!--
+      Structured data. The Organization block is what a search engine reads for a
+      knowledge panel; the WebSite block declares the on-site search so results can
+      offer a search box. The named links below give Google the candidates it draws
+      sitelinks from - including Sign in. Which sitelinks actually appear is Google's
+      decision, not something a site can set.
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://junubsoftflow.com/#organization",
+            "name": "JunubSoftFlow",
+            "alternateName": ["Junub SoftFlow", "SoftFlow"],
+            "url": "https://junubsoftflow.com/",
+            "logo": "https://junubsoftflow.com/og-image.png",
+            "description": "Genuine software licences delivered the moment you pay.",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Juba",
+              "addressCountry": "SS"
+            },
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "customer support",
+              "email": "support@softflow.com",
+              "availableLanguage": ["English"]
+            },
+            "sameAs": [
+              "https://www.facebook.com/junubsoftflow",
+              "https://twitter.com/junubsoftflow",
+              "https://www.linkedin.com/company/junubsoftflow"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://junubsoftflow.com/#website",
+            "url": "https://junubsoftflow.com/",
+            "name": "JunubSoftFlow",
+            "publisher": { "@id": "https://junubsoftflow.com/#organization" },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://junubsoftflow.com/products?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@type": "SiteNavigationElement",
+            "@id": "https://junubsoftflow.com/#nav",
+            "name": ["Home", "Products", "Demos", "About", "Contact", "Sign in", "Create account"],
+            "url": [
+              "https://junubsoftflow.com/",
+              "https://junubsoftflow.com/products",
+              "https://junubsoftflow.com/demos",
+              "https://junubsoftflow.com/about",
+              "https://junubsoftflow.com/contact",
+              "https://junubsoftflow.com/login",
+              "https://junubsoftflow.com/register"
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!--
+      Crawlable copy and links for anything that does not execute JavaScript. React
+      replaces #root on load, so a visitor never sees this - a crawler that cannot
+      render still gets the site's name and its main pages, including Sign in.
+    -->
+    <noscript>
+      <h1>JunubSoftFlow - Buy Genuine Software Licences Online</h1>
+      <p>
+        JunubSoftFlow sells genuine software licences and delivers them the moment you pay.
+        Productivity, security, design and business software with instant licence keys.
+      </p>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/products">Products</a></li>
+        <li><a href="/demos">Demos</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+        <li><a href="/login">Sign in to your account</a></li>
+        <li><a href="/register">Create an account</a></li>
+      </ul>
+    </noscript>
+
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
