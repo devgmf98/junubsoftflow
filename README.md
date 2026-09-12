@@ -134,11 +134,16 @@ npm --prefix frontend run build    # builds frontend/dist
 Set `SERVE_CLIENT=true` in `backend/.env` and the API will serve the built app,
 so a single process handles both.
 
-## Why there is no root package.json
+## What the root package.json is for
 
-The two halves are built by different hosts - Netlify builds `frontend/` from
-`netlify.toml`, Railway builds the API from the root `Dockerfile` - so a root
-manifest served only local convenience. It also made Railway's builder treat the
-repository as a JavaScript workspace and try to install the front end into the API
-image, which failed the deploy. Run the commands above against each package
-directly instead.
+It describes the **API service only** - three scripts that Railway's builder runs:
+`npm install` (which pulls the API's dependencies through `postinstall`),
+`npm run build` (nothing to build) and `npm start` (`node backend/server.js`).
+
+It deliberately says nothing about the web client. An earlier version had scripts
+referencing it, which made Railway's builder treat the repository as a JavaScript
+workspace and try to install the client into the API image - a deploy failure with
+no obvious cause. Netlify builds the client from `netlify.toml` with
+`base = "frontend"` and never reads this file.
+
+For local work, address each package directly with the commands above.

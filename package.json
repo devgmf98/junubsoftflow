@@ -1,0 +1,15 @@
+{
+  "name": "junubsoftflow-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "JunubSoftFlow API service. The web client is a separate package, built by Netlify.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "postinstall": "cd backend && npm ci --omit=dev --no-audit --no-fund",
+    "build": "echo \"no build step for the API\"",
+    "start": "node backend/server.js"
+  },
+  "license": "MIT"
+}
