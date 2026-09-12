@@ -64,16 +64,49 @@ when the schema does not:
 `schema: "not-migrated"` means the database is connected but empty - the
 migration below has not been run. The server prints the same warning at startup.
 
-### First deploy
+### First deploy: create the schema
 
-The container does not create the schema. Once the MySQL plugin is attached, run
-once from Railway's shell:
+The container does not migrate on start-up, because `db/schema.sql` **drops every
+table before recreating it**. Running it automatically would wipe the database on
+every deploy. It is a first-run tool, run deliberately, once.
+
+`db/migrate.js` takes its connection from `src/db.js`, so it understands Railway's
+`MYSQL*` variables, and it rewrites the `CREATE DATABASE ... USE ...` header in
+`schema.sql` to whatever database is configured - Railway names yours `railway`,
+not `junubsoftflow`, and the user usually has no CREATE DATABASE grant.
+
+**From your own machine, over Railway's public proxy** (simplest):
+
+Railway → MySQL service → Variables → copy `MYSQL_PUBLIC_URL`. It looks like
+`mysql://root:PASSWORD@shinkansen.proxy.rlwy.net:12345/railway`. Then, from
+`backend/`:
 
 ```bash
-node db/migrate.js && node db/seed.js
+DB_HOST=shinkansen.proxy.rlwy.net DB_PORT=12345 DB_USER=root DB_PASSWORD=PASSWORD DB_NAME=railway node db/migrate.js && DB_HOST=shinkansen.proxy.rlwy.net DB_PORT=12345 DB_USER=root DB_PASSWORD=PASSWORD DB_NAME=railway node db/seed.js
 ```
 
-`seed.js` **truncates every table it populates**. Run it on a new database only.
+The private `*.railway.internal` host only resolves inside Railway's network, so
+the public proxy is what works from outside.
+
+**Or as a one-off inside Railway**: temporarily set the service's start command to
+
+```
+node db/migrate.js && node db/seed.js && node server.js
+```
+
+deploy once, then **put it back to `node server.js`** - otherwise every future
+deploy wipes the database.
+
+Confirm with `GET /api/health`: `schema` flips from `not-migrated` to `ready`.
+
+### Change the seeded password immediately
+
+`seed.js` creates `admin@softflow.com` / `admin123`. On a public site that is a
+published credential: sign in and change it, or create your own administrator and
+delete the seeded one, before doing anything else.
+
+Seeding also inserts demo products, customers and orders. That is convenient for a
+first look and wrong for a real storefront - delete what you do not want.
 
 ### Uploads will not survive a redeploy
 
