@@ -45,15 +45,19 @@ copy frontend/package.json
 ```
 
 Railway's auto-detected builder reads the root `package.json`, sees a workspace and
-copies both manifests. `.dockerignore` must therefore not hide either of them - it
-excludes only installed packages, build output, secrets, uploads and logs, never a
-source file. `backend/Dockerfile` copies `backend/` explicitly, so keeping the
-context larger costs it nothing.
+copies both manifests. There is deliberately **no `.dockerignore`** in this
+repository: it excluded `frontend` and made that file vanish from the build context,
+and it was buying nothing - `node_modules`, `dist`, `.env` and the uploads are all
+gitignored, so they are not in a git-sourced build context to begin with. The whole
+tracked tree is 3.4 MB.
 
-The root scripts are written so that a generic Node builder also works end to end:
+`backend/Dockerfile` names what it copies, so a larger context costs the image
+nothing.
+
+The root scripts are written so a generic Node builder works end to end too:
 `npm install` pulls the API's dependencies through `postinstall`, `npm run build`
 asks for devDependencies explicitly so `vite` is present, and `npm start` runs the
-API. That path is verified locally with `NODE_ENV=production`.
+API. Verified locally with `NODE_ENV=production`.
 
 Note the `postinstall` uses `cd backend && npm install`, not `npm --prefix backend
 install`: with `--prefix`, npm keeps the *root* as the lifecycle package, so the
