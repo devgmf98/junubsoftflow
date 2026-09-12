@@ -1,16 +1,25 @@
-# Build context is the repo root. The API image needs backend/ only.
-frontend
-dist
+# Keep the build context small, but never hide a source file from the builder.
+#
+# This previously excluded `frontend` wholesale. backend/Dockerfile does not need it,
+# but Railway's auto-detected builder does - it reads the root package.json, sees a
+# workspace and copies frontend/package.json. Excluding the directory made that file
+# "not found" and failed the build before anything else could go wrong.
+#
+# So exclude only what is genuinely disposable: installed packages, build output,
+# secrets, uploads and logs.
+
 **/node_modules
+**/dist
 **/.env
 **/.env.*
 !**/.env.example
+
+# Uploaded files - large, and restored from a volume rather than baked into an image.
 backend/storage/apk/*
 backend/storage/files/*
 backend/storage/tmp/*
 !backend/storage/**/.gitkeep
+
 **/*.log
 .git
 .github
-*.md
-api-samples.json

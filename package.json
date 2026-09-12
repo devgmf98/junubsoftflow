@@ -11,7 +11,8 @@
     "dev:api": "npm --prefix backend run dev",
     "dev:web": "npm --prefix frontend run dev",
     "build": "npm --prefix frontend install --include=dev --no-audit --no-fund && npm --prefix frontend run build",
-    "start": "npm --prefix backend start"
+    "start": "npm --prefix backend start",
+    "postinstall": "cd backend && npm install --omit=dev --no-audit --no-fund"
   },
   "license": "MIT"
 }

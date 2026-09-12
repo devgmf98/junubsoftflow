@@ -37,6 +37,28 @@ copy them into `DB_*` aliases.
 | `ALLOW_BASIC_AUTH` | `false` | HTTP Basic sends credentials on every request; leave it off unless a tool genuinely needs it |
 | `SERVE_CLIENT` | `false` | Netlify serves the front end; the API only serves `/api` |
 
+### If the build fails on a missing file
+
+```
+copy frontend/package.json
+"/frontend/package.json": not found
+```
+
+Railway's auto-detected builder reads the root `package.json`, sees a workspace and
+copies both manifests. `.dockerignore` must therefore not hide either of them - it
+excludes only installed packages, build output, secrets, uploads and logs, never a
+source file. `backend/Dockerfile` copies `backend/` explicitly, so keeping the
+context larger costs it nothing.
+
+The root scripts are written so that a generic Node builder also works end to end:
+`npm install` pulls the API's dependencies through `postinstall`, `npm run build`
+asks for devDependencies explicitly so `vite` is present, and `npm start` runs the
+API. That path is verified locally with `NODE_ENV=production`.
+
+Note the `postinstall` uses `cd backend && npm install`, not `npm --prefix backend
+install`: with `--prefix`, npm keeps the *root* as the lifecycle package, so the
+root postinstall re-triggers itself and recurses until it dies.
+
 ### If Railway keeps serving an old build
 
 A failed build does not take the service down - Railway keeps the last deployment
