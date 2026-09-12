@@ -37,31 +37,35 @@ copy them into `DB_*` aliases.
 | `ALLOW_BASIC_AUTH` | `false` | HTTP Basic sends credentials on every request; leave it off unless a tool genuinely needs it |
 | `SERVE_CLIENT` | `false` | Netlify serves the front end; the API only serves `/api` |
 
-### If the build fails on a missing file
+### The Dockerfile is at the repository root, deliberately
+
+Railway's current builder is **Railpack**, and it does not read `railway.json`'s
+`dockerfilePath` or `nixpacks.toml` - it inspects the project and generates its own
+plan (`railpack-plan.json`). Left to guess, it read the root `package.json`, saw a
+workspace, and emitted `COPY frontend/package.json` steps for an image that has
+nothing to do with the front end. That is what kept failing:
 
 ```
 copy frontend/package.json
 "/frontend/package.json": not found
 ```
 
-Railway's auto-detected builder reads the root `package.json`, sees a workspace and
-copies both manifests. There is deliberately **no `.dockerignore`** in this
-repository: it excluded `frontend` and made that file vanish from the build context,
-and it was buying nothing - `node_modules`, `dist`, `.env` and the uploads are all
-gitignored, so they are not in a git-sourced build context to begin with. The whole
+A `Dockerfile` at the repository root is what Railpack looks for, and finding one it
+uses it instead of guessing. So the API image lives at `/Dockerfile`, not
+`backend/Dockerfile`. Its `COPY` paths are root-relative because the build context is
+the repository root.
+
+There is also no `.dockerignore`: it once excluded `frontend` and made that manifest
+vanish, and it excluded nothing real - `node_modules`, `dist`, `.env` and the uploads
+are all gitignored, so they never reach a git-sourced context anyway. The whole
 tracked tree is 3.4 MB.
 
-`backend/Dockerfile` names what it copies, so a larger context costs the image
-nothing.
-
-The root scripts are written so a generic Node builder works end to end too:
+The root scripts still work standalone, in case a generic Node builder is ever used:
 `npm install` pulls the API's dependencies through `postinstall`, `npm run build`
 asks for devDependencies explicitly so `vite` is present, and `npm start` runs the
-API. Verified locally with `NODE_ENV=production`.
-
-Note the `postinstall` uses `cd backend && npm install`, not `npm --prefix backend
-install`: with `--prefix`, npm keeps the *root* as the lifecycle package, so the
-root postinstall re-triggers itself and recurses until it dies.
+API. Note `postinstall` uses `cd backend && npm install`, not `npm --prefix backend
+install` - with `--prefix`, npm keeps the *root* as the lifecycle package and the
+root postinstall re-triggers itself until it dies.
 
 ### If Railway keeps serving an old build
 

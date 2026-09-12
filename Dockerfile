@@ -1,10 +1,17 @@
 # JunubSoftFlow API — container image for Railway.
 #
-# The build context is the REPOSITORY ROOT (railway.json points here with
-# dockerfilePath: backend/Dockerfile), so every path below is root-relative.
-# That matters: a bare `COPY package.json` would pick up the root workspace
-# manifest, whose build script builds the front end - which is what made the
-# Nixpacks build fail with "vite: not found".
+# This lives at the REPOSITORY ROOT on purpose. Railway's current builder, Railpack,
+# does not read railway.json's dockerfilePath or nixpacks.toml - it auto-detects the
+# project and generates its own plan. A Dockerfile at the root is what it looks for,
+# and finding one it uses it instead of guessing.
+#
+# Guessing is what kept failing: Railpack read the root package.json, saw a workspace
+# and generated COPY steps for frontend/package.json, which is not something the API
+# image needs at all.
+#
+# Paths are root-relative because the context is the repository root. A bare
+# `COPY package.json` would pick up the root workspace manifest, whose build script
+# builds the front end - the original "vite: not found".
 #
 # Nothing here builds the front end. Netlify does that. This image is the API.
 
