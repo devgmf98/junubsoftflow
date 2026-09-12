@@ -10,6 +10,7 @@ const cors = require('cors');
 
 const db = require('./src/db');
 const { syncSchema } = require('./src/schema-sync');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
@@ -253,6 +254,31 @@ async function applySchema() {
   }
 }
 
+/** Create the first administrator only when an operator supplies a password. */
+async function ensureAdmin() {
+  const password = process.env.ADMIN_PASSWORD;
+  if (!password) return;
+  if (password.length < 8) {
+    console.error('  admin  ADMIN_PASSWORD must contain at least 8 characters; skipped');
+    return;
+  }
+
+  const email = (process.env.ADMIN_EMAIL || 'admin@softflow.com').trim().toLowerCase();
+  const existing = await db.one('SELECT id FROM users WHERE email = ?', [email]);
+  if (existing) {
+    console.log(`  admin  ${email} already exists`);
+    return;
+  }
+
+  const role = await db.one('SELECT id FROM roles WHERE slug = ?', ['administrator']);
+  await db.run(
+    `INSERT INTO users (name, email, password_hash, role, role_id, status)
+     VALUES (?, ?, ?, 'admin', ?, 'active')`,
+    ['Administrator', email, bcrypt.hashSync(password, 12), role ? role.id : null]
+  );
+  console.log(`  admin  created ${email}`);
+}
+
 /**
  * Connect, sync the schema, and say what happened. Returns false if the database
  * could not be reached.
@@ -268,6 +294,11 @@ async function connectAndSync() {
     return false;
   }
   await applySchema();
+  try {
+    await ensureAdmin();
+  } catch (err) {
+    console.error('  admin  bootstrap failed:', err.message);
+  }
   return true;
 }
 
@@ -311,8 +342,7 @@ async function start() {
     console.log(`  api    http://localhost:${PORT}/api`);
     console.log(`  cors   ${CLIENT_ORIGIN}`);
     console.log('');
-    console.log('  admin  admin@softflow.com / admin123');
-    console.log('  user   john@example.com   / user123');
+    if (process.env.ADMIN_PASSWORD) console.log(`  admin  ${process.env.ADMIN_EMAIL || 'admin@softflow.com'}`);
     console.log('');
   });
 }

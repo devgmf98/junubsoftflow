@@ -29,6 +29,8 @@ copy them into `DB_*` aliases.
 | `NODE_ENV` | `production` | Switches the session cookie to `SameSite=None; Secure`, without which the browser will not send it from Netlify |
 | `CLIENT_ORIGIN` | `https://junubsoftflow.netlify.app` | The only origin CORS accepts. Comma-separate to allow more (e.g. a preview domain) |
 | `SESSION_SECRET` | a long random string | Signs the session cookie. Changing it logs everyone out |
+| `ADMIN_EMAIL` | `admin@softflow.com` or your chosen address | First-admin account email |
+| `ADMIN_PASSWORD` | a strong password, 8+ characters | Creates the first admin once at startup; never use `admin123` |
 | `PUBLIC_URL` | `https://junubsoftflow.netlify.app` | Where links inside emails point |
 | `SMTP_HOST` | `smtp.gmail.com` | Leave unset and the app sends nothing and says so |
 | `SMTP_PORT` | `587` | |
@@ -208,9 +210,9 @@ destructive on a live one.
 
 ### Change the seeded password immediately
 
-`seed.js` creates `admin@softflow.com` / `admin123`. On a public site that is a
-published credential: sign in and change it, or create your own administrator and
-delete the seeded one, before doing anything else.
+For a fresh hosted database, set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in Railway.
+The API creates that administrator once after schema sync and never overwrites an
+existing account. The full seed remains a destructive demo-data reset for local use.
 
 Seeding also inserts demo products, customers and orders. That is convenient for a
 first look and wrong for a real storefront - delete what you do not want.
