@@ -28,6 +28,8 @@ app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
 /* ---------- sessions in MySQL ---------- */
+const CLEAR_EXPIRED_EVERY = 900000;
+
 const sessionStore = new MySQLStore({
   host: db.config.host,
   port: db.config.port,
@@ -35,10 +37,27 @@ const sessionStore = new MySQLStore({
   password: db.config.password,
   database: db.config.database,
   createDatabaseTable: true,
-  clearExpired: true,
-  checkExpirationInterval: 900000,
+  // the library's own sweep is replaced below, so do not start it here
+  clearExpired: false,
   expiration: 1000 * 60 * 60 * 24 * 7,
 });
+
+/**
+ * Sweep expired sessions ourselves.
+ *
+ * express-mysql-session schedules clearExpiredSessions() with setInterval and never
+ * catches the promise it returns (index.js:401). The sweep rethrows on failure, so a
+ * database that is briefly unreachable - restarted, failed over, XAMPP toggled - became
+ * an unhandled rejection and took the whole API process down with it.
+ *
+ * Tidying old rows is maintenance: it should be logged when it fails, not fatal. The
+ * timer is unref'd so it never keeps the process alive on its own.
+ */
+setInterval(() => {
+  sessionStore.clearExpiredSessions().catch((err) => {
+    console.error('[session] could not clear expired sessions:', err.code || err.message);
+  });
+}, CLEAR_EXPIRED_EVERY).unref();
 
 app.use(
   session({
