@@ -64,40 +64,39 @@ when the schema does not:
 `schema: "not-migrated"` means the database is connected but empty - the
 migration below has not been run. The server prints the same warning at startup.
 
-### First deploy: create the schema
+### The schema creates itself
 
-The container does not migrate on start-up, because `db/schema.sql` **drops every
-table before recreating it**. Running it automatically would wipe the database on
-every deploy. It is a first-run tool, run deliberately, once.
+The API brings the database up to `db/schema.sql` every time it starts. A missing
+table is created; a column that `schema.sql` has and the table does not is added.
+Nothing is ever dropped, and an existing column is never retyped - those are the
+operations that lose data, and a start-up routine has no business guessing whether
+one is safe. A column whose type genuinely must change needs a person and a backup.
 
-`db/migrate.js` takes its connection from `src/db.js`, so it understands Railway's
-`MYSQL*` variables, and it rewrites the `CREATE DATABASE ... USE ...` header in
-`schema.sql` to whatever database is configured - Railway names yours `railway`,
-not `junubsoftflow`, and the user usually has no CREATE DATABASE grant.
+So a fresh Railway database needs no migration step: deploy, and the 23 tables
+appear. `GET /api/health` reports `schema: "ready"` once they do.
 
-**From your own machine, over Railway's public proxy** (simplest):
+This is deliberately *not* `db/migrate.js` on boot. That script applies
+`schema.sql` verbatim, and the file drops all 23 tables before recreating them -
+run on every deploy it would wipe production each time. `migrate.js` remains the
+reset tool, for a first run or a deliberate rebuild.
 
-Railway → MySQL service → Variables → copy `MYSQL_PUBLIC_URL`. It looks like
-`mysql://root:PASSWORD@shinkansen.proxy.rlwy.net:12345/railway`. Then, from
-`backend/`:
+Set `AUTO_SCHEMA_SYNC=false` to manage the schema by hand.
+
+### Seed data is still manual
+
+Creating the tables does not fill them. Without seeding there is **no administrator
+account**, so run this once against the deployed database - over Railway's public
+proxy (MySQL service → Variables → `MYSQL_PUBLIC_URL`), from `backend/`:
 
 ```bash
-DB_HOST=shinkansen.proxy.rlwy.net DB_PORT=12345 DB_USER=root DB_PASSWORD=PASSWORD DB_NAME=railway node db/migrate.js && DB_HOST=shinkansen.proxy.rlwy.net DB_PORT=12345 DB_USER=root DB_PASSWORD=PASSWORD DB_NAME=railway node db/seed.js
+DB_HOST=<host>.proxy.rlwy.net DB_PORT=<port> DB_USER=root DB_PASSWORD=<password> DB_NAME=railway node db/seed.js
 ```
 
-The private `*.railway.internal` host only resolves inside Railway's network, so
-the public proxy is what works from outside.
+The private `*.railway.internal` host only resolves inside Railway's network, which
+is why the public proxy is the one to use from outside.
 
-**Or as a one-off inside Railway**: temporarily set the service's start command to
-
-```
-node db/migrate.js && node db/seed.js && node server.js
-```
-
-deploy once, then **put it back to `node server.js`** - otherwise every future
-deploy wipes the database.
-
-Confirm with `GET /api/health`: `schema` flips from `not-migrated` to `ready`.
+`seed.js` **truncates every table it populates**. It is safe on a new database and
+destructive on a live one.
 
 ### Change the seeded password immediately
 

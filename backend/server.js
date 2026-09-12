@@ -9,6 +9,7 @@ const MySQLStore = require('express-mysql-session')(session);
 const cors = require('cors');
 
 const db = require('./src/db');
+const { syncSchema } = require('./src/schema-sync');
 
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
@@ -202,13 +203,30 @@ async function start() {
     process.exit(1);
   }
 
-  // A schema that was never migrated connects fine and then fails every query, which
-  // surfaces as an opaque 500. Name it here instead.
-  try {
-    await db.query('SELECT 1 FROM settings LIMIT 1');
-  } catch {
-    console.error('  schema NOT migrated - every request will return 500.');
-    console.error('         run: node db/migrate.js && node db/seed.js');
+  /**
+   * Bring the database up to db/schema.sql before serving anything.
+   *
+   * Additive only - it creates missing tables and missing columns, and never drops
+   * or retypes. That distinction is the whole reason this is not just `migrate.js`
+   * on boot: schema.sql drops all 23 tables before recreating them, so running the
+   * file itself here would wipe the database on every single deploy.
+   *
+   * Set AUTO_SCHEMA_SYNC=false to manage the schema by hand instead.
+   */
+  if (process.env.AUTO_SCHEMA_SYNC !== 'false') {
+    try {
+      await syncSchema(db);
+    } catch (err) {
+      console.error('  schema sync FAILED:', err.message);
+      console.error('         the API will start, but requests touching missing tables will fail.');
+    }
+  } else {
+    try {
+      await db.query('SELECT 1 FROM settings LIMIT 1');
+    } catch {
+      console.error('  schema NOT migrated and AUTO_SCHEMA_SYNC=false - requests will return 500.');
+      console.error('         run: node db/migrate.js && node db/seed.js');
+    }
   }
 
   if (IS_PROD && ALLOWED_ORIGINS.some((o) => /localhost|127\.0\.0\.1/.test(o))) {
