@@ -37,6 +37,29 @@ copy them into `DB_*` aliases.
 | `ALLOW_BASIC_AUTH` | `false` | HTTP Basic sends credentials on every request; leave it off unless a tool genuinely needs it |
 | `SERVE_CLIENT` | `false` | Netlify serves the front end; the API only serves `/api` |
 
+### Two Dockerfiles, because the build context depends on a setting
+
+|  | Context | Used when |
+|---|---|---|
+| `/Dockerfile` | repository root | Root Directory is blank |
+| `/backend/Dockerfile` | `backend/` | Root Directory is `backend` |
+
+They build the same image. Which one applies depends on the service's **Root
+Directory**, which this repository cannot see, so both are kept rather than
+guessing.
+
+That setting is worth checking first when a build fails on a missing file. With
+Root Directory set to `backend`, the context is `backend/` - and `frontend/`, plus
+a Dockerfile at the repository root, are outside it entirely. An auto-detected
+build plan that tries to copy `frontend/package.json` then fails with exactly:
+
+```
+"/frontend/package.json": not found
+```
+
+The file is committed and perfectly healthy; it is simply not inside the context
+the build was given.
+
 ### The Dockerfile is at the repository root, deliberately
 
 Railway's current builder is **Railpack**, and it does not read `railway.json`'s
