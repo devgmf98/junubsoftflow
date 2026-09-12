@@ -30,9 +30,44 @@ const IS_PROD = process.env.NODE_ENV === 'production';
 const CROSS_SITE = IS_PROD || process.env.CROSS_SITE_COOKIE === 'true';
 
 /* ---------- CORS (credentials on, so the session cookie travels) ---------- */
+
+const ALLOWED_ORIGINS = CLIENT_ORIGIN.split(',').map((o) => o.trim()).filter(Boolean);
+
+/**
+ * Netlify gives every branch and pull request its own hostname
+ * (deploy-preview-4--site.netlify.app). Listing them is impossible, so any subdomain
+ * of an allowed netlify.app site is accepted too.
+ */
+function originAllowed(origin) {
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  return ALLOWED_ORIGINS.some((allowed) => {
+    const m = allowed.match(/^https:\/\/([a-z0-9-]+)\.netlify\.app$/i);
+    return m && new RegExp(`^https://[a-z0-9-]+--${m[1]}\.netlify\.app$`, 'i').test(origin || '');
+  });
+}
+
+const rejectedOrigins = new Set();
+
 app.use(
   cors({
-    origin: CLIENT_ORIGIN.split(',').map((o) => o.trim()),
+    origin(origin, callback) {
+      // no Origin header at all: curl, Postman, server-to-server. Not a browser, so
+      // there is no cross-site risk to guard against here.
+      if (!origin) return callback(null, true);
+      if (originAllowed(origin)) return callback(null, true);
+
+      // The cors package answers a rejected preflight with 204 and simply omits
+      // Access-Control-Allow-Origin, which reaches the browser as an opaque CORS
+      // error with nothing in the server log. Say it out loud, once per origin.
+      if (!rejectedOrigins.has(origin)) {
+        rejectedOrigins.add(origin);
+        console.error(
+          `[cors] refused ${origin} - CLIENT_ORIGIN is ${JSON.stringify(CLIENT_ORIGIN)}. ` +
+          "Set CLIENT_ORIGIN to the address the front end is served from."
+        );
+      }
+      return callback(null, false);
+    },
     credentials: true,
   })
 );
@@ -95,18 +130,36 @@ const { attachBasicAuth, basicAuthAllowed } = require('./src/middleware/auth');
 app.use('/api', attachBasicAuth);
 
 /* ---------- routes ---------- */
+/**
+ * Liveness, plus a separate readiness verdict.
+ *
+ * A platform health check must not depend on application tables: if the schema has
+ * not been migrated, a table-backed check reports the container unhealthy and the
+ * deploy restart-loops, hiding the real problem. So a reachable database answers 200
+ * either way, and `schema` says whether the tables are actually there.
+ */
 app.get('/api/health', async (req, res) => {
   try {
     await db.query('SELECT 1');
-    res.json({
-      ok: true,
-      service: 'softflow-api',
-      database: db.config.database,
-      basicAuth: basicAuthAllowed(),
-    });
   } catch (err) {
-    res.status(503).json({ ok: false, error: err.message });
+    return res.status(503).json({ ok: false, database: 'unreachable', error: err.code || err.message });
   }
+
+  const out = {
+    ok: true,
+    service: 'softflow-api',
+    database: db.config.database,
+    basicAuth: basicAuthAllowed(),
+    uptime: Math.round(process.uptime()),
+    schema: 'ready',
+  };
+  try {
+    await db.query('SELECT 1 FROM settings LIMIT 1');
+  } catch {
+    out.schema = 'not-migrated';
+    out.hint = 'Run: node db/migrate.js && node db/seed.js';
+  }
+  res.json(out);
 });
 
 app.use('/api/auth', require('./src/routes/auth'));
@@ -147,6 +200,20 @@ async function start() {
     console.error('  db     FAILED to connect:', e.message);
     console.error('         check backend/.env and that MySQL is running.');
     process.exit(1);
+  }
+
+  // A schema that was never migrated connects fine and then fails every query, which
+  // surfaces as an opaque 500. Name it here instead.
+  try {
+    await db.query('SELECT 1 FROM settings LIMIT 1');
+  } catch {
+    console.error('  schema NOT migrated - every request will return 500.');
+    console.error('         run: node db/migrate.js && node db/seed.js');
+  }
+
+  if (IS_PROD && ALLOWED_ORIGINS.some((o) => /localhost|127\.0\.0\.1/.test(o))) {
+    console.error(`  cors   CLIENT_ORIGIN is ${JSON.stringify(CLIENT_ORIGIN)} in production.`);
+    console.error('         a browser on the real front end will be refused. Set it to that address.');
   }
 
   // 0.0.0.0, not localhost: inside a container the health check arrives from outside

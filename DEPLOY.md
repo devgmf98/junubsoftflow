@@ -37,6 +37,33 @@ copy them into `DB_*` aliases.
 | `ALLOW_BASIC_AUTH` | `false` | HTTP Basic sends credentials on every request; leave it off unless a tool genuinely needs it |
 | `SERVE_CLIENT` | `false` | Netlify serves the front end; the API only serves `/api` |
 
+### If the browser reports a CORS error
+
+`No 'Access-Control-Allow-Origin' header is present` means the API refused the
+origin. The `cors` package answers a rejected preflight with **204 and no
+`Access-Control-Allow-Origin`**, which reaches the browser as an opaque failure -
+so check the Railway logs, where the refusal is now named:
+
+```
+[cors] refused https://junubsoftflow.netlify.app - CLIENT_ORIGIN is "http://localhost:5173".
+```
+
+The fix is `CLIENT_ORIGIN=https://junubsoftflow.netlify.app` on the service.
+Netlify deploy previews (`deploy-preview-7--junubsoftflow.netlify.app`) are
+accepted automatically once the main site is allowed.
+
+### If every request returns 500
+
+`GET /api/health` answers without touching application tables, so it works even
+when the schema does not:
+
+```json
+{ "ok": true, "schema": "not-migrated", "hint": "Run: node db/migrate.js && node db/seed.js" }
+```
+
+`schema: "not-migrated"` means the database is connected but empty - the
+migration below has not been run. The server prints the same warning at startup.
+
 ### First deploy
 
 The container does not create the schema. Once the MySQL plugin is attached, run
