@@ -93,6 +93,35 @@ If a deploy still fails, check in the dashboard that the service **Builder** is
 Dockerfile (or that `nixpacks.toml` is being picked up), that the watched branch
 is `main`, and that auto-deploy is on.
 
+### "Application not found", which the browser calls a CORS error
+
+```
+Access to fetch at '.../api/shop/settings' has been blocked by CORS policy:
+No 'Access-Control-Allow-Origin' header is present
+```
+
+Check the API directly before touching any CORS setting:
+
+```bash
+curl https://junubsoftflow.up.railway.app/api/health
+```
+
+`{"status":"error","code":404,"message":"Application not found"}` means **there is
+no application running** - a failed deploy, or none yet. The platform edge answers
+404, a 404 carries no `Access-Control-Allow-Origin`, and the browser reports that as
+a CORS failure. The CORS message is a symptom; nothing is wrong with CORS.
+
+The API used to make this worse by calling `process.exit(1)` when the database was
+unreachable at boot, before it started listening. A missing database variable then
+left no deployment at all, so `/api/health` - the one endpoint that would have named
+the problem - was gone too. It now starts regardless, answers **200** on
+`/api/health` with `database: "unreachable"` and the reason in the body, retries the
+connection every 15 seconds, and returns **503** from data routes until it recovers.
+
+Liveness is the status code, readiness is the body. That distinction matters: if
+`/api/health` returned 503 while the database was down, the platform health check
+would tear the deployment down and take the diagnosis with it.
+
 ### If the browser reports a CORS error
 
 `No 'Access-Control-Allow-Origin' header is present` means the API refused the

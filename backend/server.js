@@ -140,10 +140,31 @@ app.use('/api', attachBasicAuth);
  * either way, and `schema` says whether the tables are actually there.
  */
 app.get('/api/health', async (req, res) => {
+  // 200 whenever the process is alive, whatever the database is doing.
+  //
+  // The platform health check reads the status code. If an unreachable database
+  // answered 503 here, the deploy would be marked unhealthy and torn down - and the
+  // one endpoint that names the problem would disappear with it. Liveness is the
+  // status code; readiness is the body.
+  let reachable = true;
+  let dbError = null;
   try {
     await db.query('SELECT 1');
   } catch (err) {
-    return res.status(503).json({ ok: false, database: 'unreachable', error: err.code || err.message });
+    reachable = false;
+    dbError = err.code || err.message;
+  }
+
+  if (!reachable) {
+    return res.json({
+      ok: false,
+      service: 'softflow-api',
+      database: 'unreachable',
+      error: dbError,
+      uptime: Math.round(process.uptime()),
+      commit: (process.env.RAILWAY_GIT_COMMIT_SHA || 'unknown').slice(0, 7),
+      hint: 'check the database variables on the service, and that the database is running',
+    });
   }
 
   const out = {
@@ -186,8 +207,14 @@ app.use((req, res) => {
 });
 
 /* ---------- errors ---------- */
+const DB_DOWN = new Set(['ECONNREFUSED', 'PROTOCOL_CONNECTION_LOST', 'ER_ACCESS_DENIED_ERROR', 'ENOTFOUND', 'ETIMEDOUT']);
+
 app.use((err, req, res, _next) => {
-  const status = err.status || (String(err.code || '').startsWith('LIMIT_') ? 400 : 500);
+  // "the database is away" is a 503, not a 500: it is temporary, and saying so lets
+  // a caller retry rather than treat the request itself as malformed
+  const code = String(err.code || '');
+  const status = err.status
+    || (code.startsWith('LIMIT_') ? 400 : DB_DOWN.has(code) ? 503 : 500);
   if (status >= 500) console.error(err);
   res.status(status).json({
     error:
@@ -198,40 +225,78 @@ app.use((err, req, res, _next) => {
 });
 
 /* ---------- boot ---------- */
-async function start() {
-  try {
-    await db.query('SELECT 1');
-    console.log(`  db     connected -> ${db.config.database}@${db.config.host}:${db.config.port}`);
-  } catch (e) {
-    console.error('  db     FAILED to connect:', e.message);
-    console.error('         check backend/.env and that MySQL is running.');
-    process.exit(1);
-  }
-
-  /**
-   * Bring the database up to db/schema.sql before serving anything.
-   *
-   * Additive only - it creates missing tables and missing columns, and never drops
-   * or retypes. That distinction is the whole reason this is not just `migrate.js`
-   * on boot: schema.sql drops all 23 tables before recreating them, so running the
-   * file itself here would wipe the database on every single deploy.
-   *
-   * Set AUTO_SCHEMA_SYNC=false to manage the schema by hand instead.
-   */
-  if (process.env.AUTO_SCHEMA_SYNC !== 'false') {
-    try {
-      await syncSchema(db);
-    } catch (err) {
-      console.error('  schema sync FAILED:', err.message);
-      console.error('         the API will start, but requests touching missing tables will fail.');
-    }
-  } else {
+/**
+ * Bring the database up to db/schema.sql.
+ *
+ * Additive only - it creates missing tables and missing columns, and never drops or
+ * retypes. That distinction is the whole reason this is not just `migrate.js` on
+ * boot: schema.sql drops all 23 tables before recreating them, so running the file
+ * itself here would wipe the database on every single deploy.
+ *
+ * Set AUTO_SCHEMA_SYNC=false to manage the schema by hand instead.
+ */
+async function applySchema() {
+  if (process.env.AUTO_SCHEMA_SYNC === 'false') {
     try {
       await db.query('SELECT 1 FROM settings LIMIT 1');
     } catch {
       console.error('  schema NOT migrated and AUTO_SCHEMA_SYNC=false - requests will return 500.');
       console.error('         run: node db/migrate.js && node db/seed.js');
     }
+    return;
+  }
+  try {
+    await syncSchema(db);
+  } catch (err) {
+    console.error('  schema sync FAILED:', err.message);
+    console.error('         the API will start, but requests touching missing tables will fail.');
+  }
+}
+
+/**
+ * Connect, sync the schema, and say what happened. Returns false if the database
+ * could not be reached.
+ */
+async function connectAndSync() {
+  try {
+    await db.query('SELECT 1');
+    console.log(`  db     connected -> ${db.config.database}@${db.config.host}:${db.config.port}`);
+  } catch (e) {
+    console.error(`  db     FAILED to connect to ${db.config.database}@${db.config.host}:${db.config.port}`);
+    console.error(`         ${e.code || e.message}`);
+    console.error('         check the database variables, and that the database is running.');
+    return false;
+  }
+  await applySchema();
+  return true;
+}
+
+async function start() {
+  /*
+   * A database that is unreachable at boot must not stop the process.
+   *
+   * This used to exit(1) here, before app.listen. The effect on a hosted platform is
+   * that a missing database variable, or a database still starting up, leaves no
+   * healthy deployment at all - the edge answers "Application not found", and even
+   * /api/health is gone, so the one endpoint that could name the problem is the one
+   * you cannot reach. A browser then reports it as a CORS failure, because a 404
+   * from the edge carries no Access-Control-Allow-Origin, which sends you looking in
+   * entirely the wrong place.
+   *
+   * So: serve regardless, report the truth on /api/health, and keep trying.
+   */
+  const connected = await connectAndSync();
+
+  if (!connected) {
+    console.error('  db     starting anyway - /api/health will report the failure');
+    const RETRY_MS = 15000;
+    const retry = setInterval(async () => {
+      if (await connectAndSync()) {
+        console.log('  db     recovered');
+        clearInterval(retry);
+      }
+    }, RETRY_MS);
+    retry.unref();
   }
 
   if (IS_PROD && ALLOWED_ORIGINS.some((o) => /localhost|127\.0\.0\.1/.test(o))) {
