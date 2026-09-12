@@ -1,0 +1,22 @@
+# Belt and braces for Railway.
+#
+# railway.json already selects the Dockerfile, which builds the API alone. If a
+# service is pinned to Nixpacks in the dashboard that file is ignored, and Nixpacks
+# auto-detects the ROOT package.json - whose build script builds the FRONT END.
+# vite is a devDependency, so a production install omits it and the build dies with
+# "vite: not found".
+#
+# Netlify builds the front end. This service is the API, and nothing else.
+
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+
+[phases.install]
+cmds = ["npm ci --omit=dev --no-audit --no-fund --prefix backend"]
+
+# No build step: the API is plain JavaScript, there is nothing to compile.
+[phases.build]
+cmds = []
+
+[start]
+cmd = "node backend/server.js"

@@ -37,6 +37,32 @@ copy them into `DB_*` aliases.
 | `ALLOW_BASIC_AUTH` | `false` | HTTP Basic sends credentials on every request; leave it off unless a tool genuinely needs it |
 | `SERVE_CLIENT` | `false` | Netlify serves the front end; the API only serves `/api` |
 
+### If Railway keeps serving an old build
+
+A failed build does not take the service down - Railway keeps the last deployment
+that succeeded running. So "my fix is not working" and "my fix never built" look
+identical from outside. `GET /api/health` reports the commit it is actually
+running:
+
+```json
+{ "commit": "bd3daa8", "schemaSync": "enabled", "schema": "ready" }
+```
+
+If that does not match the tip of `main`, the build is failing or the service is
+not watching this branch. The historical cause was `vite: not found`:
+
+Nixpacks auto-detects the **root** `package.json`, whose build script builds the
+front end, and `vite` is a devDependency that a production install omits. Netlify
+builds the front end; this service is the API. Three things now prevent it:
+
+- `railway.json` selects `backend/Dockerfile`, which has no build step at all
+- `nixpacks.toml` builds only `backend/` if the service is pinned to Nixpacks
+- the root build script installs devDependencies explicitly, so it works anyway
+
+If a deploy still fails, check in the dashboard that the service **Builder** is
+Dockerfile (or that `nixpacks.toml` is being picked up), that the watched branch
+is `main`, and that auto-deploy is on.
+
 ### If the browser reports a CORS error
 
 `No 'Access-Control-Allow-Origin' header is present` means the API refused the

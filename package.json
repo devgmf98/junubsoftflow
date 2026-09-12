@@ -10,7 +10,7 @@
     "seed": "npm --prefix backend run seed",
     "dev:api": "npm --prefix backend run dev",
     "dev:web": "npm --prefix frontend run dev",
-    "build": "npm --prefix frontend run build",
+    "build": "npm --prefix frontend install --include=dev --no-audit --no-fund && npm --prefix frontend run build",
     "start": "npm --prefix backend start"
   },
   "license": "MIT"
