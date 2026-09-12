@@ -34,8 +34,8 @@ JunubSoftflow/
 ## Setup
 
 ```bash
-npm run install:all     # install backend + frontend dependencies
-npm run setup           # create the schema and seed demo data
+npm --prefix backend install && npm --prefix frontend install
+npm --prefix backend run setup     # create the schema and seed demo data
 ```
 
 Database credentials live in `backend/.env`:
@@ -53,8 +53,8 @@ DB_NAME=junubsoftflow
 Two processes, in separate terminals:
 
 ```bash
-npm run dev:api         # http://localhost:4000  (API)
-npm run dev:web         # http://localhost:5173  (app)
+npm --prefix backend run dev       # http://localhost:4000  (API)
+npm --prefix frontend run dev      # http://localhost:5173  (app)
 ```
 
 Open **http://localhost:5173**. Vite proxies `/api` to the backend, so the session
@@ -121,13 +121,24 @@ and are restricted to customers who actually bought the product.
 `support_tickets`, `contact_messages`, `newsletter_subscribers`, `activity_log`,
 `settings` — plus a `sessions` table created automatically by the session store.
 
-Re-run `npm run setup` at any time to reset to the seeded demo dataset.
+Re-run `npm --prefix backend run setup` at any time to reset to the seeded demo
+dataset. Note the migration refuses to run against a database that already holds
+data unless you pass `--force`, because it drops every table first.
 
 ## Production build
 
 ```bash
-npm run build           # builds frontend/dist
+npm --prefix frontend run build    # builds frontend/dist
 ```
 
 Set `SERVE_CLIENT=true` in `backend/.env` and the API will serve the built app,
 so a single process handles both.
+
+## Why there is no root package.json
+
+The two halves are built by different hosts - Netlify builds `frontend/` from
+`netlify.toml`, Railway builds the API from the root `Dockerfile` - so a root
+manifest served only local convenience. It also made Railway's builder treat the
+repository as a JavaScript workspace and try to install the front end into the API
+image, which failed the deploy. Run the commands above against each package
+directly instead.
