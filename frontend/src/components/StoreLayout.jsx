@@ -202,14 +202,26 @@ export default function StoreLayout() {
             </button>
 
             {user ? (
-              <Link to={isAdmin ? '/admin' : '/account'} className="btn btn-primary btn-sm">
-                <Icon name="user" /> {isAdmin ? 'Admin' : 'My Account'}
+              <Link
+                to={isAdmin ? '/admin' : '/account'}
+                className="btn btn-primary btn-sm nav-account"
+                title={isAdmin ? 'Admin' : 'My Account'}
+                aria-label={isAdmin ? 'Admin' : 'My Account'}
+              >
+                <Icon name="user" />
+                <span className="btn-label">{isAdmin ? 'Admin' : 'My Account'}</span>
               </Link>
             ) : (
               // One door in. "Sign in" / "Sign up" side by side read as the same
               // word; the sign-in page already offers "Create one free" underneath.
-              <Link to="/login" className="btn btn-primary btn-sm">
-                <Icon name="user" /> Sign in
+              <Link
+                to="/login"
+                className="btn btn-primary btn-sm nav-account"
+                title="Sign in"
+                aria-label="Sign in"
+              >
+                <Icon name="user" />
+                <span className="btn-label">Sign in</span>
               </Link>
             )}
 

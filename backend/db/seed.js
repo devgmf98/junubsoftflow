@@ -8,6 +8,19 @@
  */
 
 require('dotenv').config();
+
+/**
+ * The administrator this seed creates.
+ *
+ * The password used to be the literal 'admin123', which is published in this
+ * repository - fine for a demo on a laptop, a handed-out credential the moment the
+ * store is reachable from the internet. Supply ADMIN_PASSWORD to choose one, or a
+ * strong random one is generated and printed once.
+ */
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@softflow.com';
+const GENERATED = !process.env.ADMIN_PASSWORD;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
+  || require('crypto').randomBytes(12).toString('base64url');
 const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
@@ -372,7 +385,7 @@ async function seed() {
     await db.run(
       `INSERT INTO users (name, email, password_hash, role, role_id, phone, company, country, city, status, last_login_at, created_at)
        VALUES (?, ?, ?, 'admin', ?, '+211 920 000 111', 'SoftFlow', 'South Sudan', 'Juba', 'active', NOW(), ?)`,
-      ['Admin', 'admin@softflow.com', hash('admin123'), roleId.administrator, fmtDT(daysAgo(400))]
+      ['Admin', ADMIN_EMAIL, hash(ADMIN_PASSWORD), roleId.administrator, fmtDT(daysAgo(400))]
     )
   ).insertId;
 
@@ -690,8 +703,13 @@ async function seed() {
   console.log(`> settings: ${settingCount}`);
 
   console.log('\nSeed complete.');
-  console.log('  admin login:  admin@softflow.com / admin123');
-  console.log('  customer:     john@example.com   / user123');
+  console.log(`  admin login:  ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`);
+  if (GENERATED) {
+    console.log('');
+    console.log('  ^ generated for this seed and shown once. Save it now, or set');
+    console.log('    ADMIN_PASSWORD before seeding to choose your own.');
+  }
+  console.log('  customer:     john@example.com   / user123   (demo data)');
 
   await db.pool.end();
 }

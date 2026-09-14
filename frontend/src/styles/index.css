@@ -1204,8 +1204,12 @@ table.data .nowrap { white-space: nowrap; }
     display: grid; place-items: center; width: 36px; height: 36px;
     border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer;
   }
-  .nav-inner { justify-content: space-between; gap: 10px; }
-  .nav-right { gap: 10px; }
+  /* 24px each side is a lot of a 360px screen, and 66px is a tall bar to give up
+     above the fold on a phone. Both come in, and the drawer follows the new height. */
+  .container { padding: 0 16px; }
+  .nav-inner { justify-content: space-between; gap: 10px; height: 58px; }
+  .nav-links { top: 58px; }
+  .nav-right { gap: 8px; }
   .topstrip { display: none; }
 
   /* Menu button leads, then just the mark. The wordmark and tagline wrapped onto
@@ -1219,11 +1223,15 @@ table.data .nowrap { white-space: nowrap; }
   .nav-right .nav-icon:has(.lucide-search),
   .nav-search { display: none; }
   .nav-toggle { margin-right: auto; }
-  /* match the height of the other controls in the bar - it was 31px against 36px */
-  .nav-right > .btn {
-    height: 36px; padding: 0 14px; border-radius: 10px; font-size: 13px;
+  /* A circle, matching the cart and menu buttons either side of it. The label is
+     dropped rather than shrunk - "My Account" wrapped and stretched the bar - and
+     the button keeps its aria-label, so it still announces itself. */
+  .nav-right > .btn.nav-account {
+    width: 38px; height: 38px; padding: 0; border-radius: 50%;
+    display: grid; place-items: center; flex: none;
   }
-  .nav-right > .btn svg { width: 16px; height: 16px; }
+  .nav-right > .btn.nav-account .btn-label { display: none; }
+  .nav-right > .btn svg { width: 17px; height: 17px; }
 
   .nav-links-search {
     display: flex; align-items: center; gap: 9px;
