@@ -203,19 +203,28 @@ export function platformAccent(value) {
 export const MOBILE_PLATFORMS = ['android', 'ios', 'mobile', 'both'];
 
 /**
- * What kind of mobile build a demo carries - "APK" for Android, "IPA" for iOS.
- * The uploaded filename is the authority, because a demo on 'mobile' or 'both'
- * could be either; the platform only decides before anything is attached.
+ * The two build slots a demo has. They are independent: a demo can ship the
+ * Android and the iOS build at once, and uploading one never disturbs the other.
+ *
+ * `path` is the URL segment its routes live under, and matches the server's
+ * DEMO_BUILD_SLOTS. Screens map over this rather than naming either slot, so
+ * neither one can drift into being treated as "the" build again.
  */
-export function buildFormat(demo = {}) {
-  const name = String(demo.apkName || '').toLowerCase();
-  if (name.endsWith('.ipa')) return 'IPA';
-  if (name.endsWith('.apk')) return 'APK';
-  return demo.platform === 'ios' ? 'IPA' : 'APK';
-}
+export const DEMO_BUILDS = [
+  { os: 'android', path: 'apk', format: 'APK', ext: '.apk', title: 'Android build', icon: 'android', versionKey: 'apkVersion' },
+  { os: 'ios', path: 'ipa', format: 'IPA', ext: '.ipa', title: 'iOS build', icon: 'apple', versionKey: 'ipaVersion' },
+];
 
-/** The store this build sidesteps, for install instructions. */
-export const buildOs = (demo) => (buildFormat(demo) === 'IPA' ? 'iOS' : 'Android');
+/** The slot descriptor merged with whatever the demo has attached to it, or null. */
+export const demoBuild = (demo, os) => {
+  const slot = DEMO_BUILDS.find((b) => b.os === os);
+  const got = (demo?.builds || []).find((b) => b.os === os);
+  return got ? { ...slot, ...got } : null;
+};
+
+/** Every build a demo actually carries, in slot order. */
+export const attachedBuilds = (demo) =>
+  DEMO_BUILDS.map((slot) => demoBuild(demo, slot.os)).filter(Boolean);
 
 /* ---------- payment methods ---------- */
 

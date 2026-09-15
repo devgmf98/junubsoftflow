@@ -246,6 +246,55 @@ const DEMO_PLATFORMS = ['web', 'desktop', 'windows', 'mac', 'linux', 'android', 
 const MOBILE_PLATFORMS = ['android', 'ios', 'mobile', 'both'];
 
 /**
+ * A demo's two build slots, held independently: a demo can ship the Android and
+ * the iOS build at once, and uploading one never touches the other.
+ *
+ * The Android slot lives in the apk_* columns because it predates iOS support, and
+ * renaming live columns is a retype that src/schema-sync.js will not perform. Every
+ * route and screen maps over this list rather than naming columns, so the asymmetry
+ * stops here.
+ */
+const DEMO_BUILD_SLOTS = [
+  {
+    os: 'android',
+    path: 'apk',
+    format: 'APK',
+    ext: '.apk',
+    title: 'Android build',
+    versionKey: 'apkVersion',
+    cols: { file: 'apk_file', name: 'apk_name', size: 'apk_size', version: 'apk_version', at: 'apk_uploaded_at' },
+  },
+  {
+    os: 'ios',
+    path: 'ipa',
+    format: 'IPA',
+    ext: '.ipa',
+    title: 'iOS build',
+    versionKey: 'ipaVersion',
+    cols: { file: 'ios_file', name: 'ios_name', size: 'ios_size', version: 'ios_version', at: 'ios_uploaded_at' },
+  },
+];
+
+/**
+ * The builds actually attached to a demo row, shaped for the API.
+ * Pass `exists` (upload.apkPath) to have a file that has gone missing from storage
+ * flagged rather than offered as a download.
+ */
+function demoBuilds(row, exists) {
+  return DEMO_BUILD_SLOTS.filter((slot) => row[slot.cols.file]).map((slot) => ({
+    os: slot.os,
+    path: slot.path,
+    format: slot.format,
+    title: slot.title,
+    name: row[slot.cols.name],
+    size: Number(row[slot.cols.size]) || 0,
+    version: row[slot.cols.version] || null,
+    uploadedAt: row[slot.cols.at],
+    ...(exists ? { missing: !exists(row[slot.cols.file]) } : {}),
+  }));
+}
+
+/**
  * Product SKU derived from the name: three letters per word, digits kept whole.
  *   "Microsoft Office 365" -> SF-MICOFF365
  *   "Adobe Photoshop"      -> SF-ADOPHO
@@ -339,4 +388,6 @@ module.exports = {
   PRICING_MODES,
   DEMO_PLATFORMS,
   MOBILE_PLATFORMS,
+  DEMO_BUILD_SLOTS,
+  demoBuilds,
 };

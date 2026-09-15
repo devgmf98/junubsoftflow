@@ -65,8 +65,45 @@ function splitTopLevel(body) {
   return parts;
 }
 
+/**
+ * Strips `-- ...` line comments, leaving anything inside quotes alone so a
+ * COMMENT 'a -- b' survives intact.
+ *
+ * Worth doing before anything else: a comment inside a table body used to be
+ * folded into the column that followed it, and since the comment could contain a
+ * comma, one column silently became two nonsense ones - which the sync then tried
+ * to add. It failed quietly rather than loudly, which is the worst way to fail.
+ */
+function stripLineComments(sql) {
+  let out = '';
+  let quote = null;
+  for (let i = 0; i < sql.length; i++) {
+    const ch = sql[i];
+    if (quote) {
+      out += ch;
+      if (ch === quote && sql[i - 1] !== '\\') quote = null;
+      continue;
+    }
+    if (ch === "'" || ch === '"' || ch === '`') {
+      quote = ch;
+      out += ch;
+      continue;
+    }
+    if (ch === '-' && sql[i + 1] === '-') {
+      const nl = sql.indexOf('\n', i);
+      if (nl === -1) break;
+      i = nl - 1;
+      out += '\n';
+      continue;
+    }
+    out += ch;
+  }
+  return out;
+}
+
 /** Every `CREATE TABLE` in the file, with its columns in declared order. */
-function parseSchema(sql) {
+function parseSchema(raw) {
+  const sql = stripLineComments(raw);
   const tables = [];
   const re = /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?`?(\w+)`?\s*\(/gi;
 
@@ -180,4 +217,4 @@ async function syncSchema(db, { logger = console } = {}) {
   return { created, added, mismatched, tables: wanted.length };
 }
 
-module.exports = { syncSchema, parseSchema, splitTopLevel };
+module.exports = { syncSchema, parseSchema, splitTopLevel, stripLineComments };

@@ -8,26 +8,28 @@ import { Loading, Alert, Empty, Modal, Kpi } from '../../components/ui';
 import { useToast } from '../../context/ToastContext';
 import {
   fileSize, num, date, timeAgo, label, statusClass,
-  PLATFORM_GROUPS, platformLabel, MOBILE_PLATFORMS, buildFormat, limitLabel,
+  PLATFORM_GROUPS, platformLabel, MOBILE_PLATFORMS, DEMO_BUILDS, demoBuild, limitLabel,
 } from '../../utils/format';
 
 const BLANK = {
   title: '', productId: '', description: '', platform: 'web',
-  webUrl: '', reviewUrl: '', apkVersion: '', visibility: 'public', status: 'published',
+  webUrl: '', reviewUrl: '', apkVersion: '', ipaVersion: '', visibility: 'public', status: 'published',
 };
 
-/** Admin: publish web review/demo links and upload Android APK builds. */
+/** Admin: publish web review/demo links and upload the Android and iOS builds. */
 export default function AdminDemos() {
   const toast = useToast();
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [editing, setEditing] = useState(null);
-  const [newApk, setNewApk] = useState(null);
+  // one pending file per slot while a demo is being created
+  const [newBuilds, setNewBuilds] = useState({ apk: null, ipa: null });
   const [busy, setBusy] = useState(false);
-  const [uploadingId, setUploadingId] = useState(null);
+  // which demo, and which of its two slots, is mid-upload
+  const [uploading, setUploading] = useState(null);
   const [filters, setFilters] = useState({ search: '', platform: '', status: '', hasApk: '' });
   const [term, setTerm] = useState('');
-  const newApkInput = useRef(null);
+  const newBuildInputs = { apk: useRef(null), ipa: useRef(null) };
   const { toggleSidebar } = useOutletContext();
 
   const load = useCallback(() => {
@@ -50,10 +52,10 @@ export default function AdminDemos() {
         await api.put(`/admin/demos/${editing.id}`, editing);
         toast.ok(`"${editing.title}" was updated.`);
       } else {
-        // a new demo can carry its APK in the same submit
+        // a new demo can carry both of its builds in the same submit
         const fd = new FormData();
         Object.entries(editing).forEach(([k, v]) => fd.append(k, v ?? ''));
-        if (newApk) fd.append('apk', newApk);
+        DEMO_BUILDS.forEach((slot) => newBuilds[slot.path] && fd.append(slot.path, newBuilds[slot.path]));
         const res = await api.upload('/admin/demos', fd);
         toast.ok(
           res.needsBuild
@@ -62,8 +64,11 @@ export default function AdminDemos() {
         );
       }
       setEditing(null);
-      setNewApk(null);
-      if (newApkInput.current) newApkInput.current.value = '';
+      setNewBuilds({ apk: null, ipa: null });
+      DEMO_BUILDS.forEach((slot) => {
+        const el = newBuildInputs[slot.path].current;
+        if (el) el.value = '';
+      });
       load();
     } catch (err) {
       toast.fail(err.message);
@@ -72,32 +77,33 @@ export default function AdminDemos() {
     }
   };
 
-  const uploadApk = async (demo, file, version) => {
+  // each slot posts to its own route, so replacing one build leaves the other alone
+  const uploadBuild = async (demo, slot, file, version) => {
     if (!file) {
-      toast.fail('Choose an .apk file to upload.');
+      toast.fail(`Choose the ${slot.ext} file to upload.`);
       return;
     }
-    setUploadingId(demo.id);
+    setUploading({ id: demo.id, os: slot.os });
     setError('');
     try {
       const fd = new FormData();
-      fd.append('apk', file);
-      if (version) fd.append('apkVersion', version);
-      const res = await api.upload(`/admin/demos/${demo.id}/apk`, fd);
-      toast.ok(`APK uploaded for "${demo.title}"${res.apkVersion ? ` (v${res.apkVersion})` : ''}.`);
+      fd.append(slot.path, file);
+      if (version) fd.append(slot.versionKey, version);
+      const res = await api.upload(`/admin/demos/${demo.id}/${slot.path}`, fd);
+      toast.ok(`${slot.title} uploaded for "${demo.title}"${res.version ? ` (v${res.version})` : ''}.`);
       load();
     } catch (err) {
       toast.fail(err.message);
     } finally {
-      setUploadingId(null);
+      setUploading(null);
     }
   };
 
-  const removeApk = async (demo) => {
-    if (!window.confirm(`Remove the APK from "${demo.title}"?`)) return;
+  const removeBuild = async (demo, slot) => {
+    if (!window.confirm(`Remove the ${slot.format} from "${demo.title}"?`)) return;
     try {
-      await api.del(`/admin/demos/${demo.id}/apk`);
-      toast.ok(`The APK for "${demo.title}" was removed.`);
+      await api.del(`/admin/demos/${demo.id}/${slot.path}`);
+      toast.ok(`The ${slot.format} for "${demo.title}" was removed.`);
       load();
     } catch (err) {
       toast.fail(err.message);
@@ -105,7 +111,7 @@ export default function AdminDemos() {
   };
 
   const removeDemo = async (demo) => {
-    if (!window.confirm(`Delete "${demo.title}"? Its APK is removed from the server too.`)) return;
+    if (!window.confirm(`Delete "${demo.title}"? Its builds are removed from the server too.`)) return;
     try {
       await api.del(`/admin/demos/${demo.id}`);
       toast.ok(`"${demo.title}" was deleted.`);
@@ -122,8 +128,8 @@ export default function AdminDemos() {
   return (
     <>
       <PageHeader
-        title="Demos & APK"
-        subtitle="Publish review links and Android builds"
+        title="Demos & builds"
+        subtitle="Publish review links and the Android and iOS builds"
         onToggleSidebar={toggleSidebar}
         actions={
           <button className="btn btn-primary btn-sm" onClick={() => setEditing({ ...BLANK })}>
@@ -141,7 +147,7 @@ export default function AdminDemos() {
           <>
             <div className="kpi-grid">
               <Kpi label="Demos" value={num(totals.demos)} icon="monitor" accent="blue" deltaLabel={`${totals.published} published`} />
-              <Kpi label="Android builds" value={num(totals.withApk)} icon="android" accent="green" deltaLabel="APK attached" />
+              <Kpi label="Mobile builds" value={num(totals.withApk)} icon="android" accent="green" deltaLabel="demos with a build" />
               <Kpi label="APK downloads" value={num(totals.downloads)} icon="download" accent="purple" deltaLabel="All time" />
               <Kpi label="Upload limit" value={limitLabel(data.maxApkMb)} icon="upload" accent="orange" deltaLabel="Per .apk file" />
             </div>
@@ -192,9 +198,9 @@ export default function AdminDemos() {
                   value={filters.hasApk}
                   onChange={(e) => setFilters((f) => ({ ...f, hasApk: e.target.value }))}
                 >
-                  <option value="">APK: any</option>
-                  <option value="yes">Has an APK</option>
-                  <option value="no">No APK yet</option>
+                  <option value="">Builds: any</option>
+                  <option value="yes">Has a build</option>
+                  <option value="no">No build yet</option>
                 </select>
 
                 <button type="submit" className="btn btn-outline btn-sm">Search</button>
@@ -255,17 +261,17 @@ export default function AdminDemos() {
               <DemoRow
                 key={d.id}
                 demo={d}
-                uploading={uploadingId === d.id}
+                uploading={uploading && uploading.id === d.id ? uploading.os : null}
                 onEdit={() => setEditing({ ...d, productId: d.productId || '' })}
                 onDelete={() => removeDemo(d)}
-                onUpload={(file, version) => uploadApk(d, file, version)}
-                onRemoveApk={() => removeApk(d)}
+                onUpload={(slot, file, version) => uploadBuild(d, slot, file, version)}
+                onRemoveBuild={(slot) => removeBuild(d, slot)}
               />
             ))}
 
             {data.recentDownloads.length > 0 && (
               <div className="panel">
-                <div className="panel-head"><h3>Recent APK downloads</h3></div>
+                <div className="panel-head"><h3>Recent build downloads</h3></div>
                 <div className="panel-body tight">
                   <div className="table-wrap">
                     <table className="data">
@@ -401,34 +407,45 @@ export default function AdminDemos() {
               </div>
             </div>
 
-            <div className="field-row">
-              <div className="field">
-                <label htmlFor="d-ver">Build version</label>
-                <input id="d-ver" value={editing.apkVersion || ''} onChange={set('apkVersion')} placeholder="8.2.1" />
-              </div>
-              {!editing.id && (
-                <div className="field">
-                  <label htmlFor="d-apk">
-                    Mobile build <span style={{ fontWeight: 400, color: '#94a3b8' }}>(optional)</span>
-                  </label>
-                  <input
-                    id="d-apk"
-                    type="file"
-                    accept={editing.platform === 'ios' ? '.ipa' : editing.platform === 'android' ? '.apk' : '.apk,.ipa'}
-                    ref={newApkInput}
-                    onChange={(e) => setNewApk(e.target.files?.[0] || null)}
-                  />
-                  <div className="field-hint">
-                    .apk for Android, .ipa for iOS. Up to {limitLabel(data?.maxApkMb)} per build.{' '}
-                    {newApk && <b style={{ color: 'var(--a-green)' }}>{newApk.name} ({fileSize(newApk.size)})</b>}
+            {!editing.id && (
+              // both builds can come up with the demo; neither is required
+              <div className="field-row">
+                {DEMO_BUILDS.map((slot) => (
+                  <div className="field" key={slot.os}>
+                    <label htmlFor={`d-${slot.path}`}>
+                      {slot.title} <span style={{ fontWeight: 400, color: '#94a3b8' }}>(optional)</span>
+                    </label>
+                    <input
+                      id={`d-${slot.path}`}
+                      type="file"
+                      accept={slot.ext}
+                      ref={newBuildInputs[slot.path]}
+                      onChange={(e) =>
+                        setNewBuilds((b) => ({ ...b, [slot.path]: e.target.files?.[0] || null }))
+                      }
+                    />
+                    <input
+                      value={editing[slot.versionKey] || ''}
+                      onChange={set(slot.versionKey)}
+                      placeholder={`${slot.format} version`}
+                      style={{ marginTop: 6 }}
+                    />
+                    <div className="field-hint">
+                      {slot.ext}, up to {limitLabel(data?.maxApkMb)}.{' '}
+                      {newBuilds[slot.path] && (
+                        <b style={{ color: 'var(--a-green)' }}>
+                          {newBuilds[slot.path].name} ({fileSize(newBuilds[slot.path].size)})
+                        </b>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            )}
 
             {editing.id && (
               <div className="field-hint" style={{ marginTop: 0 }}>
-                Upload or replace the APK file itself from the demo row.
+                The builds themselves are uploaded and replaced from the demo row.
               </div>
             )}
           </form>
@@ -438,25 +455,9 @@ export default function AdminDemos() {
   );
 }
 
-/** One demo, with its links on the left and the APK panel on the right. */
-function DemoRow({ demo, uploading, onEdit, onDelete, onUpload, onRemoveApk }) {
-  const [file, setFile] = useState(null);
-  const [version, setVersion] = useState(demo.apkVersion || '');
-  const input = useRef(null);
-
-  const submit = (e) => {
-    e.preventDefault();
-    onUpload(file, version);
-    setFile(null);
-    if (input.current) input.current.value = '';
-  };
-
-  const expectsApk = MOBILE_PLATFORMS.includes(demo.platform);
-  // iOS ships .ipa, Android .apk; a demo on 'mobile' or 'both' could carry either,
-  // so what is already attached decides before the platform does
-  const format = buildFormat(demo);
-  const isIos = format === 'IPA';
-  const accepts = demo.platform === 'ios' ? '.ipa' : demo.platform === 'android' ? '.apk' : '.apk,.ipa';
+/** One demo: its links on the left, its two build slots on the right. */
+function DemoRow({ demo, uploading, onEdit, onDelete, onUpload, onRemoveBuild }) {
+  const expectsBuild = MOBILE_PLATFORMS.includes(demo.platform);
 
   return (
     <div className="panel">
@@ -517,126 +518,135 @@ function DemoRow({ demo, uploading, onEdit, onDelete, onUpload, onRemoveApk }) {
             ))}
           </div>
 
-          {/* ---------- APK ---------- */}
-          <div style={{ border: '1px solid var(--line-2)', borderRadius: 10, padding: 14, background: '#fdfdff' }}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 7,
-                fontSize: 11,
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '.05em',
-                color: 'var(--muted)',
-                marginBottom: 12,
-              }}
-            >
-              <Icon name={isIos ? 'apple' : 'android'} style={{ width: 15, height: 15 }} />{' '}
-              {demo.platform === 'ios'
-                ? 'iOS build (IPA)'
-                : demo.platform === 'android'
-                ? 'Android build (APK)'
-                : 'Mobile build (APK / IPA)'}
-            </div>
-
-            {demo.apkMissing && (
-              <Alert type="error">The file is recorded but missing from storage. Upload the build again.</Alert>
-            )}
-
-            {!expectsApk && !demo.hasApk && (
-              <p className="cell-sub" style={{ marginBottom: 12 }}>
-                This demo targets {platformLabel(demo.platform)}. A mobile build is optional here - attach one
-                only if you also ship an Android or iOS build.
-              </p>
-            )}
-
-            {demo.hasApk ? (
-              <div
-                style={{
-                  display: 'flex',
-                  gap: 12,
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  background: 'var(--bg-soft)',
-                  border: '1px solid var(--line-2)',
-                  borderRadius: 9,
-                  padding: '10px 12px',
-                  marginBottom: 12,
-                  fontSize: 12,
-                }}
-              >
-                <div style={{ minWidth: 0 }}>
-                  <b style={{ color: 'var(--ink)', wordBreak: 'break-all' }}>{demo.apkName}</b>
-                  <div className="cell-sub">
-                    {demo.apkVersion && `v${demo.apkVersion} · `}
-                    {fileSize(demo.apkSize)} · uploaded {date(demo.apkUploadedAt)} · {num(demo.downloadCount)} downloads
-                  </div>
-                </div>
-                <div className="row-actions">
-                  <a href={downloadUrl(`/admin/demos/${demo.id}/apk`)} className="btn btn-outline btn-sm" title="Download">
-                    <Icon name="download" />
-                  </a>
-                  <button
-                    className="btn btn-ghost btn-sm"
-                    style={{ color: 'var(--bad)' }}
-                    onClick={onRemoveApk}
-                    title={`Remove ${format}`}
-                  >
-                    <Icon name="trash" />
-                  </button>
-                </div>
-              </div>
-            ) : (
-              expectsApk && (
-                <p className="cell-sub" style={{ marginBottom: 12 }}>
-                  No {demo.platform === 'ios' ? 'IPA' : demo.platform === 'android' ? 'APK' : 'build'} uploaded yet.
-                </p>
-              )
-            )}
-
-            {(isIos || demo.platform === 'ios') && (
-              <p className="cell-sub" style={{ marginBottom: 12 }}>
-                An .ipa does not install from a browser the way an .apk does: a tester needs TestFlight, or an
-                ad-hoc build and a device already on the provisioning profile. Put the TestFlight invite in the
-                demo link above.
-              </p>
-            )}
-
-            <form onSubmit={submit} style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-              <input
-                type="file"
-                ref={input}
-                accept={accepts}
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-                style={{ fontSize: 11, maxWidth: 190 }}
-                required
+          {/* ---------- builds: Android and iOS, one slot each ---------- */}
+          <div style={{ display: 'grid', gap: 10 }}>
+            {DEMO_BUILDS.map((slot) => (
+              <BuildSlot
+                key={slot.os}
+                slot={slot}
+                demo={demo}
+                build={demoBuild(demo, slot.os)}
+                expected={expectsBuild}
+                uploading={uploading === slot.os}
+                onUpload={(file, version) => onUpload(slot, file, version)}
+                onRemove={() => onRemoveBuild(slot)}
               />
-              <input
-                value={version}
-                onChange={(e) => setVersion(e.target.value)}
-                placeholder="Version"
-                style={{
-                  width: 110,
-                  border: '1px solid var(--line)',
-                  borderRadius: 8,
-                  padding: '7px 10px',
-                  fontSize: 11.5,
-                  fontFamily: 'inherit',
-                }}
-              />
-              <button type="submit" className="btn btn-primary btn-sm" disabled={uploading}>
-                <Icon name="upload" /> {uploading ? 'Uploading...' : demo.hasApk ? 'Replace' : 'Upload'}
-              </button>
-              {file && (
-                <span style={{ fontSize: 11, color: 'var(--a-green)', fontWeight: 500, width: '100%' }}>
-                  {file.name} ({fileSize(file.size)})
-                </span>
-              )}
-            </form>
+            ))}
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+
+/**
+ * One build slot on a demo - the Android .apk or the iOS .ipa.
+ *
+ * The two are independent: each has its own file, version, upload and remove, and
+ * replacing one never touches the other. A demo that ships on both stores keeps
+ * both here at once.
+ */
+function BuildSlot({ slot, demo, build, expected, uploading, onUpload, onRemove }) {
+  const [file, setFile] = useState(null);
+  const [version, setVersion] = useState(build?.version || '');
+  const input = useRef(null);
+
+  // the list reloads after an upload without remounting this row, so follow it
+  useEffect(() => {
+    setVersion(build?.version || '');
+  }, [build?.version]);
+
+  const submit = (e) => {
+    e.preventDefault();
+    onUpload(file, version);
+    setFile(null);
+    if (input.current) input.current.value = '';
+  };
+
+  return (
+    <div style={{ border: '1px solid var(--line-2)', borderRadius: 10, padding: 14, background: '#fdfdff' }}>
+      <div className="build-slot-head">
+        <Icon name={slot.icon} /> {slot.title} ({slot.ext})
+      </div>
+
+      {build?.missing && (
+        <Alert type="error">The file is recorded but missing from storage. Upload the build again.</Alert>
+      )}
+
+      {build ? (
+        <div className="build-slot-file">
+          <div style={{ minWidth: 0 }}>
+            <b style={{ color: 'var(--ink)', wordBreak: 'break-all' }}>{build.name}</b>
+            <div className="cell-sub">
+              {build.version && `v${build.version} · `}
+              {fileSize(build.size)} · uploaded {date(build.uploadedAt)}
+            </div>
+          </div>
+          <div className="row-actions">
+            <a
+              href={downloadUrl(`/admin/demos/${demo.id}/${slot.path}`)}
+              className="btn btn-outline btn-sm"
+              title="Download"
+            >
+              <Icon name="download" />
+            </a>
+            <button
+              className="btn btn-ghost btn-sm"
+              style={{ color: 'var(--bad)' }}
+              onClick={onRemove}
+              title={`Remove ${slot.format}`}
+            >
+              <Icon name="trash" />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p className="cell-sub" style={{ marginBottom: 12 }}>
+          {expected
+            ? `No ${slot.format} uploaded yet.`
+            : `Optional - this demo targets ${platformLabel(demo.platform)}. Attach one if you ship it here too.`}
+        </p>
+      )}
+
+      {slot.os === 'ios' && (
+        <p className="cell-sub" style={{ marginBottom: 12 }}>
+          An .ipa does not install from a browser the way an .apk does: a tester needs TestFlight, or an ad-hoc
+          build and a device already on the provisioning profile. Put the TestFlight invite in the demo link.
+        </p>
+      )}
+
+      <form onSubmit={submit} style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+        <input
+          type="file"
+          ref={input}
+          accept={slot.ext}
+          onChange={(e) => setFile(e.target.files?.[0] || null)}
+          style={{ fontSize: 11, maxWidth: 170 }}
+          required
+        />
+        <input
+          value={version}
+          onChange={(e) => setVersion(e.target.value)}
+          placeholder="Version"
+          style={{
+            width: 96,
+            border: '1px solid var(--line)',
+            borderRadius: 8,
+            padding: '7px 10px',
+            fontSize: 11.5,
+            fontFamily: 'inherit',
+          }}
+        />
+        <button type="submit" className="btn btn-primary btn-sm" disabled={uploading}>
+          <Icon name="upload" /> {uploading ? 'Uploading...' : build ? 'Replace' : 'Upload'}
+        </button>
+        {file && (
+          <span style={{ fontSize: 11, color: 'var(--a-green)', fontWeight: 500, width: '100%' }}>
+            {file.name} ({fileSize(file.size)})
+          </span>
+        )}
+      </form>
     </div>
   );
 }

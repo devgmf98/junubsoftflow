@@ -6,7 +6,7 @@ import ImageSlider from '../components/ImageSlider';
 import { Loading, Alert, Empty } from '../components/ui';
 import { useAuth } from '../context/AuthContext';
 import {
-  fileSize, date, num, accentStyle, platformLabel, platformIcon, platformAccent, buildFormat, buildOs,
+  fileSize, date, num, accentStyle, platformLabel, platformIcon, platformAccent, attachedBuilds,
 } from '../utils/format';
 import usePageMeta from '../hooks/usePageMeta';
 
@@ -97,6 +97,7 @@ export default function Demos() {
               // the product's own picture first; failing that one of its screenshots.
               // A demo need not belong to a product, hence the platform panel below.
               const cover = d.productImage || d.previewImages?.[0]?.url || null;
+              const builds = attachedBuilds(d);
 
               return (
               <article className="demo-card" key={d.id}>
@@ -111,11 +112,16 @@ export default function Demos() {
                   <span className="demo-tag">
                     <Icon name={platformIcon(d.platform)} /> {platformLabel(d.platform)}
                   </span>
-                  {d.hasApk && (
-                    <span className="demo-tag demo-tag-apk">
-                      <Icon name={buildFormat(d) === 'IPA' ? 'apple' : 'android'} /> {buildFormat(d)}
+                  {builds.map((b, i) => (
+                    <span
+                      key={b.os}
+                      className="demo-tag demo-tag-apk"
+                      /* stacked down the corner when a demo ships on both stores */
+                      style={i ? { top: 42 } : undefined}
+                    >
+                      <Icon name={b.icon} /> {b.format}
                     </span>
-                  )}
+                  ))}
                 </div>
 
                 <div className="demo-body">
@@ -127,18 +133,19 @@ export default function Demos() {
                 )}
                 {d.description && <p className="desc">{d.description}</p>}
 
-                {d.hasApk && (
-                  <div className="demo-apk">
-                    <Icon name={buildFormat(d) === 'IPA' ? 'apple' : 'android'} />
+                {builds.map((b) => (
+                  <div className="demo-apk" key={b.os}>
+                    <Icon name={b.icon} />
                     <span style={{ minWidth: 0 }}>
-                      <b>{d.apkName}</b>
+                      <b>{b.name}</b>
                       <em>
-                        {fileSize(d.apkSize)} · {num(d.downloadCount)} downloads
-                        {d.apkUploadedAt && ` · ${date(d.apkUploadedAt)}`}
+                        {b.version && `v${b.version} · `}
+                        {fileSize(b.size)}
+                        {b.uploadedAt && ` · ${date(b.uploadedAt)}`}
                       </em>
                     </span>
                   </div>
-                )}
+                ))}
 
                 <div className="demo-actions">
                   {d.webUrl && (
@@ -168,12 +175,16 @@ export default function Demos() {
                       </a>
                     )
                   )}
-                  {d.hasApk && (
-                    <a href={downloadUrl(`/shop/demos/${d.id}/apk`)} className="btn btn-outline btn-sm">
-                      <Icon name="download" /> {buildFormat(d)}{d.apkVersion ? ` v${d.apkVersion}` : ''}
+                  {builds.map((b) => (
+                    <a
+                      key={b.os}
+                      href={downloadUrl(`/shop/demos/${d.id}/${b.path}`)}
+                      className="btn btn-outline btn-sm"
+                    >
+                      <Icon name="download" /> {b.format}{b.version ? ` v${b.version}` : ''}
                     </a>
-                  )}
-                  {!d.webUrl && !d.reviewUrl && !d.hasApk && !d.previewImages?.length && (
+                  ))}
+                  {!d.webUrl && !d.reviewUrl && !builds.length && !d.previewImages?.length && (
                     <span className="cell-sub">Links coming soon.</span>
                   )}
                 </div>
@@ -198,13 +209,13 @@ export default function Demos() {
             <span className="kpi-ic ic-blue" style={{ flex: 'none' }}><Icon name="info" /></span>
             <div style={{ flex: 1, minWidth: 250 }}>
               <h3 style={{ fontSize: 13.5, marginBottom: 4 }}>Installing a mobile build</h3>
-              {demos.some((d) => d.hasApk && buildOs(d) === 'Android') && (
+              {demos.some((d) => d.hasApk) && (
                 <p style={{ margin: 0, fontSize: 12 }}>
                   <b>Android.</b> The Play Store is bypassed here, so after downloading the APK, open it and allow{' '}
                   <b>Install unknown apps</b> for your browser when prompted.
                 </p>
               )}
-              {demos.some((d) => d.hasApk && buildOs(d) === 'iOS') && (
+              {demos.some((d) => d.hasIpa) && (
                 <p style={{ margin: '6px 0 0', fontSize: 12 }}>
                   <b>iOS.</b> An .ipa cannot be installed from Safari. Open the demo link for a TestFlight invite, or
                   ask us to add your device to the provisioning profile.

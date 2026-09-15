@@ -166,7 +166,7 @@ Set in `backend/.env`; the API reports them as `maxFileMb`, `maxApkMb`, `maxBund
 | Limit | Default | Notes |
 |---|---|---|
 | `MAX_FILE_MB` | 4096 (4 GB) | single file, streamed to disk |
-| `MAX_APK_MB` | 2048 (2 GB) | one mobile build - `.apk` (Android) or `.ipa` (iOS) |
+| `MAX_APK_MB` | 2048 (2 GB) | each mobile build - the `.apk` and the `.ipa` separately |
 | `MAX_BUNDLE_TOTAL_MB` | 1024 (1 GB) | **folder** uploads only — they are zipped in one pass, so the parts are read into memory. A pre-made `.zip` is moved, not read, and only hits `MAX_FILE_MB`. |
 | images | 5 MB | 6 review images, 8 product images |
 | folder parts | 300 files | per upload |
@@ -249,7 +249,7 @@ Email cannot be changed here.
 | POST | `/checkout` | place an order |
 | GET | `/orders/:number` | order confirmation |
 | GET | `/demos` | published demos |
-| GET | `/demos/:id/apk` | mobile build download (`.apk` or `.ipa`) |
+| GET | `/demos/:id/apk` · `/demos/:id/ipa` | Android / iOS build download |
 | POST | `/contact` | contact form |
 | POST | `/subscribe` | newsletter |
 
@@ -424,8 +424,11 @@ Works signed in or as a guest. Prices are recomputed server-side; anything sent 
       "platform": "both",
       "webUrl": "https://moneypay.example.com",
       "reviewUrl": "https://moneypay.example.com/review",
-      "hasApk": true, "apkName": "app-release.apk", "apkSize": 70205272,
-      "apkVersion": "1.0.0", "apkUploadedAt": "2026-09-10T00:12:00.000Z",
+      "hasApk": true, "hasIpa": false,
+      "builds": [
+        { "os": "android", "path": "apk", "format": "APK", "name": "app-release.apk",
+          "size": 70205272, "version": "1.0.0", "uploadedAt": "2026-09-10T00:12:00.000Z" }
+      ],
       "downloadCount": 5,
       "productName": "MoneyPay", "productSlug": "moneypay",
       "previewImages": [{ "id": 4, "caption": "Dashboard overview", "url": "/api/shop/review-images/..." }]
@@ -799,18 +802,32 @@ The new account can sign in immediately and, when `role: "admin"`, reach the who
 | Method | Path |
 |---|---|
 | GET | `/demos` — `?search= &platform= &status= &hasApk=` |
-| POST | `/demos` (multipart, optional `apk`) |
+| POST | `/demos` (multipart, optional `apk` and `ipa`) |
 | PUT | `/demos/:id` |
-| POST/DELETE/GET | `/demos/:id/apk` |
+| POST/DELETE/GET | `/demos/:id/apk` · `/demos/:id/ipa` |
 | DELETE | `/demos/:id` |
 
-A demo's build is `.apk` or `.ipa`; the route keeps its `apk` name, as do the
-`apk_*` columns, because renaming a live column is a retype the boot-time schema
-sync will not do. The stored file keeps the extension it arrived with, and the
-download is typed from it - `application/vnd.android.package-archive` for an
-`.apk`, `application/octet-stream` for an `.ipa`. Note that an `.ipa` served this
-way does not install from a browser: iOS needs TestFlight, or an ad-hoc build and
-a device on its provisioning profile.
+A demo has **two independent build slots** - `/demos/:id/apk` for the Android
+`.apk` and `/demos/:id/ipa` for the iOS `.ipa`. Each takes POST, DELETE and GET;
+replacing or removing one never touches the other, and `POST /demos` accepts both
+at once as the multipart fields `apk` and `ipa` (with `apkVersion` / `ipaVersion`).
+
+The Android slot lives in the `apk_*` columns because it predates iOS support, and
+the iOS one in `ios_*`; renaming a live column is a retype the boot-time schema
+sync will not do. Every listing returns the attached builds as `builds[]`:
+
+```json
+"builds": [
+  { "os": "android", "path": "apk", "format": "APK", "name": "app-release.apk",
+    "size": 70205272, "version": "1.0.0", "uploadedAt": "2026-09-10T00:12:00.000Z" }
+]
+```
+
+A stored file keeps the extension it arrived with and the download is typed from
+it - `application/vnd.android.package-archive` for an `.apk`,
+`application/octet-stream` for an `.ipa`. `downloadCount` is per demo, not per
+build. Note that an `.ipa` served this way does not install from a browser: iOS
+needs TestFlight, or an ad-hoc build and a device on its provisioning profile.
 
 ```json
 {
@@ -819,12 +836,12 @@ a device on its provisioning profile.
   "platform": "both",
   "webUrl": "https://moneypay.example.com",
   "reviewUrl": "https://moneypay.example.com/review",
-  "apkVersion": "1.0.0",
+  "apkVersion": "1.0.0", "ipaVersion": "1.0.1",
   "visibility": "public",
   "status": "published"
 }
 ```
-A demo needs at least one of a web link, a review link or an APK.
+A demo needs at least one of a web link, a review link or a build.
 
 ### Messages and support tickets
 
@@ -1096,9 +1113,9 @@ Licence terms for the product dropdown are one setting, newline-separated:
 | Path | Returns |
 |---|---|
 | `GET /api/shop/review-images/:file` | image bytes — `X-Content-Type-Options: nosniff` and `Content-Security-Policy: default-src 'none'; sandbox` |
-| `GET /api/shop/demos/:id/apk` | public mobile build, increments `downloadCount` |
+| `GET /api/shop/demos/:id/apk` · `/ipa` | public build, increments `downloadCount` |
 | `GET /api/account/downloads/file/:id` | entitlement-gated file, or a redirect to `externalUrl` |
-| `GET /api/account/downloads/demo/:id/apk` | mobile build for signed-in customers |
+| `GET /api/account/downloads/demo/:id/apk` · `/ipa` | build for signed-in customers |
 | `GET /api/admin/demos/:id/apk` | admin copy, no download counted |
 
 Uploaded images are served with a sandbox CSP so an SVG cannot execute script in the site's origin.

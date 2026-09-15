@@ -765,8 +765,8 @@ router.get(
       demos: rows.map((d) => ({
         id: d.id, title: d.title, slug: d.slug, description: d.description,
         platform: d.platform, webUrl: d.web_url, reviewUrl: d.review_url,
-        hasApk: Boolean(d.apk_file), apkName: d.apk_name, apkSize: d.apk_size,
-        apkVersion: d.apk_version, apkUploadedAt: d.apk_uploaded_at,
+        builds: store.demoBuilds(d),
+        hasApk: Boolean(d.apk_file), hasIpa: Boolean(d.ios_file),
         downloadCount: d.download_count,
         productName: d.product_name, productSlug: d.product_slug,
         productImage: d.product_image
@@ -778,29 +778,38 @@ router.get(
   })
 );
 
-/** Public download of a demo's mobile build, where the demo is marked public. */
-router.get(
-  '/demos/:id/apk',
-  asyncRoute(async (req, res) => {
-    const { apkPath, buildMime, buildFileName } = require('../upload');
-    const demo = await db.one(
-      "SELECT * FROM demos WHERE id = ? AND status = 'published' AND visibility = 'public'",
-      [req.params.id]
-    );
-    if (!demo || !demo.apk_file) return res.status(404).json({ error: 'That build is not available.' });
+/**
+ * Public download of a demo's build, one route per slot:
+ *   /demos/:id/apk   Android     /demos/:id/ipa   iOS
+ * Both count towards the demo's download total, which is per demo rather than
+ * per build.
+ */
+store.DEMO_BUILD_SLOTS.forEach((slot) => {
+  const { file: fileCol, name: nameCol } = slot.cols;
 
-    const file = apkPath(demo.apk_file);
-    if (!file) return res.status(410).json({ error: 'The build file is missing from the server.' });
+  router.get(
+    `/demos/:id/${slot.path}`,
+    asyncRoute(async (req, res) => {
+      const { apkPath, buildMime, buildFileName } = require('../upload');
+      const demo = await db.one(
+        "SELECT * FROM demos WHERE id = ? AND status = 'published' AND visibility = 'public'",
+        [req.params.id]
+      );
+      if (!demo || !demo[fileCol]) return res.status(404).json({ error: 'That build is not available.' });
 
-    await db.run('UPDATE demos SET download_count = download_count + 1 WHERE id = ?', [demo.id]);
-    await db.run('INSERT INTO download_log (demo_id, user_id, ip_address) VALUES (?, ?, ?)', [
-      demo.id, req.session.user ? req.session.user.id : null, req.ip,
-    ]);
+      const file = apkPath(demo[fileCol]);
+      if (!file) return res.status(410).json({ error: 'The build file is missing from the server.' });
 
-    res.type(buildMime(demo.apk_file));
-    return res.download(file, buildFileName(demo.apk_file, demo.apk_name, demo.slug));
-  })
-);
+      await db.run('UPDATE demos SET download_count = download_count + 1 WHERE id = ?', [demo.id]);
+      await db.run('INSERT INTO download_log (demo_id, user_id, ip_address) VALUES (?, ?, ?)', [
+        demo.id, req.session.user ? req.session.user.id : null, req.ip,
+      ]);
+
+      res.type(buildMime(demo[fileCol]));
+      return res.download(file, buildFileName(demo[fileCol], demo[nameCol], demo.slug));
+    })
+  );
+});
 
 /* ================= contact & newsletter ================= */
 router.post(

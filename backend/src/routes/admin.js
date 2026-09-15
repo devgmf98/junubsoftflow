@@ -11,6 +11,7 @@ const { requireAdmin, asyncRoute } = require('../middleware/auth');
 const {
   uploadApk, uploadInstaller, uploadBundle, uploadProductImages, uploadProductImage, storeBundle,
   removeApk, removeFile, removeImage, apkPath, filePath, buildMime, buildFileName,
+  uploadIpa, uploadDemoBuilds,
   MAX_APK_BYTES, MAX_FILE_BYTES,
   MAX_BUNDLE_TOTAL_BYTES,
   cleanupParts, MAX_PRODUCT_IMAGES, MAX_BUNDLE_FILES,
@@ -2145,8 +2146,9 @@ router.get(
       where += ' AND d.status = ?';
       params.push(status);
     }
-    if (hasApk === 'yes') where += ' AND d.apk_file IS NOT NULL';
-    if (hasApk === 'no') where += ' AND d.apk_file IS NULL';
+    // "has a build" means either store's - a demo can carry both
+    if (hasApk === 'yes') where += ' AND (d.apk_file IS NOT NULL OR d.ios_file IS NOT NULL)';
+    if (hasApk === 'no') where += ' AND d.apk_file IS NULL AND d.ios_file IS NULL';
 
     const [demos, allDemos, products, recentDownloads] = await Promise.all([
       db.query(
@@ -2159,7 +2161,7 @@ router.get(
         params
       ),
       // unfiltered, so the KPI tiles keep showing store-wide totals
-      db.query('SELECT status, apk_file, download_count FROM demos'),
+      db.query('SELECT status, apk_file, ios_file, download_count FROM demos'),
       db.query("SELECT id, name FROM products WHERE status = 'active' ORDER BY sort_order"),
       db.query(
         `SELECT dl.*, d.title, u.name AS user_name
@@ -2174,9 +2176,8 @@ router.get(
       demos: demos.map((d) => ({
         id: d.id, title: d.title, slug: d.slug, description: d.description,
         platform: d.platform, webUrl: d.web_url, reviewUrl: d.review_url,
-        hasApk: Boolean(d.apk_file), apkName: d.apk_name, apkSize: d.apk_size,
-        apkVersion: d.apk_version, apkUploadedAt: d.apk_uploaded_at,
-        apkMissing: Boolean(d.apk_file) && !apkPath(d.apk_file),
+        builds: store.demoBuilds(d, apkPath),
+        hasApk: Boolean(d.apk_file), hasIpa: Boolean(d.ios_file),
         visibility: d.visibility, status: d.status,
         downloadCount: d.download_count,
         productId: d.product_id, productName: d.product_name,
@@ -2197,7 +2198,7 @@ router.get(
       totals: {
         demos: allDemos.length,
         published: allDemos.filter((d) => d.status === 'published').length,
-        withApk: allDemos.filter((d) => d.apk_file).length,
+        withApk: allDemos.filter((d) => d.apk_file || d.ios_file).length,
         downloads: allDemos.reduce((s, d) => s + Number(d.download_count || 0), 0),
       },
       matched: demos.length,
@@ -2208,48 +2209,63 @@ router.get(
 router.post(
   '/demos',
   asyncRoute(async (req, res) => {
-    await runUpload(uploadApk, req, res);
+    await runUpload(uploadDemoBuilds, req, res);
+
+    // .fields() gives one array per field name; a demo may arrive with either
+    // build, both, or neither
+    const apk = req.files && req.files.apk ? req.files.apk[0] : null;
+    const ipa = req.files && req.files.ipa ? req.files.ipa[0] : null;
+    const uploaded = [apk, ipa].filter(Boolean);
+    const discard = () => uploaded.forEach((f) => removeApk(f.filename));
 
     const title = String(req.body.title || '').trim();
     if (!title) {
-      if (req.file) removeApk(req.file.filename);
+      discard();
       return res.status(400).json({ error: 'The demo needs a title.' });
     }
 
     const web = cleanUrl(req.body.webUrl);
     const review = cleanUrl(req.body.reviewUrl);
     if (!web.ok || !review.ok) {
-      if (req.file) removeApk(req.file.filename);
+      discard();
       return res.status(400).json({ error: 'Links must start with http:// or https://' });
     }
 
     const platform = store.DEMO_PLATFORMS.includes(req.body.platform) ? req.body.platform : 'web';
 
     // a demo has to give people something to open or install
-    if (!web.value && !review.value && !req.file) {
+    if (!web.value && !review.value && !uploaded.length) {
       return res.status(400).json({
-        error: 'Add a demo link, a review link, or an APK build - otherwise there is nothing to publish.',
+        error: 'Add a demo link, a review link, or a build - otherwise there is nothing to publish.',
       });
     }
 
     const slug = await uniqueSlug('demos', slugify(req.body.slug || title, 'demo'));
     const sortOrder = Number(await db.scalar('SELECT COALESCE(MAX(sort_order),0) + 1 AS v FROM demos'));
 
+    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
     const result = await db.run(
       `INSERT INTO demos (title, slug, product_id, description, platform, web_url, review_url,
                           apk_file, apk_name, apk_size, apk_version, apk_uploaded_at,
+                          ios_file, ios_name, ios_size, ios_version, ios_uploaded_at,
                           visibility, status, sort_order, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         title, slug,
         req.body.productId ? Number(req.body.productId) : null,
         String(req.body.description || '').trim() || null,
         platform, web.value, review.value,
-        req.file ? req.file.filename : null,
-        req.file ? req.file.originalname : null,
-        req.file ? req.file.size : null,
+        apk ? apk.filename : null,
+        apk ? apk.originalname : null,
+        apk ? apk.size : null,
         String(req.body.apkVersion || '').trim() || null,
-        req.file ? new Date().toISOString().slice(0, 19).replace('T', ' ') : null,
+        apk ? now : null,
+        ipa ? ipa.filename : null,
+        ipa ? ipa.originalname : null,
+        ipa ? ipa.size : null,
+        String(req.body.ipaVersion || '').trim() || null,
+        ipa ? now : null,
         req.body.visibility === 'users' ? 'users' : 'public',
         req.body.status === 'draft' ? 'draft' : 'published',
         sortOrder, req.session.user.id,
@@ -2258,7 +2274,7 @@ router.post(
 
     res.status(201).json({
       id: result.insertId,
-      needsBuild: store.MOBILE_PLATFORMS.includes(platform) && !req.file,
+      needsBuild: store.MOBILE_PLATFORMS.includes(platform) && !uploaded.length,
     });
   })
 );
@@ -2278,9 +2294,15 @@ router.put(
       return res.status(400).json({ error: 'Links must start with http:// or https://' });
     }
 
+    // a build's version is set where the build is uploaded, so an edit that does
+    // not mention one must leave it alone rather than blank it
+    const keptVersion = (key, current) =>
+      req.body[key] === undefined ? current : String(req.body[key] || '').trim() || null;
+
     await db.run(
       `UPDATE demos SET title = ?, product_id = ?, description = ?, platform = ?,
-                        web_url = ?, review_url = ?, apk_version = ?, visibility = ?, status = ?
+                        web_url = ?, review_url = ?, apk_version = ?, ios_version = ?,
+                        visibility = ?, status = ?
        WHERE id = ?`,
       [
         title,
@@ -2288,7 +2310,8 @@ router.put(
         String(req.body.description || '').trim() || null,
         store.DEMO_PLATFORMS.includes(req.body.platform) ? req.body.platform : demo.platform,
         web.value, review.value,
-        String(req.body.apkVersion || '').trim() || null,
+        keptVersion('apkVersion', demo.apk_version),
+        keptVersion('ipaVersion', demo.ios_version),
         req.body.visibility === 'users' ? 'users' : 'public',
         req.body.status === 'draft' ? 'draft' : 'published',
         demo.id,
@@ -2298,78 +2321,97 @@ router.put(
   })
 );
 
-/** Upload or replace the mobile build (.apk or .ipa) on a demo. */
-router.post(
-  '/demos/:id/apk',
-  asyncRoute(async (req, res) => {
-    await runUpload(uploadApk, req, res);
+/**
+ * Upload / remove / download a demo's build, one route set per slot:
+ *
+ *   POST|DELETE|GET  /demos/:id/apk   the Android build
+ *   POST|DELETE|GET  /demos/:id/ipa   the iOS build
+ *
+ * The slots are independent - replacing one leaves the other alone - and the
+ * column names come from store.DEMO_BUILD_SLOTS, never from the request.
+ */
+const BUILD_UPLOADS = { apk: uploadApk, ipa: uploadIpa };
 
-    if (!req.file) return res.status(400).json({ error: 'Choose an .apk or .ipa file to upload.' });
+store.DEMO_BUILD_SLOTS.forEach((slot) => {
+  const { file: fileCol, name: nameCol, size: sizeCol, version: verCol, at: atCol } = slot.cols;
 
-    const demo = await db.one('SELECT * FROM demos WHERE id = ?', [req.params.id]);
-    if (!demo) {
-      removeApk(req.file.filename);
-      return res.status(404).json({ error: 'Demo not found.' });
-    }
+  router.post(
+    `/demos/:id/${slot.path}`,
+    asyncRoute(async (req, res) => {
+      await runUpload(BUILD_UPLOADS[slot.path], req, res);
 
-    const previous = demo.apk_file;
-    const version = String(req.body.apkVersion || '').trim() || demo.apk_version;
+      if (!req.file) return res.status(400).json({ error: `Choose the ${slot.ext} file to upload.` });
 
-    await db.run(
-      // the platform stays whatever the admin chose - attaching a build does not reclassify it
-      `UPDATE demos
-       SET apk_file = ?, apk_name = ?, apk_size = ?, apk_version = ?, apk_uploaded_at = NOW()
-       WHERE id = ?`,
-      [req.file.filename, req.file.originalname, req.file.size, version, demo.id]
-    );
+      const demo = await db.one('SELECT * FROM demos WHERE id = ?', [req.params.id]);
+      if (!demo) {
+        removeApk(req.file.filename);
+        return res.status(404).json({ error: 'Demo not found.' });
+      }
 
-    if (previous && previous !== req.file.filename) removeApk(previous);
+      const previous = demo[fileCol];
+      const version = String(req.body[slot.versionKey] || '').trim() || demo[verCol];
 
-    res.json({
-      ok: true,
-      apkName: req.file.originalname,
-      apkSize: req.file.size,
-      apkVersion: version,
-    });
-  })
-);
+      await db.run(
+        // the platform stays whatever the admin chose - attaching a build does not reclassify it
+        `UPDATE demos
+         SET ${fileCol} = ?, ${nameCol} = ?, ${sizeCol} = ?, ${verCol} = ?, ${atCol} = NOW()
+         WHERE id = ?`,
+        [req.file.filename, req.file.originalname, req.file.size, version, demo.id]
+      );
 
-router.delete(
-  '/demos/:id/apk',
-  asyncRoute(async (req, res) => {
-    const demo = await db.one('SELECT * FROM demos WHERE id = ?', [req.params.id]);
-    if (!demo) return res.status(404).json({ error: 'Demo not found.' });
+      if (previous && previous !== req.file.filename) removeApk(previous);
 
-    removeApk(demo.apk_file);
-    await db.run(
-      `UPDATE demos SET apk_file = NULL, apk_name = NULL, apk_size = NULL, apk_uploaded_at = NULL
-       WHERE id = ?`,
-      [demo.id]
-    );
-    res.json({ ok: true });
-  })
-);
+      res.json({
+        ok: true,
+        os: slot.os,
+        format: slot.format,
+        name: req.file.originalname,
+        size: req.file.size,
+        version,
+      });
+    })
+  );
 
-router.get(
-  '/demos/:id/apk',
-  asyncRoute(async (req, res) => {
-    const demo = await db.one('SELECT * FROM demos WHERE id = ?', [req.params.id]);
-    if (!demo || !demo.apk_file) return res.status(404).json({ error: 'No APK is attached to that demo.' });
+  router.delete(
+    `/demos/:id/${slot.path}`,
+    asyncRoute(async (req, res) => {
+      const demo = await db.one('SELECT * FROM demos WHERE id = ?', [req.params.id]);
+      if (!demo) return res.status(404).json({ error: 'Demo not found.' });
 
-    const file = apkPath(demo.apk_file);
-    if (!file) return res.status(410).json({ error: 'The build is missing from storage.' });
+      removeApk(demo[fileCol]);
+      await db.run(
+        `UPDATE demos SET ${fileCol} = NULL, ${nameCol} = NULL, ${sizeCol} = NULL, ${atCol} = NULL
+         WHERE id = ?`,
+        [demo.id]
+      );
+      res.json({ ok: true });
+    })
+  );
 
-    res.type(buildMime(demo.apk_file));
-    return res.download(file, buildFileName(demo.apk_file, demo.apk_name, demo.slug));
-  })
-);
+  router.get(
+    `/demos/:id/${slot.path}`,
+    asyncRoute(async (req, res) => {
+      const demo = await db.one('SELECT * FROM demos WHERE id = ?', [req.params.id]);
+      if (!demo || !demo[fileCol]) {
+        return res.status(404).json({ error: `No ${slot.format} is attached to that demo.` });
+      }
+
+      const file = apkPath(demo[fileCol]);
+      if (!file) return res.status(410).json({ error: 'The build is missing from storage.' });
+
+      res.type(buildMime(demo[fileCol]));
+      return res.download(file, buildFileName(demo[fileCol], demo[nameCol], demo.slug));
+    })
+  );
+});
 
 router.delete(
   '/demos/:id',
   asyncRoute(async (req, res) => {
     const demo = await db.one('SELECT * FROM demos WHERE id = ?', [req.params.id]);
     if (!demo) return res.status(404).json({ error: 'Demo not found.' });
-    removeApk(demo.apk_file);
+    // both builds go with it
+    store.DEMO_BUILD_SLOTS.forEach((slot) => removeApk(demo[slot.cols.file]));
     await db.run('DELETE FROM demos WHERE id = ?', [demo.id]);
     res.json({ ok: true });
   })

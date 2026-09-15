@@ -101,30 +101,51 @@ const buildMime = (name) => MOBILE_MIME[path.extname(String(name || '')).toLower
 const buildFileName = (stored, original, slug) =>
   original || `${slug}${path.extname(String(stored || '')) || '.apk'}`;
 
-function apkFilter(req, file, cb) {
-  const ext = path.extname(file.originalname).toLowerCase();
-  if (!MOBILE_EXT.has(ext)) {
-    const err = new Error('Upload an Android .apk or an iOS .ipa build.');
-    err.status = 400;
-    err.code = 'LIMIT_FILE_TYPE';
-    return cb(err);
-  }
-  if (!APK_MIME.has(file.mimetype)) {
-    const err = new Error(`Unexpected file type "${file.mimetype}". Upload the .apk or .ipa build.`);
-    err.status = 400;
-    err.code = 'LIMIT_FILE_TYPE';
-    return cb(err);
-  }
-  cb(null, true);
+/**
+ * One build slot's filter. Each slot takes exactly one extension, so an .ipa
+ * dropped on the Android slot is refused rather than silently stored as the
+ * Android build - the two are separate files on a demo, not alternatives.
+ */
+function extFilter(ext, what) {
+  return (req, file, cb) => {
+    if (path.extname(file.originalname).toLowerCase() !== ext) {
+      const err = new Error(`Upload the ${what} build - a ${ext} file.`);
+      err.status = 400;
+      err.code = 'LIMIT_FILE_TYPE';
+      return cb(err);
+    }
+    if (!APK_MIME.has(file.mimetype)) {
+      const err = new Error(`Unexpected file type "${file.mimetype}". Upload the ${ext} build.`);
+      err.status = 400;
+      err.code = 'LIMIT_FILE_TYPE';
+      return cb(err);
+    }
+    cb(null, true);
+  };
 }
 
-// keepExt, now that the filter guarantees it is one of two: an .ipa saved as
-// .apk downloads as a file no phone will open.
-const uploadApk = multer({
+// keepExt, now that the filter pins it: an .ipa saved as .apk downloads as a file
+// no phone will open.
+const singleBuild = (field, ext, what) =>
+  multer({
+    storage: makeStorage(APK_DIR, true),
+    fileFilter: extFilter(ext, what),
+    limits: { fileSize: MAX_APK_BYTES, files: 1 },
+  }).single(field);
+
+const uploadApk = singleBuild('apk', '.apk', 'Android');
+const uploadIpa = singleBuild('ipa', '.ipa', 'iOS');
+
+/** Creating a demo can carry both builds in the one submit. */
+const uploadDemoBuilds = multer({
   storage: makeStorage(APK_DIR, true),
-  fileFilter: apkFilter,
-  limits: { fileSize: MAX_APK_BYTES, files: 1 },
-}).single('apk');
+  fileFilter: (req, file, cb) =>
+    (file.fieldname === 'ipa' ? extFilter('.ipa', 'iOS') : extFilter('.apk', 'Android'))(req, file, cb),
+  limits: { fileSize: MAX_APK_BYTES, files: 2 },
+}).fields([
+  { name: 'apk', maxCount: 1 },
+  { name: 'ipa', maxCount: 1 },
+]);
 
 /* ---------------- installer uploads ---------------- */
 const ALLOWED_EXT = new Set(['.apk', '.exe', '.msi', '.dmg', '.pkg', '.zip', '.gz', '.tgz', '.iso', '.deb', '.rpm', '.appimage']);
@@ -359,6 +380,8 @@ const imagePath = (f) => existsIn(IMAGE_DIR, f);
 
 module.exports = {
   uploadApk,
+  uploadIpa,
+  uploadDemoBuilds,
   buildMime,
   buildFileName,
   MOBILE_EXT,

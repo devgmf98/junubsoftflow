@@ -8,7 +8,7 @@ import { PageHeader } from '../../components/DashboardLayout';
 import { Loading, Alert, Empty } from '../../components/ui';
 import {
   fileSize, date, num, label, accentStyle,
-  platformLabel, platformIcon, platformAccent, buildFormat,
+  platformLabel, platformIcon, platformAccent, attachedBuilds,
 } from '../../utils/format';
 
 /** Step 8 of the reference flow: installers for what you own, plus demo builds. */
@@ -299,8 +299,9 @@ export default function AccountDownloads() {
                           <p style={{ fontSize: 11.5, margin: 0, lineHeight: 1.5 }}>{d.description}</p>
                         )}
 
-                        {d.hasApk && (
+                        {attachedBuilds(d).map((b) => (
                           <div
+                            key={b.os}
                             style={{
                               display: 'flex',
                               gap: 9,
@@ -312,16 +313,17 @@ export default function AccountDownloads() {
                               fontSize: 11,
                             }}
                           >
-                            <Icon name="android" style={{ width: 18, color: 'var(--a-green)', flex: 'none' }} />
+                            <Icon name={b.icon} style={{ width: 18, color: 'var(--a-green)', flex: 'none' }} />
                             <span style={{ minWidth: 0 }}>
-                              <b style={{ color: 'var(--ink)', wordBreak: 'break-all' }}>{d.apkName}</b>
+                              <b style={{ color: 'var(--ink)', wordBreak: 'break-all' }}>{b.name}</b>
                               <span className="cell-sub" style={{ display: 'block' }}>
-                                {fileSize(d.apkSize)} · {num(d.downloadCount)} downloads
-                                {d.apkUploadedAt && ` · ${date(d.apkUploadedAt)}`}
+                                {b.version && `v${b.version} · `}
+                                {fileSize(b.size)}
+                                {b.uploadedAt && ` · ${date(b.uploadedAt)}`}
                               </span>
                             </span>
                           </div>
-                        )}
+                        ))}
 
                         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 'auto' }}>
                           {d.webUrl && (
@@ -350,14 +352,15 @@ export default function AccountDownloads() {
                               </a>
                             )
                           )}
-                          {d.hasApk && (
+                          {attachedBuilds(d).map((b) => (
                             <a
-                              href={downloadUrl(`/account/downloads/demo/${d.id}/apk`)}
+                              key={b.os}
+                              href={downloadUrl(`/account/downloads/demo/${d.id}/${b.path}`)}
                               className="btn btn-outline btn-sm"
                             >
-                              <Icon name="download" /> {buildFormat(d)}{d.apkVersion ? ` v${d.apkVersion}` : ''}
+                              <Icon name="download" /> {b.format}{b.version ? ` v${b.version}` : ''}
                             </a>
-                          )}
+                          ))}
                         </div>
                       </div>
                     ))}

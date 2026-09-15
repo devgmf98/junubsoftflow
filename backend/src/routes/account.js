@@ -348,11 +348,9 @@ router.get(
         description: d.description,
         webUrl: d.web_url,
         reviewUrl: d.review_url,
+        builds: store.demoBuilds(d),
         hasApk: Boolean(d.apk_file),
-        apkName: d.apk_name,
-        apkSize: d.apk_size,
-        apkVersion: d.apk_version,
-        apkUploadedAt: d.apk_uploaded_at,
+        hasIpa: Boolean(d.ios_file),
         downloadCount: d.download_count,
         productName: d.product_name,
         previewImages: demoPreviews.get(d.product_id) || [],
@@ -450,25 +448,33 @@ router.get(
   })
 );
 
-/** Download a demo APK. */
-router.get(
-  '/downloads/demo/:id/apk',
-  asyncRoute(async (req, res) => {
-    const demo = await db.one("SELECT * FROM demos WHERE id = ? AND status = 'published'", [req.params.id]);
-    if (!demo || !demo.apk_file) return res.status(404).json({ error: 'That build is not available.' });
+/**
+ * Download a demo build - /downloads/demo/:id/apk for Android, /ipa for iOS.
+ * Registered per slot rather than as one :slot(apk|ipa) route, because Express 5
+ * no longer accepts an inline pattern on a parameter.
+ */
+store.DEMO_BUILD_SLOTS.forEach((slot) => {
+  const { file: fileCol, name: nameCol } = slot.cols;
 
-    const file = apkPath(demo.apk_file);
-    if (!file) return res.status(410).json({ error: 'The build file is missing from the server.' });
+  router.get(
+    `/downloads/demo/:id/${slot.path}`,
+    asyncRoute(async (req, res) => {
+      const demo = await db.one("SELECT * FROM demos WHERE id = ? AND status = 'published'", [req.params.id]);
+      if (!demo || !demo[fileCol]) return res.status(404).json({ error: 'That build is not available.' });
 
-    await db.run('UPDATE demos SET download_count = download_count + 1 WHERE id = ?', [demo.id]);
-    await db.run('INSERT INTO download_log (demo_id, user_id, ip_address) VALUES (?, ?, ?)', [
-      demo.id, req.session.user.id, req.ip,
-    ]);
+      const file = apkPath(demo[fileCol]);
+      if (!file) return res.status(410).json({ error: 'The build file is missing from the server.' });
 
-    res.type(buildMime(demo.apk_file));
-    return res.download(file, buildFileName(demo.apk_file, demo.apk_name, demo.slug));
-  })
-);
+      await db.run('UPDATE demos SET download_count = download_count + 1 WHERE id = ?', [demo.id]);
+      await db.run('INSERT INTO download_log (demo_id, user_id, ip_address) VALUES (?, ?, ?)', [
+        demo.id, req.session.user.id, req.ip,
+      ]);
+
+      res.type(buildMime(demo[fileCol]));
+      return res.download(file, buildFileName(demo[fileCol], demo[nameCol], demo.slug));
+    })
+  );
+});
 
 /* ================= support ================= */
 router.get(
