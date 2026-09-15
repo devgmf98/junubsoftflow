@@ -1,15 +1,23 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import Icon from './Icon';
+import { assetUrl } from '../api/client';
 
 /**
  * Lightbox slider for review photos.
  * Opens at the thumbnail that was clicked; arrows / swipe / keyboard move through the set.
+ *
+ * Callers pass whatever the API gave them, which for an uploaded image is a
+ * server-relative path like "/api/shop/review-images/x.png". Same-origin that loads
+ * fine; with the front end on Netlify and the API on Railway it resolves against the
+ * CDN and 404s. Resolving here rather than at each call site means a new caller
+ * cannot reintroduce it - there were three, and two of them had it wrong.
  */
 export default function ImageSlider({ images = [], startIndex = 0, caption, captions = [], onClose }) {
   const [index, setIndex] = useState(startIndex);
   const [touchX, setTouchX] = useState(null);
 
-  const count = images.length;
+  const sources = useMemo(() => images.map(assetUrl), [images]);
+  const count = sources.length;
   const go = useCallback((delta) => setIndex((i) => (i + delta + count) % count), [count]);
 
   useEffect(() => {
@@ -51,7 +59,7 @@ export default function ImageSlider({ images = [], startIndex = 0, caption, capt
         )}
 
         <figure className="slider-figure">
-          <img src={images[index]} alt={`${caption || 'Review image'} ${index + 1} of ${count}`} />
+          <img src={sources[index]} alt={`${caption || 'Review image'} ${index + 1} of ${count}`} />
           <figcaption>
             <span>{captions[index] || caption || ''}</span>
             <span className="slider-count">{index + 1} / {count}</span>
@@ -67,7 +75,7 @@ export default function ImageSlider({ images = [], startIndex = 0, caption, capt
 
       {count > 1 && (
         <div className="slider-dots">
-          {images.map((src, i) => (
+          {sources.map((src, i) => (
             <button
               key={src}
               className={`slider-thumb ${i === index ? 'on' : ''}`}
@@ -86,12 +94,14 @@ export default function ImageSlider({ images = [], startIndex = 0, caption, capt
 /** Thumbnail strip shown inside a review; clicking one opens the slider. */
 export function ImageStrip({ images = [], caption }) {
   const [open, setOpen] = useState(null);
+  // resolved for the same reason as in ImageSlider - the API hands back /api/... paths
+  const sources = images.map(assetUrl);
   if (!images.length) return null;
 
   return (
     <>
       <div className="review-shots">
-        {images.map((src, i) => (
+        {sources.map((src, i) => (
           <button
             key={src}
             className="review-shot"

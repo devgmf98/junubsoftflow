@@ -1621,6 +1621,20 @@ table.data.log-table { font-size: 11.5px; }
   font-size: 10.5px; color: var(--ink-3); background: var(--bg-soft);
 }
 
+/* folder vs ready-made .zip, for a source bundle */
+.bundle-pick { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.bundle-pick-opt {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--line); border-radius: 8px; padding: 6px 11px;
+  font-size: 11px; font-family: inherit; color: var(--ink-2);
+  background: #fff; cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+}
+.bundle-pick-opt svg { width: 13px; height: 13px; }
+.bundle-pick-opt:hover { border-color: var(--line-2); color: var(--ink); }
+.bundle-pick-opt.on {
+  border-color: var(--blue); color: var(--blue); background: #eff6ff; font-weight: 600;
+}
+
 /* ---------- product thumbnails (image, with icon fallback) ---------- */
 /* Thumbnails fill their frame (cover) - they identify a product at a glance and
    look best solid. Full-size views below use contain so nothing is ever hidden. */

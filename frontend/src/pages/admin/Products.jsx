@@ -87,6 +87,9 @@ export default function AdminProducts() {
         label: kind === 'source' ? 'Source code' : kind === 'apk' ? 'Android build' : 'Installer',
         platform: kind === 'apk' ? 'android' : 'web',
         version: '',
+        // source code arrives either as a folder to zip or as a .zip the admin
+        // already made; everything else is always a plain file pick
+        pick: kind === 'source' ? 'folder' : 'file',
         files: [],
       },
     ]);
@@ -769,19 +772,54 @@ export default function AdminProducts() {
                     </button>
                   </div>
 
+                  {b.kind === 'source' && (
+                    <div className="bundle-pick" role="group" aria-label="How the source code is supplied">
+                      {[
+                        { id: 'folder', icon: 'folder', text: 'Upload a folder' },
+                        { id: 'archive', icon: 'archive', text: 'Upload a .zip' },
+                      ].map((opt) => (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          className={`bundle-pick-opt ${b.pick === opt.id ? 'on' : ''}`}
+                          aria-pressed={b.pick === opt.id}
+                          onClick={() => setBundle(b.key, { pick: opt.id, files: [] })}
+                        >
+                          <Icon name={opt.icon} /> {opt.text}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Remounted when the mode changes: a file input keeps its selection, and
+                      webkitdirectory is only read when the picker opens, so reusing the node
+                      would show folder-mode files under the .zip label. */}
                   <input
+                    key={`${b.key}-${b.pick}`}
                     type="file"
-                    multiple
-                    {...(b.kind === 'source' ? { webkitdirectory: '', directory: '' } : {})}
-                    accept={b.kind === 'apk' ? '.apk' : undefined}
+                    multiple={b.pick !== 'archive'}
+                    {...(b.pick === 'folder' ? { webkitdirectory: '', directory: '' } : {})}
+                    accept={
+                      b.kind === 'apk' ? '.apk' : b.pick === 'archive' ? '.zip,.gz,.tgz,.rar,.7z' : undefined
+                    }
                     onChange={(e) => setBundle(b.key, { files: Array.from(e.target.files || []) })}
                   />
 
                   <div className="field-hint">
                     {b.files.length
-                      ? `${b.files.length} file${b.files.length === 1 ? '' : 's'} selected · ${fileSize(
-                          b.files.reduce((s, f) => s + f.size, 0)
-                        )}${b.files.length > 1 ? ' — will be zipped into one archive' : ''}`
+                      ? `${
+                          b.pick === 'archive'
+                            ? b.files[0].name
+                            : `${b.files.length} file${b.files.length === 1 ? '' : 's'} selected`
+                        } · ${fileSize(b.files.reduce((s, f) => s + f.size, 0))}${
+                          b.files.length > 1
+                            ? ' — will be zipped into one archive'
+                            : b.pick === 'archive'
+                            ? ' — stored exactly as it is'
+                            : ''
+                        }`
+                      : b.pick === 'archive'
+                      ? 'Pick the .zip you already built — it is stored as it is, not repacked, so a large archive is fine.'
                       : b.kind === 'source'
                       ? 'Pick the folder holding the source code — the whole tree is uploaded and zipped.'
                       : b.kind === 'apk'
@@ -793,7 +831,7 @@ export default function AdminProducts() {
 
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: bundles.length ? 10 : 0 }}>
                 <button type="button" className="btn btn-outline btn-sm" onClick={() => addBundle('source')}>
-                  <Icon name="code" /> Add source folder
+                  <Icon name="code" /> Add source code
                 </button>
                 <button type="button" className="btn btn-outline btn-sm" onClick={() => addBundle('apk')}>
                   <Icon name="android" /> Add APK
