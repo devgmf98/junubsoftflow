@@ -559,8 +559,17 @@ button { font-family: inherit; }
 .deals-flame svg { width: 16px; height: 16px; }
 
 /* Narrower tracks than the product grid and a shorter card: these are meant to be
-   scanned in one pass, not browsed. */
-.deal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+   scanned in one pass, not browsed.
+
+   auto-FILL, not auto-fit: auto-fit collapses the tracks nothing landed in and
+   shares the whole row between what is left, so a single running deal became one
+   card stretched across 1200px with its button a metre wide. Keeping the empty
+   tracks means one deal is the same card as one of four. */
+.deal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
 
 /* ---------- Big Deal Offers: the card ---------- */
 /* Tinted on purpose. Popular Software and New Arrivals are white tiles in a white
