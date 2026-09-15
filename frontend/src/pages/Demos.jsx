@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import api, { downloadUrl } from '../api/client';
+import api, { downloadUrl, assetUrl } from '../api/client';
 import Icon from '../components/Icon';
 import ImageSlider from '../components/ImageSlider';
 import { Loading, Alert, Empty } from '../components/ui';
@@ -90,48 +90,55 @@ export default function Demos() {
             </div>
           </div>
         ) : (
-          <div className="product-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))' }}>
-            {demos.map((d) => (
-              <div className="product-card" key={d.id} style={{ padding: 20 }}>
-                <span
-                  className="kpi-ic"
-                  style={{ ...accentStyle(platformAccent(d.platform)), width: 44, height: 44, borderRadius: 12 }}
-                >
-                  <Icon name={platformIcon(d.platform)} />
-                </span>
+          <div className="product-grid demo-grid">
+            {demos.map((d) => {
+              // the product's own picture first; failing that one of its screenshots.
+              // A demo need not belong to a product, hence the platform panel below.
+              const cover = d.productImage || d.previewImages?.[0]?.url || null;
 
-                <h3 style={{ marginTop: 8 }}>{d.title}</h3>
-                <div className="cell-sub">
-                  {platformLabel(d.platform)}
-                  {d.productName && ` · ${d.productName}`}
+              return (
+              <article className="demo-card" key={d.id}>
+                <div className={`demo-cover${cover ? '' : ' is-blank'}`}>
+                  {cover ? (
+                    <img src={assetUrl(cover)} alt={d.productName || d.title} loading="lazy" />
+                  ) : (
+                    <span className="demo-cover-icon" style={accentStyle(platformAccent(d.platform))}>
+                      <Icon name={platformIcon(d.platform)} />
+                    </span>
+                  )}
+                  <span className="demo-tag">
+                    <Icon name={platformIcon(d.platform)} /> {platformLabel(d.platform)}
+                  </span>
+                  {d.hasApk && (
+                    <span className="demo-tag demo-tag-apk">
+                      <Icon name="android" /> APK
+                    </span>
+                  )}
                 </div>
+
+                <div className="demo-body">
+                <h3>{d.title}</h3>
+                {d.productName && (
+                  <div className="demo-owner">
+                    <Icon name="box" /> {d.productName}
+                  </div>
+                )}
                 {d.description && <p className="desc">{d.description}</p>}
 
                 {d.hasApk && (
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 9,
-                      alignItems: 'center',
-                      background: 'var(--bg-soft)',
-                      border: '1px solid var(--line-2)',
-                      borderRadius: 9,
-                      padding: '9px 11px',
-                      fontSize: 11,
-                    }}
-                  >
-                    <Icon name="android" style={{ width: 18, color: 'var(--a-green)', flex: 'none' }} />
+                  <div className="demo-apk">
+                    <Icon name="android" />
                     <span style={{ minWidth: 0 }}>
-                      <b style={{ color: 'var(--ink)', wordBreak: 'break-all' }}>{d.apkName}</b>
-                      <span className="cell-sub" style={{ display: 'block' }}>
+                      <b>{d.apkName}</b>
+                      <em>
                         {fileSize(d.apkSize)} · {num(d.downloadCount)} downloads
                         {d.apkUploadedAt && ` · ${date(d.apkUploadedAt)}`}
-                      </span>
+                      </em>
                     </span>
                   </div>
                 )}
 
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 'auto', paddingTop: 12 }}>
+                <div className="demo-actions">
                   {d.webUrl && (
                     <a href={d.webUrl} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-sm">
                       <Icon name="external" /> Open demo
@@ -168,8 +175,10 @@ export default function Demos() {
                     <span className="cell-sub">Links coming soon.</span>
                   )}
                 </div>
-              </div>
-            ))}
+                </div>
+              </article>
+              );
+            })}
           </div>
         )}
 

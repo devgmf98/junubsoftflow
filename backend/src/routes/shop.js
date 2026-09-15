@@ -745,7 +745,7 @@ router.get(
     }
 
     const rows = await db.query(
-      `SELECT d.*, p.name AS product_name, p.slug AS product_slug
+      `SELECT d.*, p.name AS product_name, p.slug AS product_slug, p.image AS product_image
        FROM demos d LEFT JOIN products p ON p.id = d.product_id
        ${where}
        ORDER BY d.sort_order, d.id`,
@@ -769,6 +769,9 @@ router.get(
         apkVersion: d.apk_version, apkUploadedAt: d.apk_uploaded_at,
         downloadCount: d.download_count,
         productName: d.product_name, productSlug: d.product_slug,
+        productImage: d.product_image
+          ? `/api/shop/review-images/${encodeURIComponent(d.product_image)}`
+          : null,
         previewImages: previews.get(d.product_id) || [],
       })),
     });

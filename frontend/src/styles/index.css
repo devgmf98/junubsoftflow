@@ -347,6 +347,58 @@ button { font-family: inherit; }
 }
 .product-thumb svg { width: 42px; height: 42px; }
 .product-cat { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+
+/* ---------- demo cards ----------
+   A demo is recognised by what it looks like, so the product's picture leads and
+   fills the card's width. Where a demo has no product, or the product has no
+   image, the tinted platform panel keeps every card the same shape. */
+.demo-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.demo-card {
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg);
+  display: flex; flex-direction: column; overflow: hidden;
+  transition: box-shadow .18s, transform .18s, border-color .18s;
+}
+.demo-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); border-color: #cdd9f5; }
+
+.demo-cover { position: relative; aspect-ratio: 16 / 10; background: var(--bg-soft); overflow: hidden; }
+.demo-cover img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s ease; }
+.demo-card:hover .demo-cover img { transform: scale(1.04); }
+.demo-cover.is-blank { display: grid; place-items: center; background: linear-gradient(135deg, #f8fafc, #e7edf9); }
+.demo-cover-icon { width: 68px; height: 68px; border-radius: 19px; display: grid; place-items: center; }
+.demo-cover-icon svg { width: 30px; height: 30px; }
+
+.demo-tag {
+  position: absolute; left: 10px; bottom: 10px;
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(15, 23, 42, .74); color: #fff;
+  font-size: 10.5px; font-weight: 600; padding: 4px 9px; border-radius: 999px;
+}
+.demo-tag svg { width: 12px; height: 12px; }
+.demo-tag-apk { left: auto; right: 10px; top: 10px; bottom: auto; background: rgba(4, 120, 87, .92); }
+
+.demo-body { padding: 14px 15px 15px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
+.demo-body h3 { font-size: 14.5px; line-height: 1.35; color: var(--ink); }
+.demo-owner { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: var(--body); }
+.demo-owner svg { width: 12px; height: 12px; color: var(--muted); flex: none; }
+/* clamped so a long blurb cannot make one card twice the height of its neighbour */
+.demo-body .desc {
+  font-size: 11.5px; color: var(--body); margin: 0; line-height: 1.55;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+.demo-apk {
+  display: flex; gap: 9px; align-items: center; margin-top: 2px;
+  background: var(--bg-soft); border: 1px solid var(--line-2); border-radius: 9px;
+  padding: 9px 11px; font-size: 11px;
+}
+.demo-apk > svg { width: 17px; height: 17px; color: var(--a-green); flex: none; }
+.demo-apk b { display: block; color: var(--ink); font-size: 11px; word-break: break-all; }
+.demo-apk em { display: block; margin-top: 1px; font-style: normal; color: var(--muted); font-size: 10.5px; }
+
+.demo-actions {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line-2);
+}
 .product-card h3 { font-size: 14px; line-height: 1.35; }
 .product-card .desc { font-size: 11.5px; color: var(--body); margin: 0; line-height: 1.5; }
 .product-price { display: flex; align-items: baseline; gap: 8px; margin-top: auto; padding-top: 8px; }
@@ -1299,6 +1351,9 @@ table.data .nowrap { white-space: nowrap; }
   .search-box input { min-width: 0; width: 100%; }
   .toolbar { width: 100%; }
   .product-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+  /* a demo card carries a cover, a filename and up to three buttons - two of them
+     side by side on a phone leaves none of it readable */
+  .demo-grid { grid-template-columns: 1fr; }
 }
 
 /* nav inline search */

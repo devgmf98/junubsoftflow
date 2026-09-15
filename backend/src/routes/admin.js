@@ -2150,7 +2150,7 @@ router.get(
 
     const [demos, allDemos, products, recentDownloads] = await Promise.all([
       db.query(
-        `SELECT d.*, p.name AS product_name, u.name AS author
+        `SELECT d.*, p.name AS product_name, p.image AS product_image, u.name AS author
          FROM demos d
          LEFT JOIN products p ON p.id = d.product_id
          LEFT JOIN users u ON u.id = d.created_by
@@ -2180,6 +2180,10 @@ router.get(
         visibility: d.visibility, status: d.status,
         downloadCount: d.download_count,
         productId: d.product_id, productName: d.product_name,
+        // the demo is shown as its product's picture where there is one
+        productImage: d.product_image
+          ? `/api/shop/review-images/${encodeURIComponent(d.product_image)}`
+          : null,
         author: d.author,
       })),
       products: products.map((p) => ({ id: p.id, name: p.name })),

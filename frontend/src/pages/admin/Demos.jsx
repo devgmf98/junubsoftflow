@@ -2,12 +2,13 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import api, { downloadUrl } from '../../api/client';
 import Icon from '../../components/Icon';
+import DemoThumb from '../../components/DemoThumb';
 import { PageHeader } from '../../components/DashboardLayout';
 import { Loading, Alert, Empty, Modal, Kpi } from '../../components/ui';
 import { useToast } from '../../context/ToastContext';
 import {
-  fileSize, num, date, timeAgo, label, statusClass, accentStyle,
-  PLATFORM_GROUPS, platformLabel, platformIcon, platformAccent, APK_PLATFORMS, limitLabel,
+  fileSize, num, date, timeAgo, label, statusClass,
+  PLATFORM_GROUPS, platformLabel, APK_PLATFORMS, limitLabel,
 } from '../../utils/format';
 
 const BLANK = {
@@ -455,9 +456,7 @@ function DemoRow({ demo, uploading, onEdit, onDelete, onUpload, onRemoveApk }) {
   return (
     <div className="panel">
       <div className="panel-head">
-        <span className="kpi-ic" style={{ ...accentStyle(platformAccent(demo.platform)), flex: 'none' }}>
-          <Icon name={platformIcon(demo.platform)} />
-        </span>
+        <DemoThumb demo={demo} />
         <div style={{ minWidth: 0 }}>
           <h3>{demo.title}</h3>
           <div className="sub">
