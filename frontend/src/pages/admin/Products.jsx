@@ -78,7 +78,7 @@ export default function AdminProducts() {
     setDropImage(false);
   };
 
-  const addBundle = (kind) =>
+  const addBundle = (kind, preset = {}) =>
     setBundles((b) => [
       ...b,
       {
@@ -91,6 +91,7 @@ export default function AdminProducts() {
         // already made; everything else is always a plain file pick
         pick: kind === 'source' ? 'folder' : 'file',
         files: [],
+        ...preset,
       },
     ]);
 
@@ -731,7 +732,17 @@ export default function AdminProducts() {
                 <div className="bundle-row" key={b.key}>
                   <div className="bundle-top">
                     <span className={`kpi-ic ${b.kind === 'source' ? 'ic-purple' : b.kind === 'apk' ? 'ic-green' : 'ic-blue'}`}>
-                      <Icon name={b.kind === 'source' ? 'code' : b.kind === 'apk' ? 'android' : 'download'} />
+                      <Icon
+                        name={
+                          b.kind === 'source'
+                            ? 'code'
+                            : b.kind !== 'apk'
+                            ? 'download'
+                            : b.platform === 'ios'
+                            ? 'apple'
+                            : 'android'
+                        }
+                      />
                     </span>
                     <input
                       value={b.label}
@@ -800,7 +811,13 @@ export default function AdminProducts() {
                     multiple={b.pick !== 'archive'}
                     {...(b.pick === 'folder' ? { webkitdirectory: '', directory: '' } : {})}
                     accept={
-                      b.kind === 'apk' ? '.apk' : b.pick === 'archive' ? '.zip,.gz,.tgz,.rar,.7z' : undefined
+                      b.kind === 'apk'
+                        ? b.platform === 'ios'
+                          ? '.ipa'
+                          : '.apk'
+                        : b.pick === 'archive'
+                        ? '.zip,.gz,.tgz,.rar,.7z'
+                        : undefined
                     }
                     onChange={(e) => setBundle(b.key, { files: Array.from(e.target.files || []) })}
                   />
@@ -823,7 +840,9 @@ export default function AdminProducts() {
                       : b.kind === 'source'
                       ? 'Pick the folder holding the source code — the whole tree is uploaded and zipped.'
                       : b.kind === 'apk'
-                      ? 'Pick the .apk build.'
+                      ? b.platform === 'ios'
+                        ? 'Pick the .ipa build. Testers install it through TestFlight, not from the browser.'
+                        : 'Pick the .apk build.'
                       : 'Pick the installer, or several files to bundle together.'}
                   </div>
                 </div>
@@ -835,6 +854,13 @@ export default function AdminProducts() {
                 </button>
                 <button type="button" className="btn btn-outline btn-sm" onClick={() => addBundle('apk')}>
                   <Icon name="android" /> Add APK
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline btn-sm"
+                  onClick={() => addBundle('apk', { label: 'iOS build', platform: 'ios' })}
+                >
+                  <Icon name="apple" /> Add iOS build
                 </button>
                 <button type="button" className="btn btn-outline btn-sm" onClick={() => addBundle('installer')}>
                   <Icon name="download" /> Add installer

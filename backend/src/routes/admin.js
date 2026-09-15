@@ -10,7 +10,7 @@ const mailer = require('../mailer');
 const { requireAdmin, asyncRoute } = require('../middleware/auth');
 const {
   uploadApk, uploadInstaller, uploadBundle, uploadProductImages, uploadProductImage, storeBundle,
-  removeApk, removeFile, removeImage, apkPath, filePath,
+  removeApk, removeFile, removeImage, apkPath, filePath, buildMime, buildFileName,
   MAX_APK_BYTES, MAX_FILE_BYTES,
   MAX_BUNDLE_TOTAL_BYTES,
   cleanupParts, MAX_PRODUCT_IMAGES, MAX_BUNDLE_FILES,
@@ -2258,7 +2258,7 @@ router.post(
 
     res.status(201).json({
       id: result.insertId,
-      needsApk: store.APK_PLATFORMS.includes(platform) && !req.file,
+      needsBuild: store.MOBILE_PLATFORMS.includes(platform) && !req.file,
     });
   })
 );
@@ -2298,13 +2298,13 @@ router.put(
   })
 );
 
-/** Upload or replace the APK on a demo. */
+/** Upload or replace the mobile build (.apk or .ipa) on a demo. */
 router.post(
   '/demos/:id/apk',
   asyncRoute(async (req, res) => {
     await runUpload(uploadApk, req, res);
 
-    if (!req.file) return res.status(400).json({ error: 'Choose an .apk file to upload.' });
+    if (!req.file) return res.status(400).json({ error: 'Choose an .apk or .ipa file to upload.' });
 
     const demo = await db.one('SELECT * FROM demos WHERE id = ?', [req.params.id]);
     if (!demo) {
@@ -2357,10 +2357,10 @@ router.get(
     if (!demo || !demo.apk_file) return res.status(404).json({ error: 'No APK is attached to that demo.' });
 
     const file = apkPath(demo.apk_file);
-    if (!file) return res.status(410).json({ error: 'The APK file is missing from storage.' });
+    if (!file) return res.status(410).json({ error: 'The build is missing from storage.' });
 
-    res.type('application/vnd.android.package-archive');
-    return res.download(file, demo.apk_name || `${demo.slug}.apk`);
+    res.type(buildMime(demo.apk_file));
+    return res.download(file, buildFileName(demo.apk_file, demo.apk_name, demo.slug));
   })
 );
 

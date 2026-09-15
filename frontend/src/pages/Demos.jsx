@@ -5,7 +5,9 @@ import Icon from '../components/Icon';
 import ImageSlider from '../components/ImageSlider';
 import { Loading, Alert, Empty } from '../components/ui';
 import { useAuth } from '../context/AuthContext';
-import { fileSize, date, num, accentStyle, platformLabel, platformIcon, platformAccent } from '../utils/format';
+import {
+  fileSize, date, num, accentStyle, platformLabel, platformIcon, platformAccent, buildFormat, buildOs,
+} from '../utils/format';
 import usePageMeta from '../hooks/usePageMeta';
 
 /** Public demos: web review links and downloadable Android builds. */
@@ -13,7 +15,7 @@ export default function Demos() {
   usePageMeta({
     title: 'Live demos and Android builds',
     description:
-      'Try the software before you buy. Open a live web demo or install the Android build on a test device.',
+      'Try the software before you buy. Open a live web demo, or install the Android or iOS build on a test device.',
     path: '/demos',
   });
 
@@ -55,7 +57,7 @@ export default function Demos() {
 
         <div className="section-head section-head-center" data-reveal>
           <h2>{product ? `${product.name} demo` : 'See it before you buy it'}</h2>
-          <p>Open a live demo in your browser, or install the Android build on a test device.</p>
+          <p>Open a live demo in your browser, or install the mobile build on a test device.</p>
         </div>
 
         {filtered && (
@@ -111,7 +113,7 @@ export default function Demos() {
                   </span>
                   {d.hasApk && (
                     <span className="demo-tag demo-tag-apk">
-                      <Icon name="android" /> APK
+                      <Icon name={buildFormat(d) === 'IPA' ? 'apple' : 'android'} /> {buildFormat(d)}
                     </span>
                   )}
                 </div>
@@ -127,7 +129,7 @@ export default function Demos() {
 
                 {d.hasApk && (
                   <div className="demo-apk">
-                    <Icon name="android" />
+                    <Icon name={buildFormat(d) === 'IPA' ? 'apple' : 'android'} />
                     <span style={{ minWidth: 0 }}>
                       <b>{d.apkName}</b>
                       <em>
@@ -168,7 +170,7 @@ export default function Demos() {
                   )}
                   {d.hasApk && (
                     <a href={downloadUrl(`/shop/demos/${d.id}/apk`)} className="btn btn-outline btn-sm">
-                      <Icon name="download" /> APK{d.apkVersion ? ` v${d.apkVersion}` : ''}
+                      <Icon name="download" /> {buildFormat(d)}{d.apkVersion ? ` v${d.apkVersion}` : ''}
                     </a>
                   )}
                   {!d.webUrl && !d.reviewUrl && !d.hasApk && !d.previewImages?.length && (
@@ -195,11 +197,21 @@ export default function Demos() {
           <div className="panel-body" style={{ display: 'flex', gap: 14, alignItems: 'flex-start', flexWrap: 'wrap' }}>
             <span className="kpi-ic ic-blue" style={{ flex: 'none' }}><Icon name="info" /></span>
             <div style={{ flex: 1, minWidth: 250 }}>
-              <h3 style={{ fontSize: 13.5, marginBottom: 4 }}>Installing an Android build</h3>
-              <p style={{ margin: 0, fontSize: 12 }}>
-                Android blocks installs from outside the Play Store by default. After downloading the APK, open it and
-                allow <b>Install unknown apps</b> for your browser when prompted. These are pre-release builds meant for
-                testing, so install them on a test device rather than a production phone.
+              <h3 style={{ fontSize: 13.5, marginBottom: 4 }}>Installing a mobile build</h3>
+              {demos.some((d) => d.hasApk && buildOs(d) === 'Android') && (
+                <p style={{ margin: 0, fontSize: 12 }}>
+                  <b>Android.</b> The Play Store is bypassed here, so after downloading the APK, open it and allow{' '}
+                  <b>Install unknown apps</b> for your browser when prompted.
+                </p>
+              )}
+              {demos.some((d) => d.hasApk && buildOs(d) === 'iOS') && (
+                <p style={{ margin: '6px 0 0', fontSize: 12 }}>
+                  <b>iOS.</b> An .ipa cannot be installed from Safari. Open the demo link for a TestFlight invite, or
+                  ask us to add your device to the provisioning profile.
+                </p>
+              )}
+              <p style={{ margin: '6px 0 0', fontSize: 12 }}>
+                These are pre-release builds meant for testing, so use a test device rather than a production phone.
               </p>
             </div>
             {!user && (

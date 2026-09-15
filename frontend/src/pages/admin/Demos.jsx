@@ -8,7 +8,7 @@ import { Loading, Alert, Empty, Modal, Kpi } from '../../components/ui';
 import { useToast } from '../../context/ToastContext';
 import {
   fileSize, num, date, timeAgo, label, statusClass,
-  PLATFORM_GROUPS, platformLabel, APK_PLATFORMS, limitLabel,
+  PLATFORM_GROUPS, platformLabel, MOBILE_PLATFORMS, buildFormat, limitLabel,
 } from '../../utils/format';
 
 const BLANK = {
@@ -56,8 +56,8 @@ export default function AdminDemos() {
         if (newApk) fd.append('apk', newApk);
         const res = await api.upload('/admin/demos', fd);
         toast.ok(
-          res.needsApk
-            ? `"${editing.title}" was created. Upload the APK from its row when the build is ready.`
+          res.needsBuild
+            ? `"${editing.title}" was created. Upload the build from its row when it is ready.`
             : `"${editing.title}" was published.`
         );
       }
@@ -403,23 +403,23 @@ export default function AdminDemos() {
 
             <div className="field-row">
               <div className="field">
-                <label htmlFor="d-ver">APK version</label>
+                <label htmlFor="d-ver">Build version</label>
                 <input id="d-ver" value={editing.apkVersion || ''} onChange={set('apkVersion')} placeholder="8.2.1" />
               </div>
               {!editing.id && (
                 <div className="field">
                   <label htmlFor="d-apk">
-                    APK file <span style={{ fontWeight: 400, color: '#94a3b8' }}>(optional)</span>
+                    Mobile build <span style={{ fontWeight: 400, color: '#94a3b8' }}>(optional)</span>
                   </label>
                   <input
                     id="d-apk"
                     type="file"
-                    accept=".apk,application/vnd.android.package-archive"
+                    accept={editing.platform === 'ios' ? '.ipa' : editing.platform === 'android' ? '.apk' : '.apk,.ipa'}
                     ref={newApkInput}
                     onChange={(e) => setNewApk(e.target.files?.[0] || null)}
                   />
                   <div className="field-hint">
-                    Up to {limitLabel(data?.maxApkMb)} per build.{' '}
+                    .apk for Android, .ipa for iOS. Up to {limitLabel(data?.maxApkMb)} per build.{' '}
                     {newApk && <b style={{ color: 'var(--a-green)' }}>{newApk.name} ({fileSize(newApk.size)})</b>}
                   </div>
                 </div>
@@ -451,7 +451,12 @@ function DemoRow({ demo, uploading, onEdit, onDelete, onUpload, onRemoveApk }) {
     if (input.current) input.current.value = '';
   };
 
-  const expectsApk = APK_PLATFORMS.includes(demo.platform);
+  const expectsApk = MOBILE_PLATFORMS.includes(demo.platform);
+  // iOS ships .ipa, Android .apk; a demo on 'mobile' or 'both' could carry either,
+  // so what is already attached decides before the platform does
+  const format = buildFormat(demo);
+  const isIos = format === 'IPA';
+  const accepts = demo.platform === 'ios' ? '.ipa' : demo.platform === 'android' ? '.apk' : '.apk,.ipa';
 
   return (
     <div className="panel">
@@ -527,7 +532,12 @@ function DemoRow({ demo, uploading, onEdit, onDelete, onUpload, onRemoveApk }) {
                 marginBottom: 12,
               }}
             >
-              <Icon name="android" style={{ width: 15, height: 15 }} /> Android build (APK)
+              <Icon name={isIos ? 'apple' : 'android'} style={{ width: 15, height: 15 }} />{' '}
+              {demo.platform === 'ios'
+                ? 'iOS build (IPA)'
+                : demo.platform === 'android'
+                ? 'Android build (APK)'
+                : 'Mobile build (APK / IPA)'}
             </div>
 
             {demo.apkMissing && (
@@ -536,8 +546,8 @@ function DemoRow({ demo, uploading, onEdit, onDelete, onUpload, onRemoveApk }) {
 
             {!expectsApk && !demo.hasApk && (
               <p className="cell-sub" style={{ marginBottom: 12 }}>
-                This demo targets {platformLabel(demo.platform)}. An APK is optional here - attach one only if you
-                also ship an Android build.
+                This demo targets {platformLabel(demo.platform)}. A mobile build is optional here - attach one
+                only if you also ship an Android or iOS build.
               </p>
             )}
 
@@ -571,21 +581,33 @@ function DemoRow({ demo, uploading, onEdit, onDelete, onUpload, onRemoveApk }) {
                     className="btn btn-ghost btn-sm"
                     style={{ color: 'var(--bad)' }}
                     onClick={onRemoveApk}
-                    title="Remove APK"
+                    title={`Remove ${format}`}
                   >
                     <Icon name="trash" />
                   </button>
                 </div>
               </div>
             ) : (
-              expectsApk && <p className="cell-sub" style={{ marginBottom: 12 }}>No APK uploaded yet.</p>
+              expectsApk && (
+                <p className="cell-sub" style={{ marginBottom: 12 }}>
+                  No {demo.platform === 'ios' ? 'IPA' : demo.platform === 'android' ? 'APK' : 'build'} uploaded yet.
+                </p>
+              )
+            )}
+
+            {(isIos || demo.platform === 'ios') && (
+              <p className="cell-sub" style={{ marginBottom: 12 }}>
+                An .ipa does not install from a browser the way an .apk does: a tester needs TestFlight, or an
+                ad-hoc build and a device already on the provisioning profile. Put the TestFlight invite in the
+                demo link above.
+              </p>
             )}
 
             <form onSubmit={submit} style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
               <input
                 type="file"
                 ref={input}
-                accept=".apk,application/vnd.android.package-archive"
+                accept={accepts}
                 onChange={(e) => setFile(e.target.files?.[0] || null)}
                 style={{ fontSize: 11, maxWidth: 190 }}
                 required

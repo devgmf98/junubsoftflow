@@ -1,4 +1,5 @@
 import {
+  Apple,
   ArrowDown,
   ArrowRight,
   ArrowUp,
@@ -64,6 +65,7 @@ import {
 const ICONS = {
   alert: TriangleAlert,
   android: Smartphone,
+  apple: Apple,
   archive: FileArchive,
   arrowDown: ArrowDown,
   arrowRight: ArrowRight,

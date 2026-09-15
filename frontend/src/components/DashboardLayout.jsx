@@ -39,7 +39,7 @@ const ADMIN_NAV = [
     items: [
       { to: '/admin/products', icon: 'box', label: 'Products' },
       { to: '/admin/categories', icon: 'tag', label: 'Categories' },
-      { to: '/admin/demos', icon: 'monitor', label: 'Demos & APK' },
+      { to: '/admin/demos', icon: 'monitor', label: 'Demos & builds' },
       // leaves the console, so it is a plain link and never shows as the active page
       { to: '/', icon: 'external', label: 'View store', exit: true },
     ],

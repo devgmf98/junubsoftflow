@@ -8,7 +8,7 @@ import { PageHeader } from '../../components/DashboardLayout';
 import { Loading, Alert, Empty } from '../../components/ui';
 import {
   fileSize, date, num, label, accentStyle,
-  platformLabel, platformIcon, platformAccent,
+  platformLabel, platformIcon, platformAccent, buildFormat,
 } from '../../utils/format';
 
 /** Step 8 of the reference flow: installers for what you own, plus demo builds. */
@@ -355,7 +355,7 @@ export default function AccountDownloads() {
                               href={downloadUrl(`/account/downloads/demo/${d.id}/apk`)}
                               className="btn btn-outline btn-sm"
                             >
-                              <Icon name="download" /> APK{d.apkVersion ? ` v${d.apkVersion}` : ''}
+                              <Icon name="download" /> {buildFormat(d)}{d.apkVersion ? ` v${d.apkVersion}` : ''}
                             </a>
                           )}
                         </div>
@@ -379,10 +379,14 @@ export default function AccountDownloads() {
               <div className="panel-body" style={{ display: 'flex', gap: 13, alignItems: 'flex-start' }}>
                 <span className="kpi-ic ic-blue" style={{ flex: 'none' }}><Icon name="info" /></span>
                 <div>
-                  <h3 style={{ fontSize: 13, marginBottom: 4 }}>Installing an Android build</h3>
+                  <h3 style={{ fontSize: 13, marginBottom: 4 }}>Installing a mobile build</h3>
                   <p style={{ margin: 0, fontSize: 12 }}>
-                    Android blocks installs from outside the Play Store by default. After downloading the APK, open it
-                    and allow <b>Install unknown apps</b> for your browser when prompted.
+                    <b>Android.</b> The Play Store is bypassed here, so after downloading the APK, open it and allow{' '}
+                    <b>Install unknown apps</b> for your browser when prompted.
+                  </p>
+                  <p style={{ margin: '6px 0 0', fontSize: 12 }}>
+                    <b>iOS.</b> An .ipa cannot be installed from Safari - it needs TestFlight, or a device already on
+                    the build's provisioning profile.
                   </p>
                 </div>
               </div>

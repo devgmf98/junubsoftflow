@@ -182,7 +182,7 @@ const PLATFORM_META = {
   mac: { label: 'macOS', icon: 'monitor', accent: 'purple' },
   linux: { label: 'Linux', icon: 'code', accent: 'orange' },
   android: { label: 'Android', icon: 'android', accent: 'green' },
-  ios: { label: 'iOS', icon: 'phone', accent: 'teal' },
+  ios: { label: 'iOS', icon: 'apple', accent: 'teal' },
   mobile: { label: 'Mobile', icon: 'phone', accent: 'green' },
   both: { label: 'Web + Mobile', icon: 'monitor', accent: 'purple' },
 };
@@ -199,8 +199,23 @@ export function platformAccent(value) {
   return PLATFORM_META[value]?.accent || 'blue';
 }
 
-/** Platforms an APK build makes sense for. */
-export const APK_PLATFORMS = ['android', 'mobile', 'both'];
+/** Platforms a mobile build makes sense for. */
+export const MOBILE_PLATFORMS = ['android', 'ios', 'mobile', 'both'];
+
+/**
+ * What kind of mobile build a demo carries - "APK" for Android, "IPA" for iOS.
+ * The uploaded filename is the authority, because a demo on 'mobile' or 'both'
+ * could be either; the platform only decides before anything is attached.
+ */
+export function buildFormat(demo = {}) {
+  const name = String(demo.apkName || '').toLowerCase();
+  if (name.endsWith('.ipa')) return 'IPA';
+  if (name.endsWith('.apk')) return 'APK';
+  return demo.platform === 'ios' ? 'IPA' : 'APK';
+}
+
+/** The store this build sidesteps, for install instructions. */
+export const buildOs = (demo) => (buildFormat(demo) === 'IPA' ? 'iOS' : 'Android');
 
 /* ---------- payment methods ---------- */
 

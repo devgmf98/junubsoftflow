@@ -778,11 +778,11 @@ router.get(
   })
 );
 
-/** Public APK download for a demo marked public. */
+/** Public download of a demo's mobile build, where the demo is marked public. */
 router.get(
   '/demos/:id/apk',
   asyncRoute(async (req, res) => {
-    const { apkPath } = require('../upload');
+    const { apkPath, buildMime, buildFileName } = require('../upload');
     const demo = await db.one(
       "SELECT * FROM demos WHERE id = ? AND status = 'published' AND visibility = 'public'",
       [req.params.id]
@@ -790,15 +790,15 @@ router.get(
     if (!demo || !demo.apk_file) return res.status(404).json({ error: 'That build is not available.' });
 
     const file = apkPath(demo.apk_file);
-    if (!file) return res.status(410).json({ error: 'The APK file is missing from the server.' });
+    if (!file) return res.status(410).json({ error: 'The build file is missing from the server.' });
 
     await db.run('UPDATE demos SET download_count = download_count + 1 WHERE id = ?', [demo.id]);
     await db.run('INSERT INTO download_log (demo_id, user_id, ip_address) VALUES (?, ?, ?)', [
       demo.id, req.session.user ? req.session.user.id : null, req.ip,
     ]);
 
-    res.type('application/vnd.android.package-archive');
-    return res.download(file, demo.apk_name || `${demo.slug}.apk`);
+    res.type(buildMime(demo.apk_file));
+    return res.download(file, buildFileName(demo.apk_file, demo.apk_name, demo.slug));
   })
 );
 

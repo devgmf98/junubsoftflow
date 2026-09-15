@@ -62,25 +62,55 @@ function makeStorage(dir, keepExt) {
   });
 }
 
-/* ---------------- APK uploads ---------------- */
+/* ---------------- mobile build uploads ---------------- */
+/**
+ * A demo's mobile build: .apk for Android, .ipa for iOS. Both are zip containers
+ * and browsers label them inconsistently, so the extension decides and the MIME
+ * type is only checked for something obviously wrong.
+ *
+ * The database columns are still named apk_*. Renaming them would mean retyping
+ * live columns, which the boot-time schema sync deliberately will not do - so the
+ * names stayed and the meaning widened.
+ */
+const MOBILE_EXT = new Set(['.apk', '.ipa']);
+
 const APK_MIME = new Set([
   'application/vnd.android.package-archive',
+  'application/x-itunes-ipa',
+  'application/x-ios-app',
   'application/octet-stream',
   'application/x-zip-compressed',
   'application/zip',
   '',
 ]);
 
+const MOBILE_MIME = {
+  '.apk': 'application/vnd.android.package-archive',
+  // there is no registered type for an .ipa; octet-stream is what Apple serves
+  '.ipa': 'application/octet-stream',
+};
+
+/** Content type for a stored build, from its extension. */
+const buildMime = (name) => MOBILE_MIME[path.extname(String(name || '')).toLowerCase()] || 'application/octet-stream';
+
+/**
+ * What the browser should save a build as: the name the admin uploaded, or the
+ * demo's slug carrying the stored extension - never a hard-coded .apk, which is
+ * how an iOS build ends up on disk as an Android one.
+ */
+const buildFileName = (stored, original, slug) =>
+  original || `${slug}${path.extname(String(stored || '')) || '.apk'}`;
+
 function apkFilter(req, file, cb) {
   const ext = path.extname(file.originalname).toLowerCase();
-  if (ext !== '.apk') {
-    const err = new Error('Only .apk files can be uploaded for the mobile build.');
+  if (!MOBILE_EXT.has(ext)) {
+    const err = new Error('Upload an Android .apk or an iOS .ipa build.');
     err.status = 400;
     err.code = 'LIMIT_FILE_TYPE';
     return cb(err);
   }
   if (!APK_MIME.has(file.mimetype)) {
-    const err = new Error(`Unexpected file type "${file.mimetype}". Upload the Android .apk build.`);
+    const err = new Error(`Unexpected file type "${file.mimetype}". Upload the .apk or .ipa build.`);
     err.status = 400;
     err.code = 'LIMIT_FILE_TYPE';
     return cb(err);
@@ -88,8 +118,10 @@ function apkFilter(req, file, cb) {
   cb(null, true);
 }
 
+// keepExt, now that the filter guarantees it is one of two: an .ipa saved as
+// .apk downloads as a file no phone will open.
 const uploadApk = multer({
-  storage: makeStorage(APK_DIR, false),
+  storage: makeStorage(APK_DIR, true),
   fileFilter: apkFilter,
   limits: { fileSize: MAX_APK_BYTES, files: 1 },
 }).single('apk');
@@ -327,6 +359,9 @@ const imagePath = (f) => existsIn(IMAGE_DIR, f);
 
 module.exports = {
   uploadApk,
+  buildMime,
+  buildFileName,
+  MOBILE_EXT,
   uploadInstaller,
   uploadBundle,
   uploadReviewImages,

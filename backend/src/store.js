@@ -242,8 +242,8 @@ const PRICING_MODES = ['simple', 'packages'];
 /** Platforms a demo can target. */
 const DEMO_PLATFORMS = ['web', 'desktop', 'windows', 'mac', 'linux', 'android', 'ios', 'mobile', 'both'];
 
-/** Platforms an APK can sensibly be attached to. */
-const APK_PLATFORMS = ['android', 'mobile', 'both'];
+/** Platforms a mobile build (.apk or .ipa) can sensibly be attached to. */
+const MOBILE_PLATFORMS = ['android', 'ios', 'mobile', 'both'];
 
 /**
  * Product SKU derived from the name: three letters per word, digits kept whole.
@@ -338,5 +338,5 @@ module.exports = {
   licenseLabel,
   PRICING_MODES,
   DEMO_PLATFORMS,
-  APK_PLATFORMS,
+  MOBILE_PLATFORMS,
 };

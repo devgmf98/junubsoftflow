@@ -166,7 +166,7 @@ Set in `backend/.env`; the API reports them as `maxFileMb`, `maxApkMb`, `maxBund
 | Limit | Default | Notes |
 |---|---|---|
 | `MAX_FILE_MB` | 4096 (4 GB) | single file, streamed to disk |
-| `MAX_APK_MB` | 2048 (2 GB) | one `.apk` |
+| `MAX_APK_MB` | 2048 (2 GB) | one mobile build - `.apk` (Android) or `.ipa` (iOS) |
 | `MAX_BUNDLE_TOTAL_MB` | 1024 (1 GB) | **folder** uploads only — they are zipped in one pass, so the parts are read into memory. A pre-made `.zip` is moved, not read, and only hits `MAX_FILE_MB`. |
 | images | 5 MB | 6 review images, 8 product images |
 | folder parts | 300 files | per upload |
@@ -249,7 +249,7 @@ Email cannot be changed here.
 | POST | `/checkout` | place an order |
 | GET | `/orders/:number` | order confirmation |
 | GET | `/demos` | published demos |
-| GET | `/demos/:id/apk` | APK download |
+| GET | `/demos/:id/apk` | mobile build download (`.apk` or `.ipa`) |
 | POST | `/contact` | contact form |
 | POST | `/subscribe` | newsletter |
 
@@ -804,6 +804,14 @@ The new account can sign in immediately and, when `role: "admin"`, reach the who
 | POST/DELETE/GET | `/demos/:id/apk` |
 | DELETE | `/demos/:id` |
 
+A demo's build is `.apk` or `.ipa`; the route keeps its `apk` name, as do the
+`apk_*` columns, because renaming a live column is a retype the boot-time schema
+sync will not do. The stored file keeps the extension it arrived with, and the
+download is typed from it - `application/vnd.android.package-archive` for an
+`.apk`, `application/octet-stream` for an `.ipa`. Note that an `.ipa` served this
+way does not install from a browser: iOS needs TestFlight, or an ad-hoc build and
+a device on its provisioning profile.
+
 ```json
 {
   "title": "MoneyPay", "productId": 12,
@@ -1088,9 +1096,9 @@ Licence terms for the product dropdown are one setting, newline-separated:
 | Path | Returns |
 |---|---|
 | `GET /api/shop/review-images/:file` | image bytes — `X-Content-Type-Options: nosniff` and `Content-Security-Policy: default-src 'none'; sandbox` |
-| `GET /api/shop/demos/:id/apk` | public APK, increments `downloadCount` |
+| `GET /api/shop/demos/:id/apk` | public mobile build, increments `downloadCount` |
 | `GET /api/account/downloads/file/:id` | entitlement-gated file, or a redirect to `externalUrl` |
-| `GET /api/account/downloads/demo/:id/apk` | APK for signed-in customers |
+| `GET /api/account/downloads/demo/:id/apk` | mobile build for signed-in customers |
 | `GET /api/admin/demos/:id/apk` | admin copy, no download counted |
 
 Uploaded images are served with a sandbox CSP so an SVG cannot execute script in the site's origin.
