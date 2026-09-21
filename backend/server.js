@@ -140,6 +140,32 @@ app.use('/api', attachBasicAuth);
  * deploy restart-loops, hiding the real problem. So a reachable database answers 200
  * either way, and `schema` says whether the tables are actually there.
  */
+/**
+ * Says at boot where uploads are going. Silence here used to mean "fine"; it also
+ * meant "every upload is one deploy away from being deleted", which is not
+ * something to discover from a broken image on a product card.
+ */
+function reportStorage() {
+  const s = require('./src/upload').storageStatus();
+  const held = Object.values(s.counts).reduce((n, v) => n + (v || 0), 0);
+
+  if (!s.writable) {
+    console.error(`  files  NOT WRITABLE - ${s.error}`);
+    console.error('         every upload will fail until the app user can write there');
+    return;
+  }
+
+  if (s.volume) {
+    console.log(`  files  ${s.root} (persistent volume, ${held} stored)`);
+  } else if (process.env.NODE_ENV === 'production') {
+    console.warn(`  files  ${s.root} - EPHEMERAL, ${held} stored`);
+    console.warn('         no volume is attached, so the next deploy erases every upload.');
+    console.warn('         Attach one and point it here, or set STORAGE_DIR. See DEPLOY.md.');
+  } else {
+    console.log(`  files  ${s.root} (${held} stored)`);
+  }
+}
+
 app.get('/api/health', async (req, res) => {
   // 200 whenever the process is alive, whatever the database is doing.
   //
@@ -180,7 +206,16 @@ app.get('/api/health', async (req, res) => {
     commit: (process.env.RAILWAY_GIT_COMMIT_SHA || 'unknown').slice(0, 7),
     schemaSync: process.env.AUTO_SCHEMA_SYNC === 'false' ? 'disabled' : 'enabled',
     schema: 'ready',
+    // Where uploads are going, and whether they will still be there tomorrow.
+    storage: require('./src/upload').storageStatus(),
   };
+
+  if (!out.storage.writable) {
+    out.storageHint = 'uploads will fail - the storage directory is not writable by the app user';
+  } else if (!out.storage.volume && process.env.NODE_ENV === 'production') {
+    out.storageHint =
+      'no volume attached: uploads live on the container filesystem and are erased by the next deploy';
+  }
   try {
     await db.query('SELECT 1 FROM settings LIMIT 1');
   } catch {
@@ -316,6 +351,8 @@ async function start() {
    *
    * So: serve regardless, report the truth on /api/health, and keep trying.
    */
+  reportStorage();
+
   const connected = await connectAndSync();
 
   if (!connected) {

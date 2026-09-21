@@ -10,6 +10,31 @@ import {
 } from '../utils/format';
 import usePageMeta from '../hooks/usePageMeta';
 
+/**
+ * The picture at the top of a demo card, with the chips laid over it.
+ *
+ * Its own component only because it needs one piece of state: a picture whose
+ * file is no longer on the server has to fall back to the tinted platform panel,
+ * and a broken-image glyph across the head of the card is the worst of both.
+ */
+function DemoCover({ src, alt, platform, children }) {
+  const [failed, setFailed] = useState(false);
+  const shown = src && !failed;
+
+  return (
+    <div className={`demo-cover${shown ? '' : ' is-blank'}`}>
+      {shown ? (
+        <img src={assetUrl(src)} alt={alt} loading="lazy" onError={() => setFailed(true)} />
+      ) : (
+        <span className="demo-cover-icon" style={accentStyle(platformAccent(platform))}>
+          <Icon name={platformIcon(platform)} />
+        </span>
+      )}
+      {children}
+    </div>
+  );
+}
+
 /** Public demos: web review links and downloadable Android builds. */
 export default function Demos() {
   usePageMeta({
@@ -101,14 +126,7 @@ export default function Demos() {
 
               return (
               <article className="demo-card" key={d.id}>
-                <div className={`demo-cover${cover ? '' : ' is-blank'}`}>
-                  {cover ? (
-                    <img src={assetUrl(cover)} alt={d.productName || d.title} loading="lazy" />
-                  ) : (
-                    <span className="demo-cover-icon" style={accentStyle(platformAccent(d.platform))}>
-                      <Icon name={platformIcon(d.platform)} />
-                    </span>
-                  )}
+                <DemoCover src={cover} alt={d.productName || d.title} platform={d.platform}>
                   <span className="demo-tag">
                     <Icon name={platformIcon(d.platform)} /> {platformLabel(d.platform)}
                   </span>
@@ -122,7 +140,7 @@ export default function Demos() {
                       <Icon name={b.icon} /> {b.format}
                     </span>
                   ))}
-                </div>
+                </DemoCover>
 
                 <div className="demo-body">
                 <h3>{d.title}</h3>

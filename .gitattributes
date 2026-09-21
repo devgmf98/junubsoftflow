@@ -1,0 +1,3 @@
+# The container entrypoint must keep LF endings: /bin/sh will not run a script
+# with CRLF, and it fails with a baffling "not found" for the interpreter.
+*.sh text eol=lf

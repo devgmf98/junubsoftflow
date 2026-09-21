@@ -14,7 +14,22 @@ const path = require('path');
 const crypto = require('crypto');
 const multer = require('multer');
 
-const STORAGE = path.join(__dirname, '..', 'storage');
+/**
+ * Where uploads live.
+ *
+ * A container's filesystem is wiped on every deploy, so storage inside the app
+ * directory means every product image, APK and source bundle disappears the next
+ * time the service ships - the database row survives and points at a file that is
+ * gone, which is what a broken image on a product card actually is.
+ *
+ * So the root is taken from, in order: STORAGE_DIR, Railway's own
+ * RAILWAY_VOLUME_MOUNT_PATH (set for you as soon as a volume is attached, so
+ * attaching one is the entire fix), and only then the local directory, which is
+ * the right answer for a development machine.
+ */
+const STORAGE = path.resolve(
+  process.env.STORAGE_DIR || process.env.RAILWAY_VOLUME_MOUNT_PATH || path.join(__dirname, '..', 'storage')
+);
 const APK_DIR = path.join(STORAGE, 'apk');
 const FILE_DIR = path.join(STORAGE, 'files');
 const IMAGE_DIR = path.join(STORAGE, 'images');
@@ -374,6 +389,37 @@ function existsIn(dir, filename) {
 const removeApk = (f) => removeFrom(APK_DIR, f);
 const removeFile = (f) => removeFrom(FILE_DIR, f);
 const removeImage = (f) => removeFrom(IMAGE_DIR, f);
+/**
+ * Whether uploads can actually be stored, and how many are there.
+ *
+ * Reported on /api/health because both failure modes are silent from outside: an
+ * unwritable directory only shows up when someone tries to upload, and an
+ * ephemeral one only when the next deploy takes the files with it. `volume` says
+ * whether the platform has persistent storage attached at all.
+ */
+function storageStatus() {
+  const out = {
+    root: STORAGE,
+    volume: process.env.RAILWAY_VOLUME_MOUNT_PATH || (process.env.STORAGE_DIR ? 'configured' : null),
+    writable: true,
+    counts: {},
+  };
+
+  for (const [key, dir] of Object.entries({ images: IMAGE_DIR, apk: APK_DIR, files: FILE_DIR })) {
+    try {
+      fs.mkdirSync(dir, { recursive: true });
+      fs.accessSync(dir, fs.constants.W_OK);
+      out.counts[key] = fs.readdirSync(dir).length;
+    } catch (err) {
+      out.writable = false;
+      out.error = `${dir}: ${err.code || err.message}`;
+      out.counts[key] = null;
+    }
+  }
+
+  return out;
+}
+
 const apkPath = (f) => existsIn(APK_DIR, f);
 const filePath = (f) => existsIn(FILE_DIR, f);
 const imagePath = (f) => existsIn(IMAGE_DIR, f);
@@ -398,6 +444,8 @@ module.exports = {
   filePath,
   imagePath,
   imageMime,
+  storageStatus,
+  STORAGE,
   APK_DIR,
   FILE_DIR,
   IMAGE_DIR,

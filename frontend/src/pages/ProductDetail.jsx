@@ -26,6 +26,9 @@ export default function ProductDetail() {
   const [qty, setQty] = useState(1);
   const [tab, setTab] = useState('description');
   const [previewAt, setPreviewAt] = useState(null);
+  // a stored picture whose file has gone missing; the media block falls through
+  const [shotFailed, setShotFailed] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
   const [packageId, setPackageId] = useState(null);
   const { add } = useCart();
   const navigate = useNavigate();
@@ -114,24 +117,32 @@ export default function ProductDetail() {
 
         <div className="pdp">
           <div>
+            {/* Each step falls through to the next when its picture will not load -
+                a row can outlive its file, and a broken-image glyph is worse than
+                the icon it replaced. */}
             <div className="pdp-media">
-              {previewImages.length ? (
+              {previewImages.length && !shotFailed ? (
                 <button
                   type="button"
                   className="pdp-preview-shot"
                   onClick={() => setPreviewAt(0)}
                   aria-label="Open the preview slider"
                 >
-                  <img src={assetUrl(previewImages[0].url)} alt={previewImages[0].caption || `${product.name} preview`} />
+                  <img
+                    src={assetUrl(previewImages[0].url)}
+                    alt={previewImages[0].caption || `${product.name} preview`}
+                    onError={() => setShotFailed(true)}
+                  />
                   <span className="pdp-preview-hint">
                     <Icon name="eye" /> Preview
                   </span>
                 </button>
-              ) : product.imageUrl ? (
+              ) : product.imageUrl && !imageFailed ? (
                 <img
                   src={assetUrl(product.imageUrl)}
                   alt={product.name}
                   style={{ maxHeight: 300, borderRadius: 10, objectFit: 'contain' }}
+                  onError={() => setImageFailed(true)}
                 />
               ) : (
                 <span className="ic" style={accentStyle(product.accent)}>

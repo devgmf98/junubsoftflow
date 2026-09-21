@@ -38,6 +38,7 @@ copy them into `DB_*` aliases.
 | `SMTP_PASS` | a Gmail **App Password** | Not the account password |
 | `ALLOW_BASIC_AUTH` | `false` | HTTP Basic sends credentials on every request; leave it off unless a tool genuinely needs it |
 | `SERVE_CLIENT` | `false` | Netlify serves the front end; the API only serves `/api` |
+| `STORAGE_DIR` | usually unset | Where uploads are written. Leave it unset and a mounted volume is picked up automatically — see [Uploads need a volume](#uploads-need-a-volume-or-they-are-deleted-by-the-next-deploy) |
 
 ### Two Dockerfiles, because the build context depends on a setting
 
@@ -217,16 +218,62 @@ existing account. The full seed remains a destructive demo-data reset for local 
 Seeding also inserts demo products, customers and orders. That is convenient for a
 first look and wrong for a real storefront - delete what you do not want.
 
-### Uploads will not survive a redeploy
+### Uploads need a volume, or they are deleted by the next deploy
 
-A container filesystem is ephemeral. `storage/apk`, `storage/files` and
-`storage/images` hold uploaded APKs, source bundles and product images, and all
-of it is lost on the next deploy unless a **Railway volume is mounted at
-`/app/storage`**. Attach one before uploading anything you would mind losing.
+**This is the single most important setting on the service.** A container
+filesystem is erased and rebuilt on every deploy. Product images, review
+screenshots, APKs, iOS builds and source bundles are written to disk, so without
+persistent storage each one survives only until the next time you ship — while its
+database row stays behind, pointing at a file that is no longer there.
 
-The alternative — object storage such as S3 or Cloudflare R2 — is the better
-long-term answer, but it is a code change: `src/upload.js` writes to the local
-disk today.
+What that looks like from outside is a broken-image icon on a product card, or a
+download that 404s. Nothing in the logs, because nothing failed: the file was
+deleted by the platform, exactly as a container filesystem is meant to behave.
+
+**Attach a volume:** Railway → the API service → **Variables / Settings → Volumes
+→ Add volume**, mount path `/app/storage`.
+
+That is the whole fix. Railway sets `RAILWAY_VOLUME_MOUNT_PATH` when a volume is
+attached, and `src/upload.js` reads it, so any mount path works — nothing else to
+configure. `STORAGE_DIR` overrides it if you ever need somewhere else.
+
+Confirm it took, on `GET /api/health`:
+
+```json
+"storage": {
+  "root": "/app/storage",
+  "volume": "/app/storage",
+  "writable": true,
+  "counts": { "images": 12, "apk": 2, "files": 5 }
+}
+```
+
+`"volume": null` means there is no volume and the files are still temporary —
+`/api/health` says so in `storageHint`, and the service prints the same warning at
+startup. `"writable": false` means uploads are failing outright; the `error` field
+names the path and the reason.
+
+A volume is mounted root-owned while the app runs as the unprivileged `node` user,
+which would make every upload fail with `EACCES`. `backend/docker-entrypoint.sh`
+takes ownership of the storage tree as root and then drops to `node` via `su-exec`,
+so this is handled — but it is why the image no longer ends on a bare `USER node`.
+
+**Files already lost.** Attaching a volume does not bring back what previous
+deploys deleted; those rows now point at nothing. Clear them so the app falls back
+to its icon placeholders instead of showing broken images, then re-upload what
+matters:
+
+```bash
+node db/prune-missing-uploads.js          # report what is dangling
+node db/prune-missing-uploads.js --fix    # clear those references
+```
+
+Run it **after** the volume is attached, or the next deploy puts you straight back
+where you started.
+
+The longer-term answer is object storage — S3 or Cloudflare R2 — which survives
+the platform entirely. That is a code change: `src/upload.js` writes to local disk
+today.
 
 ---
 

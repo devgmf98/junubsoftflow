@@ -31,22 +31,25 @@ ENV NODE_ENV=production
 
 # tini reaps zombies and forwards SIGTERM, so a redeploy stops the app cleanly
 # instead of waiting out a kill timeout.
-RUN apk add --no-cache tini
+RUN apk add --no-cache tini su-exec
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY backend/ ./
 
 # Uploads land here. On Railway this path should be a mounted volume - a container
-# filesystem is ephemeral, so without one every APK and source bundle is lost on the
-# next deploy. See DEPLOY.md.
+# filesystem is ephemeral, so without one every image, APK and source bundle is lost
+# on the next deploy. See DEPLOY.md.
 RUN mkdir -p storage/apk storage/files storage/images storage/tmp
 
-# node:20-alpine ships an unprivileged `node` user; run as it rather than root.
+# node:20-alpine ships an unprivileged `node` user; the app runs as it. The
+# entrypoint stays root just long enough to take ownership of the storage volume,
+# which is mounted root-owned, then drops to `node` via su-exec.
 RUN chown -R node:node /app
-USER node
+COPY backend/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 4000
 
 # Railway sets PORT; server.js honours it and binds 0.0.0.0.
-ENTRYPOINT ["/sbin/tini", "--"]
+ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/docker-entrypoint.sh"]
 CMD ["node", "server.js"]
